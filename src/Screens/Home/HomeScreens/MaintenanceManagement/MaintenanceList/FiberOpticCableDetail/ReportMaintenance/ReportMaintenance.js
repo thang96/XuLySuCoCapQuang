@@ -13,7 +13,7 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
@@ -96,9 +96,11 @@ const ReportMaintenance = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setMeasureCableResultDocument(imageConverted1);
+        setModalResultCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
+        setModalResultCamera(false);
       });
   };
   const openCamera = () => {
@@ -106,9 +108,11 @@ const ReportMaintenance = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setReportDocument(imageConverted1);
+        setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
+        setModalCamera(false);
       });
   };
   const openResultGallery = () => {
@@ -116,9 +120,11 @@ const ReportMaintenance = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setMeasureCableResultDocument(imageConverted1);
+        setModalResultCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
+        setModalResultCamera(false);
       });
   };
 
@@ -127,9 +133,11 @@ const ReportMaintenance = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setReportDocument(imageConverted1);
+        setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
+        setModalCamera(false);
       });
   };
   const rejectIssue = async () => {
@@ -176,222 +184,224 @@ const ReportMaintenance = props => {
   };
   return (
     <View style={styles.container}>
-        <KeyboardAvoidingView style={styles.container}>
-      {modalResultCamera && (
-        <View style={styles.styleModal}>
-          <CustomModalCamera
-            openCamera={() => {
-              openResultCamera();
-              setModalResultCamera(false);
-            }}
-            openGallery={() => {
-              openResultGallery();
-              setModalResultCamera(false);
-            }}
-            modalVisible={modalResultCamera}
-            onRequestClose={() => {
-              setModalResultCamera(false);
-            }}
-            cancel={() =>
-              setModalResultCamera(prev => (prev == false ? true : false))
-            }
-          />
-        </View>
-      )}
-      {modalCamera && (
-        <View style={styles.styleModal}>
-          <CustomModalCamera
-            openCamera={() => {
-              openCamera();
-              setModalCamera(false);
-            }}
-            openGallery={() => {
-              openGallery();
-              setModalCamera(false);
-            }}
-            modalVisible={modalCamera}
-            onRequestClose={() => {
-              setModalCamera(false);
-            }}
-            cancel={() =>
-              setModalCamera(prev => (prev == false ? true : false))
-            }
-          />
-        </View>
-      )}
-      <CustomAppBar
-        title={'Báo cáo kết quả'}
-        iconsLeft={icons.ic_back}
-        onPressIconsLeft={() => navigation.navigate('FiberOpticCableDetail')}
-      />
-    
-      <ScrollView style={styles.eachContainer}>
-        <Text style={styles.title}>Thông tin yêu cầu xử lý</Text>
-        <Text style={styles.content}>{`Mã CV : ${request?.code}`}</Text>
-        <Text
-          style={
-            styles.content
-          }>{`Nhân sự kỹ thuật : ${request?.user_assigned}`}</Text>
-        <View style={[styles.line, {marginVertical: 10}]} />
-        <View style={styles.viewRow}>
-          <Text style={styles.title}>Nhập thông tin vị trí</Text>
-          <CustomTextButton
-            textStyle={{color: colors.mainColor, fontWeight: 'bold'}}
-            styleButton={{height: 50}}
-            label={'Tự động lấy vị trí >>'}
-            onPress={() => getLocation()}
-          />
-        </View>
-        {locationLongitude ? (
-          <View style={styles.viewCustomTextInputChangeValue}>
-            <Text style={styles.styleTitle}>Longitude : </Text>
-            <Text>{locationLongitude}</Text>
+      <KeyboardAvoidingView style={styles.container}>
+        {modalResultCamera && (
+          <View style={styles.styleModal}>
+            <CustomModalCamera
+              openCamera={() => {
+                openResultCamera();
+              }}
+              openGallery={() => {
+                openResultGallery();
+              }}
+              modalVisible={modalResultCamera}
+              onRequestClose={() => {
+                setModalResultCamera(false);
+              }}
+              cancel={() =>
+                setModalResultCamera(prev => (prev == false ? true : false))
+              }
+            />
           </View>
-        ) : (
-          <CustomTextInputChangeValue
-            styleTitle={styles.styleTitle}
-            title={'Longitude : '}
-            styleViewInput={styles.viewCustomTextInputChangeValue}
-            placeholder={'Longitude'}
-            value={locationLongitude}
-            onChangeText={text => setLocationLongitude(text)}
-          />
         )}
-        {locationLatitude ? (
-          <View style={styles.viewCustomTextInputChangeValue}>
-            <Text style={styles.styleTitle}>Latitude : </Text>
-            <Text>{locationLatitude}</Text>
+        {modalCamera && (
+          <View style={styles.styleModal}>
+            <CustomModalCamera
+              openCamera={() => {
+                openCamera();
+              }}
+              openGallery={() => {
+                openGallery();
+              }}
+              modalVisible={modalCamera}
+              onRequestClose={() => {
+                setModalCamera(false);
+              }}
+              cancel={() =>
+                setModalCamera(prev => (prev == false ? true : false))
+              }
+            />
           </View>
-        ) : (
-          <CustomTextInputChangeValue
-            styleTitle={styles.styleTitle}
-            title={'Latitude : '}
-            styleViewInput={styles.viewCustomTextInputChangeValue}
-            placeholder={'Latitude'}
-            value={locationLatitude}
-            onChangeText={text => setLocationLatitude(text)}
-          />
         )}
+        <CustomAppBar
+          title={'Báo cáo kết quả'}
+          iconsLeft={icons.ic_back}
+          onPressIconsLeft={() => navigation.navigate('FiberOpticCableDetail')}
+        />
 
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kết quả đo tuyến cáp'}
-            result={measureCableResult}
-            onPressOk={() => setMeasureCableResult(true)}
-            onPressNotOk={() => setMeasureCableResult(false)}
+        <ScrollView style={styles.eachContainer}>
+          <Text style={styles.title}>Thông tin yêu cầu xử lý</Text>
+          <Text style={styles.content}>{`Mã CV : ${request?.code}`}</Text>
+          <Text
+            style={
+              styles.content
+            }>{`Nhân sự kỹ thuật : ${request?.user_assigned}`}</Text>
+          <View style={[styles.line, {marginVertical: 10}]} />
+          <View style={styles.viewRow}>
+            <Text style={styles.title}>Nhập thông tin vị trí</Text>
+            <CustomTextButton
+              textStyle={{color: colors.mainColor, fontWeight: 'bold'}}
+              styleButton={{height: 50}}
+              label={'Tự động lấy vị trí >>'}
+              onPress={() => getLocation()}
+            />
+          </View>
+          {locationLongitude ? (
+            <View style={styles.viewCustomTextInputChangeValue}>
+              <Text style={styles.styleTitle}>Longitude : </Text>
+              <Text>{locationLongitude}</Text>
+            </View>
+          ) : (
+            <CustomTextInputChangeValue
+              styleTitle={styles.styleTitle}
+              title={'Longitude : '}
+              styleViewInput={styles.viewCustomTextInputChangeValue}
+              placeholder={'Longitude'}
+              value={locationLongitude}
+              onChangeText={text => setLocationLongitude(text)}
+            />
+          )}
+          {locationLatitude ? (
+            <View style={styles.viewCustomTextInputChangeValue}>
+              <Text style={styles.styleTitle}>Latitude : </Text>
+              <Text>{locationLatitude}</Text>
+            </View>
+          ) : (
+            <CustomTextInputChangeValue
+              styleTitle={styles.styleTitle}
+              title={'Latitude : '}
+              styleViewInput={styles.viewCustomTextInputChangeValue}
+              placeholder={'Latitude'}
+              value={locationLatitude}
+              onChangeText={text => setLocationLatitude(text)}
+            />
+          )}
+
+          <View style={styles.viewItem}>
+            <CustomComponentViewCheck
+              title={'Kết quả đo tuyến cáp'}
+              result={measureCableResult}
+              onPressOk={() => setMeasureCableResult(true)}
+              onPressNotOk={() => setMeasureCableResult(false)}
+            />
+            {measureCableResultDocument ? (
+              <Image
+                source={{
+                  uri:
+                    Platform.OS == 'ios'
+                      ? measureCableResultDocument?.path
+                      : measureCableResultDocument?.uri,
+                }}
+                style={styles.image}
+                resizeMode={'contain'}
+              />
+            ) : (
+              <TouchableOpacity
+                onPress={() => setModalResultCamera(true)}
+                style={styles.buttonUpload}>
+                <Image
+                  source={icons.ic_report}
+                  style={styles.iconButtonUpload}
+                />
+                <Text style={styles.textButtonUpload}>Upload kết quả đo</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+          <View style={styles.viewItem}>
+            <CustomComponentViewCheck
+              title={'Phát quang\ndọc tuyến cáp'}
+              result={cleanCableResult}
+              onPressOk={() => setCleanCableResult(true)}
+              onPressNotOk={() => setCleanCableResult(false)}
+            />
+          </View>
+          <View style={styles.viewItem}>
+            <CustomComponentViewCheck
+              title={'Căn chỉnh các tuyến\ncáp quang treo'}
+              result={adjustTensionCable}
+              onPressOk={() => setAdjustTensionCable(true)}
+              onPressNotOk={() => setAdjustTensionCable(false)}
+            />
+          </View>
+          <View style={styles.viewItem}>
+            <CustomComponentViewCheck
+              title={'Kiểm tra chỉnh lại vật tư\nphụ kiện treo cáp'}
+              result={checkSupplies}
+              onPressOk={() => setCheckSupplies(true)}
+              onPressNotOk={() => setCheckSupplies(false)}
+            />
+          </View>
+          <View style={styles.viewItem}>
+            <CustomComponentViewCheck
+              title={'Vệ sinh công bể\ncáp ngầm'}
+              result={cleanUndergroundCable}
+              onPressOk={() => setCleanUndergroundCable(true)}
+              onPressNotOk={() => setCleanUndergroundCable(false)}
+            />
+          </View>
+          <View style={styles.viewItem}>
+            <CustomComponentViewCheck
+              title={'Kiểm tra làm gọn cáp\ndự phòng'}
+              result={checkPreventiveCable}
+              onPressOk={() => setCheckPreventiveCable(true)}
+              onPressNotOk={() => setCheckPreventiveCable(false)}
+            />
+          </View>
+          <View style={styles.viewItem}>
+            <CustomComponentViewCheck
+              title={'Kiểm tra, vệ sinh\nmăng xông nối cáp'}
+              result={checkCableSocket}
+              onPressOk={() => setCheckCableSocket(true)}
+              onPressNotOk={() => setCheckCableSocket(false)}
+            />
+          </View>
+          <View style={styles.viewItem}>
+            <CustomComponentViewCheck
+              title={'Kiểm tra, vệ sinh ODF và\ncác đầu Adapter quang'}
+              result={checkCableOdfAdapter}
+              onPressOk={() => setCheckCableOdfAdapter(true)}
+              onPressNotOk={() => setCheckCableOdfAdapter(false)}
+            />
+          </View>
+          <Text style={styles.title}>Phương án đề xuất tối ưu</Text>
+          <CustomTextInputChangeValue
+            styleViewInput={{
+              height: 50,
+              width: '100%',
+              backgroundColor: 'white',
+            }}
+            placeholder={'Nhập phương án'}
+            value={solutionProvide}
+            onChangeText={text => setSolutionProvide(text)}
           />
-          {measureCableResultDocument ? (
+          <Text style={styles.title}>Hình ảnh báo cáo</Text>
+          {reportDocument ? (
             <Image
               source={{
                 uri:
                   Platform.OS == 'ios'
-                    ? measureCableResultDocument?.path
-                    : measureCableResultDocument?.uri,
+                    ? reportDocument?.path
+                    : reportDocument?.uri,
               }}
               style={styles.image}
               resizeMode={'contain'}
             />
           ) : (
             <TouchableOpacity
-              onPress={() => setModalResultCamera(true)}
-              style={styles.buttonUpload}>
-              <Image source={icons.ic_report} style={styles.iconButtonUpload} />
-              <Text style={styles.textButtonUpload}>Upload kết quả đo</Text>
+              style={styles.button}
+              onPress={() => setModalCamera(true)}>
+              <Image style={styles.imageUpload} source={icons.ic_upload} />
+              <Text style={styles.textUpload}>Up ảnh</Text>
             </TouchableOpacity>
           )}
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Phát quang\ndọc tuyến cáp'}
-            result={cleanCableResult}
-            onPressOk={() => setCleanCableResult(true)}
-            onPressNotOk={() => setCleanCableResult(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Căn chỉnh các tuyến\ncáp quang treo'}
-            result={adjustTensionCable}
-            onPressOk={() => setAdjustTensionCable(true)}
-            onPressNotOk={() => setAdjustTensionCable(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kiểm tra chỉnh lại vật tư\nphụ kiện treo cáp'}
-            result={checkSupplies}
-            onPressOk={() => setCheckSupplies(true)}
-            onPressNotOk={() => setCheckSupplies(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Vệ sinh công bể\ncáp ngầm'}
-            result={cleanUndergroundCable}
-            onPressOk={() => setCleanUndergroundCable(true)}
-            onPressNotOk={() => setCleanUndergroundCable(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kiểm tra làm gọn cáp\ndự phòng'}
-            result={checkPreventiveCable}
-            onPressOk={() => setCheckPreventiveCable(true)}
-            onPressNotOk={() => setCheckPreventiveCable(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kiểm tra, vệ sinh\nmăng xông nối cáp'}
-            result={checkCableSocket}
-            onPressOk={() => setCheckCableSocket(true)}
-            onPressNotOk={() => setCheckCableSocket(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kiểm tra, vệ sinh ODF và\ncác đầu Adapter quang'}
-            result={checkCableOdfAdapter}
-            onPressOk={() => setCheckCableOdfAdapter(true)}
-            onPressNotOk={() => setCheckCableOdfAdapter(false)}
-          />
-        </View>
-        <Text style={styles.title}>Phương án đề xuất tối ưu</Text>
-        <CustomTextInputChangeValue
-          styleViewInput={{height: 50, width: '100%', backgroundColor: 'white'}}
-          placeholder={'Nhập phương án'}
-          value={solutionProvide}
-          onChangeText={text => setSolutionProvide(text)}
+        </ScrollView>
+
+        <ComponentTwoButton
+          disabledRight={isValueOK() ? true : false}
+          onPressLeft={() => rejectIssue()}
+          onPressRight={() => sendReport()}
         />
-        <Text style={styles.title}>Hình ảnh báo cáo</Text>
-        {reportDocument ? (
-          <Image
-            source={{
-              uri:
-                Platform.OS == 'ios'
-                  ? reportDocument?.path
-                  : reportDocument?.uri,
-            }}
-            style={styles.image}
-            resizeMode={'contain'}
-          />
-        ) : (
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setModalCamera(true)}>
-            <Image style={styles.imageUpload} source={icons.ic_upload} />
-            <Text style={styles.textUpload}>Up ảnh</Text>
-          </TouchableOpacity>
-        )}
-      </ScrollView>
-  
-      
-      <ComponentTwoButton
-        disabledRight={isValueOK() ? true : false}
-        onPressLeft={() => rejectIssue()}
-        onPressRight={() => sendReport()}
-      />
-          </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
     </View>
   );
 };

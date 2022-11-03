@@ -93,9 +93,11 @@ const ReportWork = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setMeasureCableResultDocument(imageConverted1);
+        setModalResultCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
+        setModalResultCamera(false);
       });
   };
   const openCamera = () => {
@@ -103,9 +105,11 @@ const ReportWork = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setReportDocument(imageConverted1);
+        setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
+        setModalCamera(false);
       });
   };
   const openResultGallery = () => {
@@ -113,9 +117,11 @@ const ReportWork = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setMeasureCableResultDocument(imageConverted1);
+        setModalResultCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
+        setModalResultCamera(false);
       });
   };
 
@@ -124,9 +130,11 @@ const ReportWork = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setReportDocument(imageConverted1);
+        setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
+        setModalCamera(false);
       });
   };
   const rejectIssue = async () => {
@@ -178,11 +186,9 @@ const ReportWork = props => {
           <CustomModalCamera
             openCamera={() => {
               openResultCamera();
-              setModalResultCamera(false);
             }}
             openGallery={() => {
               openResultGallery();
-              setModalResultCamera(false);
             }}
             modalVisible={modalResultCamera}
             onRequestClose={() => {
@@ -199,11 +205,9 @@ const ReportWork = props => {
           <CustomModalCamera
             openCamera={() => {
               openCamera();
-              setModalCamera(false);
             }}
             openGallery={() => {
               openGallery();
-              setModalCamera(false);
             }}
             modalVisible={modalCamera}
             onRequestClose={() => {

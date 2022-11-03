@@ -57,15 +57,14 @@ const CreateNewRequest = props => {
     getListData();
   }, []);
   const options = {
-    timeZone:"Asia/Ho_Chi_Minh",
-    hour12 : false,
-    hour:  "2-digit",
-    minute: "2-digit",
- }
- console.log(formatValueTime);
+    timeZone: 'Asia/Ho_Chi_Minh',
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+  };
   useEffect(() => {
     setFormaValuetDate(formatDate(date));
-    setFormaValuetTime(time.toLocaleTimeString('en-UK',options));
+    setFormaValuetTime(time.toLocaleTimeString('en-UK', options));
     setRequiredTime(`${formatValueDate} ${formatValueTime}`);
   }, [date, time]);
   const formatDate = date => {
@@ -108,11 +107,11 @@ const CreateNewRequest = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setImage(imageConverted1);
-        setModalCamera(false)
+        setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
-        setModalCamera(false)
+        setModalCamera(false);
       });
   };
   const openGallery = () => {
@@ -120,11 +119,11 @@ const CreateNewRequest = props => {
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
         setImage(imageConverted1);
-        setModalCamera(false)
+        setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
-        setModalCamera(false)
+        setModalCamera(false);
       });
   };
 
@@ -148,9 +147,9 @@ const CreateNewRequest = props => {
           navigation.navigate('IncidentManagement');
         }
       })
-      .catch(function(error){
+      .catch(function (error) {
         console.log(error);
-        alert('Tạo yêu cầu thất bại')
+        alert('Tạo yêu cầu thất bại');
       });
   };
   return (
@@ -158,11 +157,8 @@ const CreateNewRequest = props => {
       {modalCamera && (
         <View style={styles.styleModal}>
           <CustomModalCamera
-            openCamera={() => 
-              openCamera()}
-            openGallery={() => 
-              openGallery()
-             }
+            openCamera={() => openCamera()}
+            openGallery={() => openGallery()}
             modalVisible={modalCamera}
             onRequestClose={() => {
               setModalCamera(false);

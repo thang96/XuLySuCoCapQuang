@@ -62,14 +62,14 @@ const CreateAMaintenanceRequest = props => {
     getListData();
   }, []);
   const options = {
-    timeZone:"Asia/Ho_Chi_Minh",
-    hour12 : false,
-    hour:  "2-digit",
-    minute: "2-digit",
- }
+    timeZone: 'Asia/Ho_Chi_Minh',
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+  };
   useEffect(() => {
     setFormaValuetDate(formatDate(date));
-    setFormaValuetTime(time.toLocaleString('en-UK',options));
+    setFormaValuetTime(time.toLocaleTimeString('en-UK', options));
     setRequiredTime(`${formatValueDate} ${formatValueTime}`);
   }, [date, time]);
   const formatDate = date => {
@@ -164,12 +164,8 @@ const CreateAMaintenanceRequest = props => {
       {modalCamera && (
         <View style={styles.styleModal}>
           <CustomModalCamera
-            openCamera={() => 
-              openCamera()
-            }
-            openGallery={() => 
-              openGallery()
-            }
+            openCamera={() => openCamera()}
+            openGallery={() => openGallery()}
             modalVisible={modalCamera}
             onRequestClose={() => {
               setModalCamera(false);
