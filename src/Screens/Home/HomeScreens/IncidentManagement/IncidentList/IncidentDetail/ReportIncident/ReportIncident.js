@@ -24,7 +24,7 @@ import common from '../../../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
 import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 import {useSelector} from 'react-redux';
-import RNLocation from 'react-native-location';
+import RNLocation, { getCurrentPermission } from 'react-native-location';
 const ReportIncident = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -75,6 +75,7 @@ const ReportIncident = props => {
     reportDocument != null;
   const [modalResultCamera, setModalResultCamera] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
+  console.log(locationLongitude);
   const getLocation = () => {
     setAutoLocation(prev => (prev == true ? false : true));
     RNLocation.configure({
@@ -96,10 +97,15 @@ const ReportIncident = props => {
       pausesLocationUpdatesAutomatically: false,
       showsBackgroundLocationIndicator: false,
     });
+    // RNLocation.getCurrentPermission().then(currentPermission=>{
+    //   console.log(currentPermission)
+      
+    // })
+
     RNLocation.requestPermission({
-      ios: 'always',
+      ios: 'whenInUse',
       android: {
-        detail: 'fine',
+        detail: 'coarse',
       },
     }).then(granted => {
       if (granted) {
@@ -272,6 +278,7 @@ const ReportIncident = props => {
           </View>
         ) : (
           <CustomInput
+            styleInput={{minHeight:50, marginVertical: 5,}}
             placeholder={'Longitude'}
             value={locationLongitude}
             onChangeText={text => setLocationLongitude(text)}
@@ -284,6 +291,7 @@ const ReportIncident = props => {
           </View>
         ) : (
           <CustomInput
+          styleInput={{minHeight:50, marginVertical: 5,}}
             placeholder={'Latitude'}
             value={locationLatitude}
             onChangeText={text => setLocationLatitude(text)}

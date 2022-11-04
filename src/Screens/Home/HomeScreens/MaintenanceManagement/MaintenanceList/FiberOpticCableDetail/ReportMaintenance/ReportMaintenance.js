@@ -100,9 +100,9 @@ const ReportMaintenance = props => {
       showsBackgroundLocationIndicator: false,
     });
     RNLocation.requestPermission({
-      ios: 'always',
+      ios: 'whenInUse',
       android: {
-        detail: 'fine',
+        detail: 'coarse',
       },
     }).then(granted => {
       if (granted) {
@@ -275,6 +275,7 @@ const ReportMaintenance = props => {
             </View>
           ) : (
             <CustomInput
+            styleInput={{minHeight:50, marginVertical: 5,}}
               placeholder={'Longitude'}
               value={locationLongitude}
               onChangeText={text => setLocationLongitude(text)}
@@ -287,6 +288,7 @@ const ReportMaintenance = props => {
             </View>
           ) : (
             <CustomInput
+            styleInput={{minHeight:50, marginVertical: 5,}}
               placeholder={'Latitude'}
               value={locationLatitude}
               onChangeText={text => setLocationLatitude(text)}
