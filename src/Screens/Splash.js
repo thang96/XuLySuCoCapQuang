@@ -50,9 +50,10 @@ const Splash = () => {
   };
 
   return (
-    <ImageBackground source={images.im_plash} style={styles.container}>
-      <Image resizeMode="cover" source={icons.ic_logo} style={styles.image} />
-    </ImageBackground>
+    <View source={images.im_plash} style={styles.container}>
+      <Image resizeMode="contain" source={icons.ic_logo} style={styles.image} />
+      <Text style={styles.title}>Quản lý tuyến cáp</Text>
+    </View>
   );
 };
 const styles = StyleSheet.create({
@@ -60,7 +61,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'white',
   },
-  image: {width: 250, height: 60},
+  image: {width: 300, height: 100},
+  title: {
+    fontSize: 30,
+    color: colors.mainColor,
+    fontWeight: 'bold',
+    marginTop: 10,
+    fontStyle: 'italic',
+  },
 });
 export default Splash;

@@ -18,6 +18,7 @@ import {
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
 import CustomTextButton from '../../../../../../../Components/CustomTextButton';
+import CustomInput from '../../../../../../../Components/CustomInput';
 import CustomTextInputChangeValue from '../../../../../../../Components/CustomTextInputChangeValue';
 import {colors, icons} from '../../../../../../../Constants';
 import common from '../../../../../../../utils/common';
@@ -32,6 +33,7 @@ const ReportMaintenance = props => {
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const [request, setRequest] = useState(null);
+  const [autoLocation, setAutoLocation] = useState(false);
   useEffect(() => {
     getRequest();
   }, []);
@@ -77,10 +79,30 @@ const ReportMaintenance = props => {
   const [modalResultCamera, setModalResultCamera] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
   const getLocation = () => {
+    setAutoLocation(prev => (prev == true ? false : true));
+    RNLocation.configure({
+      distanceFilter: 10, // Meters
+      desiredAccuracy: {
+        ios: 'best',
+        android: 'balancedPowerAccuracy',
+      },
+      // Android only
+      androidProvider: 'auto',
+      interval: 3000, // Milliseconds
+      fastestInterval: 5000, // Milliseconds
+      maxWaitTime: 3000, // Milliseconds
+      // iOS Only
+      activityType: 'other',
+      allowsBackgroundLocationUpdates: false,
+      headingFilter: 1, // Degrees
+      headingOrientation: 'portrait',
+      pausesLocationUpdatesAutomatically: false,
+      showsBackgroundLocationIndicator: false,
+    });
     RNLocation.requestPermission({
-      ios: 'whenInUse',
+      ios: 'always',
       android: {
-        detail: 'coarse',
+        detail: 'fine',
       },
     }).then(granted => {
       if (granted) {
@@ -246,31 +268,25 @@ const ReportMaintenance = props => {
               onPress={() => getLocation()}
             />
           </View>
-          {locationLongitude ? (
+          {autoLocation == true ? (
             <View style={styles.viewCustomTextInputChangeValue}>
               <Text style={styles.styleTitle}>Longitude : </Text>
               <Text>{locationLongitude}</Text>
             </View>
           ) : (
-            <CustomTextInputChangeValue
-              styleTitle={styles.styleTitle}
-              title={'Longitude : '}
-              styleViewInput={styles.viewCustomTextInputChangeValue}
+            <CustomInput
               placeholder={'Longitude'}
               value={locationLongitude}
               onChangeText={text => setLocationLongitude(text)}
             />
           )}
-          {locationLatitude ? (
+          {autoLocation == true ? (
             <View style={styles.viewCustomTextInputChangeValue}>
               <Text style={styles.styleTitle}>Latitude : </Text>
               <Text>{locationLatitude}</Text>
             </View>
           ) : (
-            <CustomTextInputChangeValue
-              styleTitle={styles.styleTitle}
-              title={'Latitude : '}
-              styleViewInput={styles.viewCustomTextInputChangeValue}
+            <CustomInput
               placeholder={'Latitude'}
               value={locationLatitude}
               onChangeText={text => setLocationLatitude(text)}

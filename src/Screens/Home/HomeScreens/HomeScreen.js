@@ -40,6 +40,9 @@ const HomeScreen = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     readUser();
+  }, []);
+  useEffect(() => {
+    readUser();
   }, [token]);
   const readUser = async () => {
     await ReadUserApi(token)
@@ -96,24 +99,28 @@ const HomeScreen = () => {
           <ScrollView horizontal style={styles.viewRowFunction}>
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
+              styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_incidentManagement}
               title={'Quản lý\nsự cố'}
               onPress={() => navigation.navigate('StackIncidentManagement')}
             />
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
+              styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_maintenanceMaintenance}
               title={'Bảo trì\nbảo dưỡng'}
               onPress={() => navigation.navigate('StackMaintenanceManagement')}
             />
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
-              icon={icons.ic_manage}
+              styleIcon={{tintColor: colors.mainColor}}
+              icon={icons.ic_warehouseManagement}
               title={'Quản lý kho'}
               onPress={() => navigation.navigate('ContinueScreen')}
             />
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
+              styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_documentManagement}
               title={'Quản lý\nvăn bản'}
               onPress={() => navigation.navigate('ContinueScreen')}

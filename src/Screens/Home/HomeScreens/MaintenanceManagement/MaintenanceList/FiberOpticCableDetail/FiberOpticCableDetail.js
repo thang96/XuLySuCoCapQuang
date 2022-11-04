@@ -35,7 +35,6 @@ const FiberOpticCableDetail = props => {
     let id = route.params?.item?.id;
     await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(token, id)
       .then(res => {
-        console.log(res?.data);
         setResult(res?.data?.data);
       })
       .catch(function (error) {
@@ -163,7 +162,7 @@ const FiberOpticCableDetail = props => {
           content={result?.completion_time}
         />
       </ScrollView>
-      {userInfor?.role != 'GENERAL_MANAGER' && (
+      {userInfor?.role == 'EMPLOYEE' && (
         <ComponentTwoButton
           accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
           disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
@@ -178,32 +177,34 @@ const FiberOpticCableDetail = props => {
           onPressSecondRight={() => reportRequest()}
         />
       )}
-      {result?.issue_status == 'CHƯA NGHIỆM THU' &&
-        userInfor?.role == 'GENERAL_MANAGER' && (
+      {(result?.issue_status == 'CHƯA NGHIỆM THU' &&
+        userInfor?.role == 'GENERAL_MANAGER') ||
+        (userInfor?.role == 'AREA_MANAGER' && (
           <View style={styles.viewRow}>
-          <CustomTextButton
-            styleButton={styles.viewCustomTextButton}
-            label={'Từ chối'}
-            textStyle={styles.textCustomTextButton}
-            onPress={() => rejectMaintenanceIssue()}
-          />
-          <CustomTextButton
-            styleButton={styles.viewCustomTextButton}
-            label={'Nghiệm thu'}
-            textStyle={styles.textCustomTextButton}
-            onPress={() => acceptance()}
-          />
-        </View>
-        )}
-      {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
-        userInfor?.role == 'GENERAL_MANAGER' && (
+            <CustomTextButton
+              styleButton={styles.viewCustomTextButton}
+              label={'Từ chối'}
+              textStyle={styles.textCustomTextButton}
+              onPress={() => rejectMaintenanceIssue()}
+            />
+            <CustomTextButton
+              styleButton={styles.viewCustomTextButton}
+              label={'Nghiệm thu'}
+              textStyle={styles.textCustomTextButton}
+              onPress={() => acceptance()}
+            />
+          </View>
+        ))}
+      {(result?.issue_status == 'CHƯA TIẾP NHẬN' &&
+        userInfor?.role == 'GENERAL_MANAGER') ||
+        (userInfor?.role == 'AREA_MANAGER' && (
           <CustomTextButton
             styleButton={styles.viewCustomTextButton}
             label={'Hủy yêu cầu'}
             textStyle={styles.textCustomTextButton}
             onPress={() => rejectMaintenanceIssue()}
           />
-        )}
+        ))}
     </View>
   );
 };
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   title: {fontSize: 18, fontWeight: 'bold', color: 'black'},
-  content: {fontSize: 16, fontWeight: 'bold',color:'black'},
+  content: {fontSize: 16, fontWeight: 'bold', color: 'black'},
   image: {width: '70%', height: 150},
   viewComponentTwoButton: {
     flexDirection: 'row',
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginVertical:10
+    marginVertical: 10,
   },
 });
 

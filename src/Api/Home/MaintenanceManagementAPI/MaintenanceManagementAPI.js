@@ -22,19 +22,19 @@ const GetMaintenanceIssuesAPI = token => {
 const CreateMaintenanceIssueAPI = (
   token,
   repeat_by,
+  descrip,
+  required_time,
   optical_cable_id,
   user_assigned_id,
-  required_time,
-  descrip,
   img,
 ) => {
   return new Promise((resolve, reject) => {
     const formData = new FormData();
     formData.append('repeat_by', repeat_by ?? '');
+    formData.append('description', descrip ?? '');
+    formData.append('required_time', required_time ?? '');
     formData.append('optical_cable_id', optical_cable_id ?? 0);
     formData.append('user_assigned_id', user_assigned_id ?? 0);
-    formData.append('required_time', required_time ?? '');
-    formData.append('description', descrip ?? '');
     formData.append(
       'document_file',
       {

@@ -142,10 +142,10 @@ const CreateAMaintenanceRequest = props => {
     await MaintenanceManagementAPI.CreateMaintenanceIssueAPI(
       token,
       repeat_by,
+      descrip,
+      required_time,
       optical_cable_id,
       user_assigned_id,
-      required_time,
-      descrip,
       img,
     )
       .then(res => {

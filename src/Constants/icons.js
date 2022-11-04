@@ -1,5 +1,5 @@
 export default {
-  ic_logo: require('../Assets/Icons/ic_logo.png'),
+  ic_logo: require('../Assets/Icons/ic_logo.jpg'),
   ic_user: require('../Assets/Icons/ic_user.png'),
   ic_medal: require('../Assets/Icons/ic_medal.png'),
   ic_show: require('../Assets/Icons/ic_show.png'),
@@ -36,6 +36,9 @@ export default {
   ic_check: require('../Assets/Icons/ic_check.png'),
   ic_no_check: require('../Assets/Icons/ic_no_check.png'),
   ic_error_persion: require('../Assets/Icons/ic_error_persion.png'),
+  ic_warehouseManagement: require('../Assets/Icons/ic_warehouseManagement.png'),
+  ic_optical: require('../Assets/Icons/ic_optical.png'),
+  ic_receive_request: require('../Assets/Icons/ic_receive_request.png'),
 
   vectorOk: require('../Assets/Icons/vectorOk.png'),
   next: require('../Assets/Icons/next.png'),

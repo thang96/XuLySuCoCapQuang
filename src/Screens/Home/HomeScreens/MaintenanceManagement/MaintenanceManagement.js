@@ -56,46 +56,52 @@ const MaintenanceManagement = () => {
           <View style={styles.viewRow}>
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
-              icon={icons.ic_manage}
+              styleIcon={{tintColor: colors.mainColor}}
+              icon={icons.ic_optical}
               title={'Quản lý\nthông tin tuyến'}
               titleColor={colors.mainColor}
               onPress={() => navigation.navigate('FiberOpticCableManagement')}
             />
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
-              icon={icons.ic_report}
+              styleIcon={{tintColor: colors.mainColor}}
+              icon={icons.ic_documentManagement}
               title={'Kết xuất\ntổng hợp'}
               titleColor={colors.mainColor}
               onPress={() => navigation.navigate('ContinueScreen')}
             />
           </View>
           <View style={styles.viewRow}>
-            {userInfor?.role == 'GENERAL_MANAGER' ? (
+            {userInfor?.role == 'EMPLOYEE' ? (
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
+                icon={icons.ic_receive_request}
+                title={'Tiếp nhận\nyêu cầu'}
+                titleColor={colors.mainColor}
+                onPress={() => navigation.navigate('AcceptMaintenanceRequests')}
+              />
+            ) : (
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
                 icon={icons.ic_edit}
                 title={'Tạo mới\nyêu cầu'}
                 titleColor={colors.mainColor}
                 onPress={() => navigation.navigate('CreateAMaintenanceRequest')}
               />
-            ) : (
-              <CustomButtonFunction
-                styleView={styles.customButtonFunction}
-                icon={icons.ic_checkList}
-                title={'Tiếp nhận\nyêu cầu'}
-                titleColor={colors.mainColor}
-                onPress={() => navigation.navigate('AcceptMaintenanceRequests')}
-              />
             )}
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
-              icon={icons.ic_list}
+              styleIcon={{tintColor: colors.mainColor}}
+              icon={icons.ic_checkList}
               title={'Danh sách\nbảo trì'}
               titleColor={colors.mainColor}
               onPress={() => navigation.navigate('MaintenanceList')}
             />
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
+              styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_report}
               title={'Kết xuất\nbáo cáo'}
               titleColor={colors.mainColor}
@@ -105,6 +111,7 @@ const MaintenanceManagement = () => {
           <View style={styles.viewRow}>
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
+              styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_gear}
               title={'Quản trị'}
               titleColor={colors.mainColor}

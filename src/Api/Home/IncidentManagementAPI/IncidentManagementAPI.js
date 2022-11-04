@@ -21,30 +21,30 @@ const GetListIssuesAPI = token => {
 
 const CreateIssuesRequestAPI = (
   token,
+  descrip,
+  required_time,
   optical_cable_id,
   user_assigned_id,
-  required_time,
-  descrip,
   img,
 ) => {
   return new Promise((resolve, reject) => {
-    const formData = new FormData();
-    formData.append('optical_cable_id', optical_cable_id ?? 0);
-    formData.append('user_assigned_id', user_assigned_id ?? 0);
-    formData.append('required_time', required_time ?? '');
-    formData.append('description', descrip ?? '');
-    formData.append(
+    const formDataCreate = new FormData();
+    formDataCreate.append('description', descrip ?? '');
+    formDataCreate.append('required_time', required_time ?? '');
+    formDataCreate.append('optical_cable_id', optical_cable_id ?? 0);
+    formDataCreate.append('user_assigned_id', user_assigned_id ?? 0);
+    formDataCreate.append(
       'document_file',
       {
-        uri:  img?.uri,
+        uri: Platform.OS === 'ios' ? '/private' + img?.path : img?.uri,
         name: getFileName(img),
         type: img?.type,
       } ?? null,
     );
     axios
-      .post(`${BASEURL}/api/v1/issues/`, formData, {
+      .post(`${BASEURL}/api/v1/issues/`, formDataCreate, {
         headers: {
-          Accept: 'application/json',
+          accept: 'application/json',
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
         },

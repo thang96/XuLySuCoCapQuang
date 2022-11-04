@@ -45,7 +45,6 @@ const CreateNewRequest = props => {
   const [formatValueTime, setFormaValuetTime] = useState();
   const [modalDate, setModalDate] = useState(false);
   const [modalTime, setModalTime] = useState(false);
-  console.log(formatValueTime);
   const isReady = () =>
     opticalCableId != null &&
     userAssignedId != null &&
@@ -128,17 +127,18 @@ const CreateNewRequest = props => {
   };
 
   const createRequest = async () => {
+    const descrip = description;
+    const required_time = requiredTime;
     const optical_cable_id = parseInt(opticalCableId?.id);
     const user_assigned_id = parseInt(userAssignedId?.id);
-    const required_time = requiredTime;
-    const descrip = description;
     const img = image;
+
     await IncidentManagementAPI.CreateIssuesRequestAPI(
       token,
+      descrip,
+      required_time,
       optical_cable_id,
       user_assigned_id,
-      required_time,
-      descrip,
       img,
     )
       .then(res => {
@@ -147,8 +147,8 @@ const CreateNewRequest = props => {
           navigation.navigate('IncidentManagement');
         }
       })
-      .catch(function (error) {
-        console.log(error);
+      .catch(error => {
+        console.log(error.response);
         alert('Tạo yêu cầu thất bại');
       });
   };

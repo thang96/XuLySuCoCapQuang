@@ -147,24 +147,24 @@ const IncidentDetail = props => {
           content={result?.completion_time}
         />
       </ScrollView>
-      {userInfor?.role != 'GENERAL_MANAGER' &&
-        result?.issue_status == 'CHƯA TIẾP NHẬN' && (
-          <ComponentTwoButton
-            accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
-            disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
-            disabledRight={
-              result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
-            }
-            disableSecondRight={
-              result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
-            }
-            onPressLeft={() => rejectIssue()}
-            onPressRight={() => receiveIssue()}
-            onPressSecondRight={() => reportRequest()}
-          />
-        )}
-      {result?.issue_status == 'CHƯA NGHIỆM THU' &&
-        userInfor?.role == 'GENERAL_MANAGER' && (
+      {userInfor?.role == 'EMPLOYEE' && (
+        <ComponentTwoButton
+          accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
+          disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
+          disabledRight={
+            result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
+          }
+          disableSecondRight={
+            result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
+          }
+          onPressLeft={() => rejectIssue()}
+          onPressRight={() => receiveIssue()}
+          onPressSecondRight={() => reportRequest()}
+        />
+      )}
+      {(result?.issue_status == 'CHƯA NGHIỆM THU' &&
+        userInfor?.role == 'GENERAL_MANAGER') ||
+        (userInfor?.role == 'AREA_MANAGER' && (
           <View style={styles.viewRow}>
             <CustomTextButton
               styleButton={styles.viewCustomTextButton}
@@ -179,16 +179,17 @@ const IncidentDetail = props => {
               onPress={() => acceptance()}
             />
           </View>
-        )}
-      {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
-        userInfor?.role == 'GENERAL_MANAGER' && (
+        ))}
+      {(result?.issue_status == 'CHƯA TIẾP NHẬN' &&
+        userInfor?.role == 'GENERAL_MANAGER') ||
+        (userInfor?.role == 'AREA_MANAGER' && (
           <CustomTextButton
             styleButton={styles.viewCustomTextButton}
             label={'Hủy yêu cầu'}
             textStyle={styles.textCustomTextButton}
             onPress={() => rejectIssue()}
           />
-        )}
+        ))}
     </View>
   );
 };
@@ -235,7 +236,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginVertical:10
+    marginVertical: 10,
   },
 });
 

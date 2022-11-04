@@ -10,7 +10,7 @@ import {
   Dimensions,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import ReadUserApi from '../../../Api/Account/ReadUserApi';
+import AccountAPI from '../../../Api/Account/AccountAPI';
 import CustomAppBar from '../../../Components/CustomAppBar';
 import {icons, colors, images} from '../../../Constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,7 +23,7 @@ const AccountScreen = props => {
     readUser(token);
   }, [token]);
   const readUser = async token => {
-    await ReadUserApi(token)
+    await AccountAPI.ReadUserAPI(token)
       .then(res => {
         setUserInfo(res?.data?.data);
       })
