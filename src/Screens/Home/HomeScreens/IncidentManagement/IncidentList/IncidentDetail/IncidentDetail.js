@@ -180,16 +180,15 @@ const IncidentDetail = props => {
             />
           </View>
         ))}
-      {(result?.issue_status == 'CHƯA TIẾP NHẬN' &&
-        userInfor?.role == 'GENERAL_MANAGER') ||
-        (userInfor?.role == 'AREA_MANAGER' && (
-          <CustomTextButton
+          {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
+        userInfor?.role != 'EMPLOYEE' &&
+        ( <CustomTextButton
             styleButton={styles.viewCustomTextButton}
             label={'Hủy yêu cầu'}
             textStyle={styles.textCustomTextButton}
             onPress={() => rejectIssue()}
           />
-        ))}
+        )}
     </View>
   );
 };

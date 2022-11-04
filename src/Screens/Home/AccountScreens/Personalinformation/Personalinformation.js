@@ -49,9 +49,9 @@ const Personalinformation = props => {
         await AccountAPI.UpdateUserAvatarAPI(token, imageConverted)
           .then(res => {
             if (res?.status == 200 && res?.data?.success == true) {
-              readUser();
               setCreateImage(false);
               setModalVisible(false);
+              readUser();
             }
           })
           .catch(error => {
@@ -75,9 +75,9 @@ const Personalinformation = props => {
         await AccountAPI.UpdateUserAvatarAPI(token, imageConverted2)
           .then(res => {
             if (res?.status == 200 && res?.data?.success == true) {
-              readUser();
               setCreateImage(false);
               setModalVisible(false);
+              readUser();
             }
           })
           .catch(function (error) {
@@ -92,9 +92,9 @@ const Personalinformation = props => {
         setModalVisible(false);
       });
   };
-  if (createImage) {
-    return <CustomLoading />;
-  }
+  // if (createImage) {
+  //   return <CustomLoading />;
+  // }
   return (
     <View style={styles.container}>
       {modalVisible && (

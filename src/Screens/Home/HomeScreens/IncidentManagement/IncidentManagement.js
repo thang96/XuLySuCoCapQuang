@@ -43,8 +43,7 @@ const IncidentManagement = () => {
                   styles.textMSNV
                 }>{`Area ID : ${userInfor?.area_id}`}</Text>
             </View>
-            {userInfor?.role == 'GENERAL_MANAGER' ||
-            userInfor?.role == 'AREA_MANAGER' ? (
+            {userInfor?.role != 'EMPLOYEE'  ? (
               <Image source={icons.ic_medal} style={{width: 25, height: 30}} />
             ) : null}
           </TouchableOpacity>

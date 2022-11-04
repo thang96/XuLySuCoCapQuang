@@ -125,7 +125,7 @@ const HomeScreen = () => {
               title={'Quản lý\nvăn bản'}
               onPress={() => navigation.navigate('ContinueScreen')}
             />
-            {userInfor?.role == 'GENERAL_MANAGER' && (
+            {userInfor?.role != 'EMPLOYEE' && (
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
