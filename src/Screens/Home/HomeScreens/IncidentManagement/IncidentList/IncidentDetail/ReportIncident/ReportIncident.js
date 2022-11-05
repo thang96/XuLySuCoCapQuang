@@ -24,13 +24,24 @@ import common from '../../../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
 import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 import {useSelector} from 'react-redux';
-import RNLocation, { getCurrentPermission } from 'react-native-location';
+import RNLocation from 'react-native-location';
 const ReportIncident = props => {
   const navigation = useNavigation();
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const [request, setRequest] = useState(null);
   const [autoLocation, setAutoLocation] = useState(false);
+  const [autoTimeNow, setAutoTimeNow] = useState(false);
+
+  const [startTime, setStartTime] = useState('');
+  const [finishTime, setFinishTime] = useState('');
+  const [totalProcessingTime, setTotalProcessingTime] = useState('');
+  const [locationLongitude, setLocationLongitude] = useState('');
+  const [locationLatitude, setLocationLatitude] = useState('');
+  const [reason, setReason] = useState('');
+  const [solution, setSolution] = useState('');
+  const [reportDocument, setReportDocument] = useState(null);
+
   useEffect(() => {
     getRequest();
   }, []);
@@ -39,43 +50,25 @@ const ReportIncident = props => {
     await IncidentManagementAPI.GetIncidentIssueByIdAPI(token, id)
       .then(res => {
         setRequest(res?.data?.data);
+        setStartTime(res?.data?.data?.received_time);
       })
       .catch(error => {
         console.log(error);
       });
   };
-  const [locationLongitude, setLocationLongitude] = useState('');
-  const [locationLatitude, setLocationLatitude] = useState('');
-  const [measureCableResult, setMeasureCableResult] = useState(null);
-  const [measureCableResultDocument, setMeasureCableResultDocument] =
-    useState(null);
-  const [cleanCableResult, setCleanCableResult] = useState(null);
-  const [adjustTensionCable, setAdjustTensionCable] = useState(null);
-  const [checkSupplies, setCheckSupplies] = useState(null);
-  const [cleanUndergroundCable, setCleanUndergroundCable] = useState(null);
-  const [checkPreventiveCable, setCheckPreventiveCable] = useState(null);
-  const [checkCableSocket, setCheckCableSocket] = useState(null);
-  const [checkCableOdfAdapter, setCheckCableOdfAdapter] = useState(null);
-  const [solutionProvide, setSolutionProvide] = useState('');
-  const [reportDocument, setReportDocument] = useState(null);
 
   const isValueOK = () =>
-    locationLongitude.length > 0 &&
-    locationLatitude.length > 0 &&
-    measureCableResult != null &&
-    measureCableResultDocument != null &&
-    cleanCableResult != null &&
-    adjustTensionCable != null &&
-    checkSupplies != null &&
-    cleanUndergroundCable != null &&
-    checkPreventiveCable != null &&
-    checkCableSocket != null &&
-    checkCableOdfAdapter != null &&
-    solutionProvide.length > 0 &&
+    startTime.length != '' &&
+    finishTime.length != '' &&
+    totalProcessingTime.length != '' &&
+    locationLongitude.length != '' &&
+    locationLatitude.length != '' &&
+    reason.length != '' &&
+    solution.length != '' &&
     reportDocument != null;
-  const [modalResultCamera, setModalResultCamera] = useState(false);
+
   const [modalCamera, setModalCamera] = useState(false);
-  console.log(locationLongitude);
+
   const getLocation = () => {
     setAutoLocation(prev => (prev == true ? false : true));
     RNLocation.configure({
@@ -97,11 +90,6 @@ const ReportIncident = props => {
       pausesLocationUpdatesAutomatically: false,
       showsBackgroundLocationIndicator: false,
     });
-    // RNLocation.getCurrentPermission().then(currentPermission=>{
-    //   console.log(currentPermission)
-      
-    // })
-
     RNLocation.requestPermission({
       ios: 'whenInUse',
       android: {
@@ -116,18 +104,7 @@ const ReportIncident = props => {
       }
     });
   };
-  const openResultCamera = () => {
-    ImagePicker.openCamera({width: 300, height: 400})
-      .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        setMeasureCableResultDocument(imageConverted1);
-        setModalResultCamera(false);
-      })
-      .catch(e => {
-        ImagePicker.clean();
-        setModalResultCamera(false);
-      });
-  };
+
   const openCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
       .then(async image => {
@@ -138,18 +115,6 @@ const ReportIncident = props => {
       .catch(e => {
         ImagePicker.clean();
         setModalCamera(false);
-      });
-  };
-  const openResultGallery = () => {
-    ImagePicker.openPicker({})
-      .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        setMeasureCableResultDocument(imageConverted1);
-        setModalResultCamera(false);
-      })
-      .catch(e => {
-        ImagePicker.clean();
-        setModalResultCamera(false);
       });
   };
 
@@ -181,21 +146,17 @@ const ReportIncident = props => {
 
   const sendReport = async () => {
     let issueId = request?.id;
+    let totalProcessingTime = parseFloat(totalProcessingTime);
     await IncidentManagementAPI.IssueReportAPI(
       token,
       issueId,
+      startTime,
+      finishTime,
+      totalProcessingTime,
       locationLongitude,
       locationLatitude,
-      measureCableResult,
-      measureCableResultDocument,
-      cleanCableResult,
-      adjustTensionCable,
-      checkSupplies,
-      cleanUndergroundCable,
-      checkPreventiveCable,
-      checkCableSocket,
-      checkCableOdfAdapter,
-      solutionProvide,
+      reason,
+      solution,
       reportDocument,
     )
       .then(res => {
@@ -209,27 +170,32 @@ const ReportIncident = props => {
         alert('Gửi báo cáo thất bại');
       });
   };
+  const getTimeNow = () => {
+    setAutoTimeNow(prev => (prev == false ? true : false));
+    let now = new Date();
+    const formatDate = date => {
+      let d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+      if (month.length < 2) month = '0' + month;
+      if (day.length < 2) day = '0' + day;
+
+      return [year, month, day].join('-');
+    };
+    const options = {
+      timeZone: 'Asia/Ho_Chi_Minh',
+      hour12: true,
+      hour: '2-digit',
+      minute: '2-digit',
+    };
+    const datenow = formatDate(now);
+    const timenow = now.toLocaleTimeString('en-UK', options);
+    setFinishTime(`${datenow} ${timenow}`);
+  };
   return (
     <View style={styles.container}>
-      {modalResultCamera && (
-        <View style={styles.styleModal}>
-          <CustomModalCamera
-            openCamera={() => {
-              openResultCamera();
-            }}
-            openGallery={() => {
-              openResultGallery();
-            }}
-            modalVisible={modalResultCamera}
-            onRequestClose={() => {
-              setModalResultCamera(false);
-            }}
-            cancel={() =>
-              setModalResultCamera(prev => (prev == false ? true : false))
-            }
-          />
-        </View>
-      )}
       {modalCamera && (
         <View style={styles.styleModal}>
           <CustomModalCamera
@@ -278,7 +244,7 @@ const ReportIncident = props => {
           </View>
         ) : (
           <CustomInput
-            styleInput={{minHeight:50, marginVertical: 5,}}
+            styleInput={{minHeight: 50, marginVertical: 5}}
             placeholder={'Longitude'}
             value={locationLongitude}
             onChangeText={text => setLocationLongitude(text)}
@@ -291,102 +257,56 @@ const ReportIncident = props => {
           </View>
         ) : (
           <CustomInput
-          styleInput={{minHeight:50, marginVertical: 5,}}
+            styleInput={{minHeight: 50, marginVertical: 5}}
             placeholder={'Latitude'}
             value={locationLatitude}
             onChangeText={text => setLocationLatitude(text)}
           />
         )}
+        <Text style={styles.title}>{`Thời gian tiếp nhận : ${startTime}`}</Text>
+        <View style={styles.viewRow}>
+          <Text style={styles.title}>Thời gian hoàn thành</Text>
+          <CustomTextButton
+            textStyle={{color: colors.mainColor, fontWeight: 'bold'}}
+            styleButton={{height: 50}}
+            label={'Lấy thời gian >>'}
+            onPress={() => getTimeNow()}
+          />
+        </View>
+        {autoTimeNow == true ? (
+          <View style={styles.viewCustomTextInputChangeValue}>
+            <Text>{`${finishTime}`}</Text>
+          </View>
+        ) : (
+          <CustomInput
+            styleInput={{minHeight: 50, marginVertical: 5}}
+            placeholder={'Thời gian hoàn thành'}
+            value={finishTime}
+            onChangeText={text => setFinishTime(text)}
+          />
+        )}
 
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kết quả đo tuyến cáp'}
-            result={measureCableResult}
-            onPressOk={() => setMeasureCableResult(true)}
-            onPressNotOk={() => setMeasureCableResult(false)}
-          />
-          {measureCableResultDocument ? (
-            <Image
-              source={{
-                uri:
-                  Platform.OS == 'ios'
-                    ? measureCableResultDocument?.path
-                    : measureCableResultDocument?.uri,
-              }}
-              style={styles.image}
-              resizeMode={'contain'}
-            />
-          ) : (
-            <TouchableOpacity
-              onPress={() => setModalResultCamera(true)}
-              style={styles.buttonUpload}>
-              <Image source={icons.ic_report} style={styles.iconButtonUpload} />
-              <Text style={styles.textButtonUpload}>Upload kết quả đo</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Phát quang\ndọc tuyến cáp'}
-            result={cleanCableResult}
-            onPressOk={() => setCleanCableResult(true)}
-            onPressNotOk={() => setCleanCableResult(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Căn chỉnh các tuyến\ncáp quang treo'}
-            result={adjustTensionCable}
-            onPressOk={() => setAdjustTensionCable(true)}
-            onPressNotOk={() => setAdjustTensionCable(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kiểm tra chỉnh lại vật tư\nphụ kiện treo cáp'}
-            result={checkSupplies}
-            onPressOk={() => setCheckSupplies(true)}
-            onPressNotOk={() => setCheckSupplies(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Vệ sinh công bể\ncáp ngầm'}
-            result={cleanUndergroundCable}
-            onPressOk={() => setCleanUndergroundCable(true)}
-            onPressNotOk={() => setCleanUndergroundCable(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kiểm tra làm gọn cáp\ndự phòng'}
-            result={checkPreventiveCable}
-            onPressOk={() => setCheckPreventiveCable(true)}
-            onPressNotOk={() => setCheckPreventiveCable(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kiểm tra, vệ sinh\nmăng xông nối cáp'}
-            result={checkCableSocket}
-            onPressOk={() => setCheckCableSocket(true)}
-            onPressNotOk={() => setCheckCableSocket(false)}
-          />
-        </View>
-        <View style={styles.viewItem}>
-          <CustomComponentViewCheck
-            title={'Kiểm tra, vệ sinh ODF và\ncác đầu Adapter quang'}
-            result={checkCableOdfAdapter}
-            onPressOk={() => setCheckCableOdfAdapter(true)}
-            onPressNotOk={() => setCheckCableOdfAdapter(false)}
-          />
-        </View>
+        <Text style={styles.title}>{'Tổng thời gian thực hiện (Giờ)'}</Text>
+        <CustomTextInputChangeValue
+          keyboardType={'numeric'}
+          styleViewInput={{height: 50, width: '100%', backgroundColor: 'white'}}
+          placeholder={'Nhập giờ'}
+          value={totalProcessingTime}
+          onChangeText={text => setTotalProcessingTime(text)}
+        />
+        <Text style={styles.title}>Lý do</Text>
+        <CustomTextInputChangeValue
+          styleViewInput={{height: 50, width: '100%', backgroundColor: 'white'}}
+          placeholder={'Nhập lý do'}
+          value={reason}
+          onChangeText={text => setReason(text)}
+        />
         <Text style={styles.title}>Phương án đề xuất tối ưu</Text>
         <CustomTextInputChangeValue
           styleViewInput={{height: 50, width: '100%', backgroundColor: 'white'}}
-          placeholder={'Nhập phương án'}
-          value={solutionProvide}
-          onChangeText={text => setSolutionProvide(text)}
+          placeholder={'Nhập phương án tối ưu'}
+          value={solution}
+          onChangeText={text => setSolution(text)}
         />
         <Text style={styles.title}>Hình ảnh báo cáo</Text>
         {reportDocument ? (

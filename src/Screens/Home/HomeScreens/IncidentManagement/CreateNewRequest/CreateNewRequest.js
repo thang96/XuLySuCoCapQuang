@@ -57,7 +57,7 @@ const CreateNewRequest = props => {
   }, []);
   const options = {
     timeZone: 'Asia/Ho_Chi_Minh',
-    hour12: false,
+    hour12: true,
     hour: '2-digit',
     minute: '2-digit',
   };

@@ -137,47 +137,45 @@ const AcceptIssueRequestAPI = (token, id) => {
   });
 };
 
+const DetailIssueReportAPI = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${BASEURL}/api/v1/issues/${id}/issue_report`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
+
 const IssueReportAPI = (
   token,
   issueId,
+  startTime,
+  finishTime,
+  totalProcessingTime,
   locationLongitude,
   locationLatitude,
-  measureCableResult,
-  measureCableResultDocument,
-  cleanCableResult,
-  adjustTensionCable,
-  checkSupplies,
-  cleanUndergroundCable,
-  checkPreventiveCable,
-  checkCableSocket,
-  checkCableOdfAdapter,
-  solutionProvide,
+  reason,
+  solution,
   reportDocument,
 ) => {
   return new Promise((resolve, reject) => {
     const formData = new FormData();
-    formData.append('location_longitude', locationLongitude ?? '');
-    formData.append('location_latitude', locationLatitude ?? '');
-    formData.append('measure_cable_result', measureCableResult ?? false);
-    formData.append(
-      'measure_cable_result_document',
-      {
-        uri:
-          Platform.OS === 'ios'
-            ? '/private' + measureCableResultDocument?.path
-            : measureCableResultDocument?.uri,
-        name: getFileName(measureCableResultDocument),
-        type: measureCableResultDocument?.mime,
-      } ?? null,
-    );
-    formData.append('clean_cable_result', cleanCableResult ?? false);
-    formData.append('adjust_tension_cable', adjustTensionCable ?? false);
-    formData.append('check_supplies', checkSupplies ?? false);
-    formData.append('clean_underground_cable', cleanUndergroundCable ?? false);
-    formData.append('check_preventive_cable', checkPreventiveCable ?? false);
-    formData.append('check_cable_socket', checkCableSocket ?? false);
-    formData.append('check_cable_odf_adapter', checkCableOdfAdapter ?? false);
-    formData.append('solution_provide', solutionProvide ?? '');
+    formData.append('startTime', startTime ?? '');
+    formData.append('finishTime', finishTime ?? '');
+    formData.append('totalProcessingTime', totalProcessingTime ?? 0);
+    formData.append('locationLongitude', locationLongitude ?? '');
+    formData.append('locationLatitude', locationLatitude ?? '');
+    formData.append('reason', reason ?? '');
+    formData.append('solution', solution ?? '');
     formData.append(
       'report_document',
       {
@@ -213,6 +211,7 @@ const IncidentManagementAPI = {
   ReceiveIssueAPI,
   RejectIssueAPI,
   AcceptIssueRequestAPI,
+  DetailIssueReportAPI,
   IssueReportAPI,
 };
 export default IncidentManagementAPI;

@@ -14,6 +14,7 @@ import {
   DetailUserIncident,
   DetailOpticCableIncident,
   ReportIncident,
+  ReportIncidentDetail,
 } from '../../../../Screens';
 const Stack = createStackNavigator();
 const StackIncidentManagement = props => {
@@ -106,6 +107,13 @@ const StackIncidentManagement = props => {
       <Stack.Screen
         component={ReportIncident}
         name={'ReportIncident'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={ReportIncidentDetail}
+        name={'ReportIncidentDetail'}
         options={{
           headerShown: false,
         }}

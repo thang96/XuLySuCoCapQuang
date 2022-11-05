@@ -126,10 +126,7 @@ const IncidentDetail = props => {
           }
           content={result?.optical_cable}
         />
-        <ComponentViewRow
-          title={'Thời gian yêu cầu : '}
-          content={result?.required_time}
-        />
+
         <ComponentViewRow
           title={'Mô tả sự cố : '}
           content={result?.description}
@@ -139,6 +136,10 @@ const IncidentDetail = props => {
           source={result?.document}
         />
         <ComponentViewRow
+          title={'Thời gian yêu cầu : '}
+          content={result?.required_time}
+        />
+        <ComponentViewRow
           title={'Thời gian tiếp nhận : '}
           content={result?.received_time}
         />
@@ -146,6 +147,15 @@ const IncidentDetail = props => {
           title={'Thời gian hoàn thành : '}
           content={result?.completion_time}
         />
+        {result?.issue_status == 'CHƯA NGHIỆM THU' && (
+          <ComponentViewRow
+            title={'Chi tiết báo cáo : '}
+            titleButton={'Chi tiết >>'}
+            onPress={() =>
+              navigation.navigate('ReportIncidentDetail', result?.id)
+            }
+          />
+        )}
       </ScrollView>
       {userInfor?.role == 'EMPLOYEE' && (
         <ComponentTwoButton
@@ -162,10 +172,9 @@ const IncidentDetail = props => {
           onPressSecondRight={() => reportRequest()}
         />
       )}
-      {(result?.issue_status == 'CHƯA NGHIỆM THU' &&
-        userInfor?.role == 'GENERAL_MANAGER') ||
-        (userInfor?.role == 'AREA_MANAGER' && (
-          <View style={styles.viewRow}>
+      {result?.issue_status == 'CHƯA NGHIỆM THU' &&
+        userInfor?.role != 'EMPLOYEE' && (
+          <View style={[styles.viewRow, {marginTop: 20}]}>
             <CustomTextButton
               styleButton={styles.viewCustomTextButton}
               label={'Từ chối'}
@@ -179,10 +188,10 @@ const IncidentDetail = props => {
               onPress={() => acceptance()}
             />
           </View>
-        ))}
-          {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
-        userInfor?.role != 'EMPLOYEE' &&
-        ( <CustomTextButton
+        )}
+      {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
+        userInfor?.role != 'EMPLOYEE' && (
+          <CustomTextButton
             styleButton={styles.viewCustomTextButton}
             label={'Hủy yêu cầu'}
             textStyle={styles.textCustomTextButton}

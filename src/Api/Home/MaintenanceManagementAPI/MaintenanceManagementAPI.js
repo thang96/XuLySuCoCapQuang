@@ -77,11 +77,93 @@ const GetMaintenanceIssueByIdAPI = (token, id) => {
       });
   });
 };
+const MaintenanceIssueReportAPI = (
+  token,
+  issueId,
+  locationLongitude,
+  locationLatitude,
+  measureCableResult,
+  measureCableResultDocument,
+  cleanCableResult,
+  adjustTensionCable,
+  checkSupplies,
+  cleanUndergroundCable,
+  checkPreventiveCable,
+  checkCableSocket,
+  checkCableOdfAdapter,
+  solutionProvide,
+  reportDocument,
+) => {
+  return new Promise((resolve, reject) => {
+    const formDataReport = new FormData();
+    formDataReport.append('location_longitude', locationLongitude ?? '');
+    formDataReport.append('location_latitude', locationLatitude ?? '');
+    formDataReport.append('measure_cable_result', measureCableResult ?? false);
+    formDataReport.append(
+      'measure_cable_result_document',
+      {
+        uri:
+          Platform.OS === 'ios'
+            ? '/private' + measureCableResultDocument?.path
+            : measureCableResultDocument?.uri,
+        name: getFileName(measureCableResultDocument),
+        type: measureCableResultDocument?.mime,
+      } ?? null,
+    );
+    formDataReport.append('clean_cable_result', cleanCableResult ?? false);
+    formDataReport.append('adjust_tension_cable', adjustTensionCable ?? false);
+    formDataReport.append('check_supplies', checkSupplies ?? false);
+    formDataReport.append(
+      'clean_underground_cable',
+      cleanUndergroundCable ?? false,
+    );
+    formDataReport.append(
+      'check_preventive_cable',
+      checkPreventiveCable ?? false,
+    );
+    formDataReport.append('check_cable_socket', checkCableSocket ?? false);
+    formDataReport.append(
+      'check_cable_odf_adapter',
+      checkCableOdfAdapter ?? false,
+    );
+    formDataReport.append('solution_provide', solutionProvide ?? '');
+    formDataReport.append(
+      'report_document',
+      {
+        uri:
+          Platform.OS === 'ios'
+            ? '/private' + reportDocument?.path
+            : reportDocument?.uri,
+        name: getFileName(reportDocument),
+        type: reportDocument?.mime,
+      } ?? null,
+    );
+    axios
+      .post(
+        `${BASEURL}/api/v1/maintenance_issue/${issueId}/maintenance-report`,
+        formDataReport,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Accept: 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 
 const MaintenanceManagementAPI = {
   GetMaintenanceIssuesAPI,
   CreateMaintenanceIssueAPI,
   GetMaintenanceIssueByIdAPI,
+  MaintenanceIssueReportAPI,
 };
 export default MaintenanceManagementAPI;
 

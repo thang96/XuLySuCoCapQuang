@@ -28,6 +28,7 @@ import MaintenanceIssueReport from '../../../../../../../Api/Home/MaintenanceMan
 import {useSelector} from 'react-redux';
 import RNLocation from 'react-native-location';
 import GetMaintenanceIssueByIdAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/GetMaintenanceIssueByIdAPI';
+import MaintenanceManagementAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 const ReportMaintenance = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -102,7 +103,7 @@ const ReportMaintenance = props => {
     RNLocation.requestPermission({
       ios: 'whenInUse',
       android: {
-        detail: 'coarse',
+        detail: 'fine',
       },
     }).then(granted => {
       if (granted) {
@@ -177,7 +178,7 @@ const ReportMaintenance = props => {
   };
   const sendReport = async () => {
     let issueId = request?.id;
-    await MaintenanceIssueReport(
+    await MaintenanceManagementAPI.MaintenanceIssueReportAPI(
       token,
       issueId,
       locationLongitude,
@@ -202,6 +203,7 @@ const ReportMaintenance = props => {
       })
       .catch(function (error) {
         console.log(JSON.stringify(error));
+        alert('Gửi báo cáo thất bại');
       });
   };
   return (
@@ -275,7 +277,7 @@ const ReportMaintenance = props => {
             </View>
           ) : (
             <CustomInput
-            styleInput={{minHeight:50, marginVertical: 5,}}
+              styleInput={{minHeight: 50, marginVertical: 5}}
               placeholder={'Longitude'}
               value={locationLongitude}
               onChangeText={text => setLocationLongitude(text)}
@@ -288,7 +290,7 @@ const ReportMaintenance = props => {
             </View>
           ) : (
             <CustomInput
-            styleInput={{minHeight:50, marginVertical: 5,}}
+              styleInput={{minHeight: 50, marginVertical: 5}}
               placeholder={'Latitude'}
               value={locationLatitude}
               onChangeText={text => setLocationLatitude(text)}
@@ -321,7 +323,7 @@ const ReportMaintenance = props => {
                   source={icons.ic_report}
                   style={styles.iconButtonUpload}
                 />
-                <Text style={styles.textButtonUpload}>Upload kết quả đo</Text>
+                <Text style={styles.textButtonUpload}>Chụp kết quả đo</Text>
               </TouchableOpacity>
             )}
           </View>
@@ -409,7 +411,7 @@ const ReportMaintenance = props => {
               style={styles.button}
               onPress={() => setModalCamera(true)}>
               <Image style={styles.imageUpload} source={icons.ic_upload} />
-              <Text style={styles.textUpload}>Up ảnh</Text>
+              <Text style={styles.textUpload}>Chụp báo cáo</Text>
             </TouchableOpacity>
           )}
         </ScrollView>
@@ -461,7 +463,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
-  iconButtonUpload: {width: 35, height: 35, marginRight: 5, marginBottom: 10},
+  iconButtonUpload: {
+    width: 35,
+    height: 35,
+    marginRight: 5,
+    marginBottom: 10,
+    tintColor: colors.mainColor,
+  },
   textButtonUpload: {color: colors.mainColor, fontSize: 18, fontWeight: 'bold'},
   viewItem: {
     backgroundColor: 'white',

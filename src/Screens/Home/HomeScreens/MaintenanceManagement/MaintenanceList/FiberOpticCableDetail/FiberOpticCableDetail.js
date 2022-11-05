@@ -118,10 +118,6 @@ const FiberOpticCableDetail = props => {
         />
 
         <ComponentViewRow
-          title={'Thời gian tạo : '}
-          content={result?.created_time}
-        />
-        <ComponentViewRow
           title={'Thời gian yêu cầu : '}
           content={result?.required_time}
         />
@@ -152,7 +148,10 @@ const FiberOpticCableDetail = props => {
           title={'File đính kèm : '}
           source={result?.document}
         />
-
+        <ComponentViewRow
+          title={'Thời gian tạo : '}
+          content={result?.created_time}
+        />
         <ComponentViewRow
           title={'Thời gian tiếp nhận : '}
           content={result?.received_time}
@@ -177,9 +176,8 @@ const FiberOpticCableDetail = props => {
           onPressSecondRight={() => reportRequest()}
         />
       )}
-      {(result?.issue_status == 'CHƯA NGHIỆM THU' &&
-        userInfor?.role == 'GENERAL_MANAGER') ||
-        (userInfor?.role == 'AREA_MANAGER' && (
+      {result?.issue_status == 'CHƯA NGHIỆM THU' &&
+        userInfor?.role != 'EMPLOYEE' && (
           <View style={styles.viewRow}>
             <CustomTextButton
               styleButton={styles.viewCustomTextButton}
@@ -194,10 +192,10 @@ const FiberOpticCableDetail = props => {
               onPress={() => acceptance()}
             />
           </View>
-        ))}
+        )}
       {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
-        userInfor?.role != 'EMPLOYEE' &&
-        ( <CustomTextButton
+        userInfor?.role != 'EMPLOYEE' && (
+          <CustomTextButton
             styleButton={styles.viewCustomTextButton}
             label={'Hủy yêu cầu'}
             textStyle={styles.textCustomTextButton}

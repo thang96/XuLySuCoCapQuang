@@ -25,6 +25,7 @@ import DetailUserIncident from './Home/HomeScreens/IncidentManagement/IncidentLi
 import ReportIncident from './Home/HomeScreens/IncidentManagement/IncidentList/IncidentDetail/ReportIncident/ReportIncident';
 import DetailOpticCableIncident from './Home/HomeScreens/IncidentManagement/IncidentList/IncidentDetail/DetailInformation/DetailOpticCableIncident';
 import CreateCableRoute from './Home/HomeScreens/IncidentManagement/FiberOpticCableManagement/CreateCableRoute/CreateCableRoute';
+import ReportIncidentDetail from './Home/HomeScreens/IncidentManagement/IncidentList/IncidentDetail/ReportIncident/ReportIncidentDetail';
 //-AcceptRequests DetailUserIncident DetailOpticCableIncident
 import AcceptRequests from './Home/HomeScreens/IncidentManagement/AcceptRequests/AcceptRequests';
 import DetailRequest from './Home/HomeScreens/IncidentManagement/AcceptRequests/DetailRequest';
@@ -98,6 +99,7 @@ export {
   DetailUserIncident,
   DetailOpticCableIncident,
   ReportIncident,
+  ReportIncidentDetail,
   //-AcceptRequests
   AcceptRequests,
   DetailRequest,
