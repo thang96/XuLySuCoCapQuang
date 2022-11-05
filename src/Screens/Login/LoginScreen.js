@@ -5,6 +5,7 @@ import {
   ImageBackground,
   Image,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import {icons, images, colors} from '../../Constants';
 import CustomInput from '../../Components/CustomInput';
@@ -30,9 +31,8 @@ const LoginScreen = () => {
     setIsLoading(true);
     await LoginAccessToken(userName, password)
       .then(res => {
-        if (res?.status == 200) {
-          let token = res?.data?.access_token;
-          // AsyncStorage.setItem('user', JSON.stringify(user));
+        if (res?.status == 200 && res?.data?.success == true) {
+          let token = res?.data?.data?.access_token;
           AsyncStorage.setItem('token', token);
           dispatch(updateToken(token));
           navigation.navigate('HomeNavigation');
@@ -51,7 +51,7 @@ const LoginScreen = () => {
     return <CustomLoading />;
   }
   return (
-    <ImageBackground source={images.splash} style={styles.container}>
+    <View style={styles.container}>
       <Image resizeMode="cover" source={icons.ic_logo} style={styles.image} />
       <CustomInput
         onChangeText={text => setUserName(text)}
@@ -83,13 +83,14 @@ const LoginScreen = () => {
         label={'Đăng nhập'}
         styleButton={[styles.styleButton, {backgroundColor: colors.mainColor}]}
       />
-    </ImageBackground>
+    </View>
   );
 };
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    backgroundColor: 'white',
   },
   image: {width: 250, height: 60, alignSelf: 'center'},
   fogetPassButton: {

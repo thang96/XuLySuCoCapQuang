@@ -39,6 +39,7 @@ export default {
   ic_warehouseManagement: require('../Assets/Icons/ic_warehouseManagement.png'),
   ic_optical: require('../Assets/Icons/ic_optical.png'),
   ic_receive_request: require('../Assets/Icons/ic_receive_request.png'),
+  ic_area_manage: require('../Assets/Icons/ic_area_manage.png'),
 
   vectorOk: require('../Assets/Icons/vectorOk.png'),
   next: require('../Assets/Icons/next.png'),

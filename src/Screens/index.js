@@ -7,6 +7,10 @@ import ForgotPassword from './Login/ForgotPassword';
 import ConfirmSuccessfulPasswordChange from './Login/ConfirmSuccessfulPasswordChange';
 //Home screen
 import HomeScreen from './Home/HomeScreens/HomeScreen';
+//-AreaManagement
+import AreaManagement from './Home/HomeScreens/AreaManagement/AreaManagement';
+import DetailArea from './Home/HomeScreens/AreaManagement/DetailArea/DetailArea';
+import DetailAreaUser from './Home/HomeScreens/AreaManagement/DetailArea/DetailAreaUser/DetailAreaUser';
 //-EmployeeManager
 import EmployeeManager from './Home/HomeScreens/EmployeeManager/EmployeeManager';
 import EmployeeDetails from './Home/HomeScreens/EmployeeManager/EmployeeDetails';
@@ -79,6 +83,10 @@ export {
   ConfirmSuccessfulPasswordChange,
   //Home screen
   HomeScreen,
+  //-AreaManagement
+  AreaManagement,
+  DetailArea,
+  DetailAreaUser,
   //-IncidentManagement
   IncidentManagement,
   CreateCableRoute,

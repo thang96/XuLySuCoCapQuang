@@ -14,6 +14,7 @@ import {NavigationContainer} from '@react-navigation/native';
 import {Provider} from 'react-redux';
 import {store} from './src/Store/store';
 import MainNavigation from './src/Navigations/MainNavigation';
+import 'react-native-gesture-handler';
 const App = () => {
   useEffect(() => {
     LogBox.ignoreAllLogs();

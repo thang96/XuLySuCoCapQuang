@@ -4,8 +4,8 @@ import {HomeScreen, ContinueScreen, News, ListNews} from '../../../Screens';
 import StackIncidentManagement from './StackIncidentManagement/StackIncidentManagement';
 import StackEmployeeManager from './StackEmployeeManager/StackEmployeeManager';
 import StackMaintenanceManagement from './StackMaintenanceManagement/StackMaintenanceManagement';
-import StackWarehouseManagement from './StackWarehouseManagement/StackWarehouseManagement';
-import StackDocumentManagement from './StackDocumentManagement/StackDocumentManagement';
+import StackAreaNavigation from './StackAreaNavigation/StackAreaNavigation';
+
 const Stack = createStackNavigator();
 const StackHomeNavigation = props => {
   return (
@@ -41,6 +41,13 @@ const StackHomeNavigation = props => {
       <Stack.Screen
         component={StackMaintenanceManagement}
         name={'StackMaintenanceManagement'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={StackAreaNavigation}
+        name={'StackAreaNavigation'}
         options={{
           headerShown: false,
         }}

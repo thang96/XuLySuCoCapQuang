@@ -7,6 +7,7 @@ import StackChatNavigation from './StackChatNavigation/StackChatNavigation';
 import StackAccountNavigation from './StackAccountNavigation/StackAccountNavigation';
 import StackNotificationNavigation from './StackNotificationNavigation/StackNotificationNavigation';
 import StackWordListNavigation from './StackWordListNavigation/StackWordListNavigation';
+import StackAreaNavigation from './StackHomeNavigation/StackAreaNavigation/StackAreaNavigation';
 
 const Tab = createBottomTabNavigator();
 

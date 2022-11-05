@@ -134,6 +134,15 @@ const HomeScreen = () => {
                 onPress={() => navigation.navigate('StackEmployeeManager')}
               />
             )}
+            {userInfor?.role != 'EMPLOYEE' && (
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
+                icon={icons.ic_area_manage}
+                title={'Quản lý\nkhu vực'}
+                onPress={() => navigation.navigate('StackAreaNavigation')}
+              />
+            )}
           </ScrollView>
           <ScrollView>
             <CustomInput
