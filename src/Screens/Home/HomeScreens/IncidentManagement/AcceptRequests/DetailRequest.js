@@ -18,7 +18,6 @@ import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import IncidentManagementAPI from '../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
-import ReceiveIssueAPI from '../../../../../Api/WorkList/ReceiveIssueAPI';
 const DetailRequest = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);

@@ -22,10 +22,10 @@ import CustomTextInputChangeValue from '../../../../../../../Components/CustomTe
 import {colors, icons} from '../../../../../../../Constants';
 import common from '../../../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
-import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
+import MaintenanceManagementAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import {useSelector} from 'react-redux';
 import RNLocation from 'react-native-location';
-const ReportIncidentDetail = props => {
+const ReportMaintenanceDetail = props => {
   const navigation = useNavigation();
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
@@ -35,7 +35,7 @@ const ReportIncidentDetail = props => {
   }, []);
   const getReportIncidentDetail = async () => {
     let id = route.params;
-    await IncidentManagementAPI.DetailIssueReportAPI(token, id)
+    await MaintenanceManagementAPI.MaintenanceIssueReportDetailAPI(token, id)
       .then(res => {
         setResult(res?.data);
       })
@@ -43,7 +43,6 @@ const ReportIncidentDetail = props => {
         console.log(error);
       });
   };
-  console.log(result);
   return (
     <View style={[styles.container, {backgroundColor: colors.background}]}>
       <CustomAppBar
@@ -52,20 +51,11 @@ const ReportIncidentDetail = props => {
         onPressIconsLeft={() => navigation.goBack()}
       />
       <ScrollView style={styles.container}>
-        <CustomViewRow title={'Mã sự cố : '} content={result?.issue_code} />
+        <CustomViewRow
+          title={'Mã sự cố : '}
+          content={result?.maintenance_issue_code}
+        />
         <CustomViewRow title={'ID sự cố : '} content={result?.id} />
-        <CustomViewRow
-          title={'Thời gian bắt đầu : '}
-          content={result?.start_time}
-        />
-        <CustomViewRow
-          title={'Thời gian kết thúc : '}
-          content={result?.finish_time}
-        />
-        <CustomViewRow
-          title={'Tổng thời gian thực hiện : '}
-          content={result?.total_processing_time}
-        />
         <CustomViewRow
           title={'Tọa độ longitude : '}
           content={result?.location_longitude}
@@ -74,11 +64,52 @@ const ReportIncidentDetail = props => {
           title={'Tọa độ latitude  : '}
           content={result?.location_latitude}
         />
-        <CustomViewRow title={'Lý do  : '} content={result?.reason} />
-        <CustomViewRow title={'Giải pháp  : '} content={result?.solution} />
-
         <CustomViewRow
-          title={'File báo cáo  : '}
+          title={'Kết quả đo tuyến cáp  : '}
+          content={result?.measure_cable_result == true ? 'Đạt' : 'Không đạt'}
+        />
+        <CustomViewRow
+          title={'Kết quả đo  : '}
+          source={result?.measure_cable_result_document}
+        />
+        <CustomViewRow
+          title={'Phát quang dọc tuyến cáp  : '}
+          content={result?.clean_cable_result == true ? 'Đạt' : 'Không đạt'}
+        />
+        <CustomViewRow
+          title={'Căng chỉnh các tuyến cáp quang treo : '}
+          content={result?.adjust_tension_cable == true ? 'Đạt' : 'Không đạt'}
+        />
+        <CustomViewRow
+          title={'Kiểm tra, chỉnh bị lại vật tư, phụ kiện treo cáp : '}
+          content={result?.check_supplies == true ? 'Đạt' : 'Không đạt'}
+        />
+        <CustomViewRow
+          title={'Vệ sinh công bể cáp ngầm : '}
+          content={
+            result?.clean_underground_cable == true ? 'Đạt' : 'Không đạt'
+          }
+        />
+        <CustomViewRow
+          title={'Kiểm tra làm gọn cáp dự phòng : '}
+          content={result?.check_preventive_cable == true ? 'Đạt' : 'Không đạt'}
+        />
+        <CustomViewRow
+          title={'Kiểm tra, vệ sinh măng xông nối cáp : '}
+          content={result?.check_cable_socket == true ? 'Đạt' : 'Không đạt'}
+        />
+        <CustomViewRow
+          title={'Kiểm tra, vệ sinh ODF và các đầu Adapter quang : '}
+          content={
+            result?.check_cable_odf_adapter == true ? 'Đạt' : 'Không đạt'
+          }
+        />
+        <CustomViewRow
+          title={'Phương án đề xuất tối ưu : '}
+          content={result?.solution_provide}
+        />
+        <CustomViewRow
+          title={'Hình ảnh báo cáo : '}
           source={result?.report_document}
         />
       </ScrollView>
@@ -113,4 +144,4 @@ const CustomViewRow = props => {
     </View>
   );
 };
-export default ReportIncidentDetail;
+export default ReportMaintenanceDetail;

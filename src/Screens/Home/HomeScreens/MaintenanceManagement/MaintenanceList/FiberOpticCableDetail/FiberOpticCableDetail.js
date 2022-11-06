@@ -156,22 +156,33 @@ const FiberOpticCableDetail = props => {
           title={'Thời gian hoàn thành : '}
           content={result?.completion_time}
         />
+        {(result?.issue_status == 'CHƯA NGHIỆM THU' ||
+          result?.issue_status == 'ĐÃ HOÀN THÀNH') && (
+          <ComponentViewRow
+            title={'Chi tiết báo cáo : '}
+            titleButton={'Chi tiết >>'}
+            onPress={() =>
+              navigation.navigate('ReportMaintenanceDetail', result?.id)
+            }
+          />
+        )}
       </ScrollView>
-      {userInfor?.role == 'EMPLOYEE' && (
-        <ComponentTwoButton
-          accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
-          disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
-          disabledRight={
-            result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
-          }
-          disableSecondRight={
-            result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
-          }
-          onPressLeft={() => rejectMaintenanceIssue()}
-          onPressRight={() => receiveMaintenanceIssue()}
-          onPressSecondRight={() => reportRequest()}
-        />
-      )}
+      {userInfor?.role == 'EMPLOYEE' &&
+        result?.issue_status != 'CHƯA NGHIỆM THU' && (
+          <ComponentTwoButton
+            accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
+            disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
+            disabledRight={
+              result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
+            }
+            disableSecondRight={
+              result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
+            }
+            onPressLeft={() => rejectMaintenanceIssue()}
+            onPressRight={() => receiveMaintenanceIssue()}
+            onPressSecondRight={() => reportRequest()}
+          />
+        )}
       {result?.issue_status == 'CHƯA NGHIỆM THU' &&
         userInfor?.role != 'EMPLOYEE' && (
           <View style={styles.viewRow}>

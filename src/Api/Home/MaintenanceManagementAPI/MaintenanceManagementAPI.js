@@ -138,6 +138,23 @@ const GetMaintenanceIssueByIdAPI = (token, id) => {
       });
   });
 };
+const MaintenanceIssueReportDetailAPI = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${BASEURL}/api/v1/maintenance_issue/${id}/maintenance-report`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 const MaintenanceIssueReportAPI = (
   token,
   issueId,
@@ -227,6 +244,7 @@ const MaintenanceManagementAPI = {
   RejectMaintenanceIssueAPI,
   AcceptanceMaintenanceRequestAPI,
   GetMaintenanceIssueByIdAPI,
+  MaintenanceIssueReportDetailAPI,
   MaintenanceIssueReportAPI,
 };
 export default MaintenanceManagementAPI;

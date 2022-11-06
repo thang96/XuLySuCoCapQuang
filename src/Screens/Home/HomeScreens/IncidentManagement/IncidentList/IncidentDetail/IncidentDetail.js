@@ -147,7 +147,8 @@ const IncidentDetail = props => {
           title={'Thời gian hoàn thành : '}
           content={result?.completion_time}
         />
-        {result?.issue_status == 'CHƯA NGHIỆM THU' && (
+        {(result?.issue_status == 'CHƯA NGHIỆM THU' ||
+          result?.issue_status == 'ĐÃ HOÀN THÀNH') && (
           <ComponentViewRow
             title={'Chi tiết báo cáo : '}
             titleButton={'Chi tiết >>'}

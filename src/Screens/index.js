@@ -45,6 +45,7 @@ import DetailMaintenanceRequests from './Home/HomeScreens/MaintenanceManagement/
 import ReportMaintenance from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/FiberOpticCableDetail/ReportMaintenance/ReportMaintenance';
 import CreateNewCableRoute from './Home/HomeScreens/MaintenanceManagement/FiberOpticCableManagement/CreateNewCableRoute/CreateNewCableRoute';
 import FibelOpticCableDetail from './Home/HomeScreens/MaintenanceManagement/FiberOpticCableManagement/FibelOpticCableDetail/FibelOpticCableDetail';
+import ReportMaintenanceDetail from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/FiberOpticCableDetail/ReportMaintenance/ReportMaintenanceDetail';
 //
 import WarehouseManagement from './Home/HomeScreens/WarehouseManagement/WarehouseManagement';
 import ListOfSupplies from './Home/HomeScreens/WarehouseManagement/ProjectManagement/ListOfSupplies';
@@ -125,6 +126,7 @@ export {
   ReportMaintenance,
   CreateNewCableRoute,
   FibelOpticCableDetail,
+  ReportMaintenanceDetail,
   //-
   WarehouseManagement,
   ListOfSupplies,

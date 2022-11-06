@@ -17,7 +17,7 @@ import CustomInput from '../../../Components/CustomInput';
 import {useNavigation} from '@react-navigation/native';
 import CustomButtonIcon from '../../../Components/CustomButtonIcon';
 import {useSelector} from 'react-redux';
-import GetWorkListAPI from '../../../Api/WorkList/GetWorkListAPI';
+import IncidentManagementAPI from '../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 
 const WordList = props => {
   const navigation = useNavigation();
@@ -31,7 +31,7 @@ const WordList = props => {
     // }, 5000);
   }, [navigation, token]);
   const getResult = async () => {
-    await GetWorkListAPI(token)
+    await IncidentManagementAPI.GetListIssuesAPI(token)
       .then(res => {
         setWorkList(res?.data?.data);
       })
