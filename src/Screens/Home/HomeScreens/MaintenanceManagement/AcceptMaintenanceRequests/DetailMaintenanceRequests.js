@@ -17,15 +17,14 @@ import {colors, icons, images} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import RejectIssueAPI from '../../../../../Api/WorkList/RejectIssueAPI';
-import ReceiveMaintenanceIssueAPI from '../../../../../Api/Home/MaintenanceManagementAPI/ReceiveMaintenanceIssueAPI';
+import IncidentManagementAPI from '../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 const DetailMaintenanceRequests = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
   const route = useRoute();
   const rejectIssue = async () => {
-    await RejectIssueAPI(token, route.params?.id)
+    await IncidentManagementAPI.RejectIssueAPI(token, route.params?.id)
       .then(res => {
         if (res?.status == 200) {
           alert('Từ chối thành công');
@@ -38,7 +37,7 @@ const DetailMaintenanceRequests = props => {
   };
   const receiveIssue = async () => {
     let id = route.params?.id;
-    await ReceiveMaintenanceIssueAPI(token, id)
+    await IncidentManagementAPI.ReceiveIssueAPI(token, id)
       .then(res => {
         if (res?.status == 200) {
           alert('Tiếp nhận thành công');

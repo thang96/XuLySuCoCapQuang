@@ -18,9 +18,6 @@ import CustomAppBar from '../../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import MaintenanceManagementAPI from '../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
-import RejectMaintenanceIssueAPI from '../../../../../../Api/Home/MaintenanceManagementAPI/RejectMaintenanceIssueAPI';
-import ReceiveMaintenanceIssueAPI from '../../../../../../Api/Home/MaintenanceManagementAPI/ReceiveMaintenanceIssueAPI';
-import AcceptanceMaintenanceRequestAPI from '../../../../../../Api/Home/MaintenanceManagementAPI/AcceptanceMaintenanceRequestAPI';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
 const FiberOpticCableDetail = props => {
   const navigation = useNavigation();
@@ -43,7 +40,7 @@ const FiberOpticCableDetail = props => {
   };
   const rejectMaintenanceIssue = async () => {
     let id = result?.id;
-    await RejectMaintenanceIssueAPI(token, id)
+    await MaintenanceManagementAPI.RejectMaintenanceIssueAPI(token, id)
       .then(res => {
         if (res?.status == 200) {
           alert('Từ chối thành công');
@@ -57,7 +54,7 @@ const FiberOpticCableDetail = props => {
   };
   const receiveMaintenanceIssue = async () => {
     let id = result?.id;
-    await ReceiveMaintenanceIssueAPI(token, id)
+    await MaintenanceManagementAPI.ReceiveMaintenanceIssueAPI(token, id)
       .then(res => {
         if (res?.status == 200) {
           alert('Tiếp nhận thành công');
@@ -75,8 +72,7 @@ const FiberOpticCableDetail = props => {
   };
   const acceptance = async () => {
     let id = result?.id;
-    console.log(id);
-    await AcceptanceMaintenanceRequestAPI(token, id)
+    await MaintenanceManagementAPI.AcceptanceMaintenanceRequestAPI(token, id)
       .then(res => {
         if (res?.status == 200) {
           alert('Nghiệm thu thành công');

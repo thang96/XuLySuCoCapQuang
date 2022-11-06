@@ -17,7 +17,7 @@ import {colors, icons, images} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import GetWorkMaintenanceListAPI from '../../../../../Api/Home/MaintenanceManagementAPI/GetWorkMaintenanceListAPI';
+import MaintenanceManagementAPI from '../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 const AcceptMaintenanceRequests = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
@@ -25,7 +25,7 @@ const AcceptMaintenanceRequests = props => {
   const [workList, setWorkList] = useState(null);
   const route = useRoute();
   useEffect(() => {
-    GetWorkMaintenanceListAPI(token)
+    MaintenanceManagementAPI.GetMaintenanceIssuesAPI(token)
       .then(res => {
         let workList = res?.data?.data;
         setWorkList(

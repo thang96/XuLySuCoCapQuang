@@ -60,6 +60,67 @@ const CreateMaintenanceIssueAPI = (
   });
 };
 
+const ReceiveMaintenanceIssueAPI = (token, id) => {
+  const formData = new FormData();
+  formData.append('id', parseInt(id) ?? 0);
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${BASEURL}/api/v1/maintenance_issue/${id}/receive`, formData, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
+
+const RejectMaintenanceIssueAPI = (token, id) => {
+  const formData = new FormData();
+  formData.append('id', parseInt(id) ?? 0);
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${BASEURL}/api/v1/maintenance_issue/${id}/reject`, formData, {
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
+
+const AcceptanceMaintenanceRequestAPI = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${BASEURL}/api/v1/maintenance_issue/${id}/accept`, null, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
+
 const GetMaintenanceIssueByIdAPI = (token, id) => {
   return new Promise((resolve, reject) => {
     axios
@@ -162,6 +223,9 @@ const MaintenanceIssueReportAPI = (
 const MaintenanceManagementAPI = {
   GetMaintenanceIssuesAPI,
   CreateMaintenanceIssueAPI,
+  ReceiveMaintenanceIssueAPI,
+  RejectMaintenanceIssueAPI,
+  AcceptanceMaintenanceRequestAPI,
   GetMaintenanceIssueByIdAPI,
   MaintenanceIssueReportAPI,
 };

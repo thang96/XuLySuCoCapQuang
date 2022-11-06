@@ -23,11 +23,8 @@ import CustomTextInputChangeValue from '../../../../../../../Components/CustomTe
 import {colors, icons} from '../../../../../../../Constants';
 import common from '../../../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
-import RejectMaintenanceIssueAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/RejectMaintenanceIssueAPI';
-import MaintenanceIssueReport from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceIssueReport';
 import {useSelector} from 'react-redux';
 import RNLocation from 'react-native-location';
-import GetMaintenanceIssueByIdAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/GetMaintenanceIssueByIdAPI';
 import MaintenanceManagementAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 const ReportMaintenance = props => {
   const navigation = useNavigation();
@@ -40,7 +37,7 @@ const ReportMaintenance = props => {
   }, []);
   const getRequest = async () => {
     let id = route.params;
-    await GetMaintenanceIssueByIdAPI(token, id)
+    await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(token, id)
       .then(res => {
         setRequest(res?.data?.data);
       })
@@ -165,7 +162,7 @@ const ReportMaintenance = props => {
   };
   const rejectIssue = async () => {
     let issueId = request?.id;
-    await RejectMaintenanceIssueAPI(token, issueId)
+    await MaintenanceManagementAPI.RejectMaintenanceIssueAPI(token, issueId)
       .then(res => {
         if (res?.data == 200) {
           alert('Từ chối thành công');
