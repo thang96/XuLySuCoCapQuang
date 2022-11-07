@@ -143,10 +143,9 @@ const ReportIncident = props => {
         alert('Từ chối thất bại');
       });
   };
-
+  console.log(totalProcessingTime, 'origin');
   const sendReport = async () => {
     let issueId = request?.id;
-    let totalProcessingTime = parseFloat(totalProcessingTime);
     await IncidentManagementAPI.IssueReportAPI(
       token,
       issueId,

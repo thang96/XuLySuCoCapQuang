@@ -75,8 +75,6 @@ import AppSetting from './Home/AccountScreens/Setting/AppSetting';
 import ChangePassword from './Home/AccountScreens/Setting/ChangePassword';
 //Work list
 import WordList from './Home/WordList/WorkList';
-import WorkDetails from './Home/WordList/WorkDetails/WorkDetails';
-import ReportWork from './Home/WordList/WorkDetails/ReportWork';
 export {
   Splash,
   ContinueScreen,
@@ -111,8 +109,6 @@ export {
   CreateNewRequest,
   //WordList
   WordList,
-  WorkDetails,
-  ReportWork,
   //-MaintenanceManagement
   MaintenanceManagement,
   FiberOpticCableManagement,

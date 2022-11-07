@@ -50,7 +50,10 @@ const FiberOpticCableManagement = props => {
     return (
       <TouchableOpacity
         style={styles.buttonRender}
-        onPress={() => navigation.navigate('FibelOpticCableDetail', {item})}>
+        onPress={() => {
+          let id = item?.id;
+          navigation.navigate('FibelOpticCableDetail', id);
+        }}>
         <Text style={styles.titleRender}>{item?.name}</Text>
         <Text
           style={[

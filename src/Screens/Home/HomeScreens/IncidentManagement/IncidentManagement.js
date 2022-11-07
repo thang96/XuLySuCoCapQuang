@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import CustomButtonFunction from '../../../../Components/CustomButtonFunction';
+import IncidentManagementAPI from '../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 import {colors, icons} from '../../../../Constants';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
@@ -20,7 +21,16 @@ const IncidentManagement = () => {
   const windowHeight = Dimensions.get('window').height;
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
-
+  const token = useSelector(state => state?.token?.token);
+  const getListHistoryIncident = async () => {
+    await IncidentManagementAPI.ExportIssueAPI(token)
+      .then(res => {
+        console.log(res?.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView style={styles.container}>
@@ -43,7 +53,7 @@ const IncidentManagement = () => {
                   styles.textMSNV
                 }>{`Area ID : ${userInfor?.area_id}`}</Text>
             </View>
-            {userInfor?.role != 'EMPLOYEE'  ? (
+            {userInfor?.role != 'EMPLOYEE' ? (
               <Image source={icons.ic_medal} style={{width: 25, height: 30}} />
             ) : null}
           </TouchableOpacity>
@@ -107,7 +117,7 @@ const IncidentManagement = () => {
               icon={icons.ic_report}
               title={'Kết xuất\nbáo cáo'}
               titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('ContinueScreen')}
+              onPress={() => getListHistoryIncident()}
             />
           </View>
           <View style={styles.viewRow}>

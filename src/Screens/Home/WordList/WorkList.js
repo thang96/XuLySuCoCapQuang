@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
-  ImageBackground,
+  ActivityIndicator,
   StyleSheet,
   View,
   Image,
@@ -23,24 +23,26 @@ import MaintenanceManagementAPI from '../../../Api/Home/MaintenanceManagementAPI
 
 const WordList = props => {
   const navigation = useNavigation();
-  const [modalVisible, setModalVisible] = useState(false);
   const token = useSelector(state => state?.token?.token);
   const [listIncident, setListIncident] = useState(null);
   const [listMaintenance, setListMaintenance] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
   const [isIncident, setIsIncident] = useState(true);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getResult();
-  }, [navigation, token]);
+  }, [token]);
   const getResult = async () => {
     await MaintenanceManagementAPI.GetMaintenanceIssuesAPI(token)
       .then(res => {
         setListMaintenance(res?.data?.data);
+        setLoading(false);
       })
       .catch(error => console.log(error));
     await IncidentManagementAPI.GetListIssuesAPI(token)
       .then(res => {
         setListIncident(res?.data?.data);
+        setLoading(false);
       })
       .catch(error => console.log(error));
   };
@@ -63,32 +65,42 @@ const WordList = props => {
         onPressLeftButton={() => setIsIncident(true)}
         onPressRightButton={() => setIsIncident(false)}
       />
-      {isIncident ? (
-        <CustomListIncident
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          data={listIncident}
-          onPressItem={item => {
-            let id = item?.id;
-            navigation.navigate('StackIncidentManagement', {
-              screen: 'IncidentDetail',
-              params: id,
-            });
-          }}
-        />
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.mainColor} />
       ) : (
-        <CustomListMaintenance
-          data={listMaintenance}
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          onPressItem={item => {
-            let id = item?.id;
-            navigation.navigate('StackMaintenanceManagement', {
-              screen: 'FiberOpticCableDetail',
-              params: id,
-            });
-          }}
-        />
+        <View style={{flex: 1}}>
+          {isIncident ? (
+            <CustomListIncident
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              data={listIncident}
+              onPressItem={item => {
+                let id = item?.id;
+                if (id) {
+                  navigation.navigate('StackIncidentManagement', {
+                    screen: 'IncidentDetail',
+                    params: id,
+                  });
+                }
+              }}
+            />
+          ) : (
+            <CustomListMaintenance
+              data={listMaintenance}
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              onPressItem={item => {
+                let id = item?.id;
+                if (id) {
+                  navigation.navigate('StackMaintenanceManagement', {
+                    screen: 'FiberOpticCableDetail',
+                    params: id,
+                  });
+                }
+              }}
+            />
+          )}
+        </View>
       )}
     </View>
   );
@@ -119,6 +131,7 @@ const CustomListIncident = props => {
   const renderItem = (item, index) => {
     return (
       <TouchableOpacity
+        disabled={true}
         onPress={() => onPressItem(item)}
         style={styles.viewRowChildren}>
         <View
@@ -163,6 +176,7 @@ const CustomListMaintenance = props => {
   const renderItem = (item, index) => {
     return (
       <TouchableOpacity
+        disabled={true}
         onPress={() => onPressItem(item)}
         style={styles.viewRowChildren}>
         <View

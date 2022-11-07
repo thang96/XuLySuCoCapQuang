@@ -1,6 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {WordList, WorkDetails, ReportWork} from '../../../Screens';
+import {WordList} from '../../../Screens';
 const Stack = createStackNavigator();
 const StackWordListNavigation = props => {
   return (
@@ -8,20 +8,6 @@ const StackWordListNavigation = props => {
       <Stack.Screen
         component={WordList}
         name={'WordList'}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        component={WorkDetails}
-        name={'WorkDetails'}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        component={ReportWork}
-        name={'ReportWork'}
         options={{
           headerShown: false,
         }}

@@ -27,7 +27,8 @@ const FiberOpticCableDetail = props => {
   const [result, setResult] = useState(null);
   useEffect(() => {
     getDetail();
-  }, [route]);
+  }, [route, token]);
+
   const getDetail = async () => {
     let id = route.params;
     await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(token, id)

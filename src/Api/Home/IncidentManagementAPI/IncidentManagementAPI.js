@@ -168,12 +168,15 @@ const IssueReportAPI = (
   reportDocument,
 ) => {
   return new Promise((resolve, reject) => {
-    const formData = new FormData();
-    formData.append('startTime', startTime ?? '');
-    formData.append('finishTime', finishTime ?? '');
-    formData.append('totalProcessingTime', totalProcessingTime ?? 0);
-    formData.append('locationLongitude', locationLongitude ?? '');
-    formData.append('locationLatitude', locationLatitude ?? '');
+    let formData = new FormData();
+    formData.append('start_time', startTime ?? '');
+    formData.append('finish_time', finishTime ?? '');
+    formData.append(
+      'total_processing_time',
+      parseFloat(totalProcessingTime) ?? 0,
+    );
+    formData.append('location_longitude', `${locationLongitude}` ?? '');
+    formData.append('location_latitude', `${locationLatitude}` ?? '');
     formData.append('reason', reason ?? '');
     formData.append('solution', solution ?? '');
     formData.append(
@@ -203,6 +206,23 @@ const IssueReportAPI = (
       });
   });
 };
+const ExportIssueAPI = token => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${BASEURL}/api/v1/issues/export/`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 
 const IncidentManagementAPI = {
   GetListIssuesAPI,
@@ -213,6 +233,7 @@ const IncidentManagementAPI = {
   AcceptIssueRequestAPI,
   DetailIssueReportAPI,
   IssueReportAPI,
+  ExportIssueAPI,
 };
 export default IncidentManagementAPI;
 

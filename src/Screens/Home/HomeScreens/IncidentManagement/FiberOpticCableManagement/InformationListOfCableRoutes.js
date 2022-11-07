@@ -51,7 +51,10 @@ const InformationListOfCableRoutes = props => {
     return (
       <TouchableOpacity
         style={styles.buttonRender}
-        onPress={() => navigation.navigate('CableRouteDetails', {item})}>
+        onPress={() => {
+          let id = item?.id;
+          navigation.navigate('CableRouteDetails', id);
+        }}>
         <Text style={styles.titleRender}>{item?.name}</Text>
         <Text
           style={[

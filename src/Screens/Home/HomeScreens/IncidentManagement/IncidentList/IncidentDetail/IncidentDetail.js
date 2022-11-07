@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
-  ImageBackground,
+  ActivityIndicator,
   StyleSheet,
   View,
   Image,
@@ -25,14 +25,16 @@ const IncidentDetail = props => {
   const token = useSelector(state => state?.token?.token);
   const route = useRoute();
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getResult();
-  }, [route]);
+  }, [route, token]);
   const getResult = async () => {
     let id = route.params;
     await IncidentManagementAPI.GetIncidentIssueByIdAPI(token, id)
       .then(res => {
         setResult(res?.data?.data);
+        setLoading(false);
       })
       .catch(function (error) {
         console.log(error);
@@ -80,6 +82,7 @@ const IncidentDetail = props => {
         console.log(error);
       });
   };
+
   return (
     <View style={styles.container}>
       <CustomAppBar
@@ -87,118 +90,131 @@ const IncidentDetail = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.navigate('IncidentList')}
       />
-      <ScrollView style={styles.eachContainer}>
-        <Text style={[styles.title, {marginBottom: 10}]}>
-          Thông tin công việc
-        </Text>
-        <ComponentViewRow title={'Mã VC : '} content={result?.code} />
-        <ComponentViewRow title={'ID: '} content={result?.id} />
-        <ComponentViewRow
-          title={'Người tạo việc : '}
-          titleButton={'Chi tiết >>'}
-          onPress={() =>
-            navigation.navigate('DetailUserIncident', result?.create_user_id)
-          }
-        />
-        <ComponentViewRow
-          title={'Nhân sự kỹ thuật : '}
-          titleButton={'Chi tiết >>'}
-          onPress={() =>
-            navigation.navigate('DetailUserIncident', result?.user_assigned_id)
-          }
-          content={result?.user_assigned}
-        />
-        <ComponentViewRow
-          title={'Tình trạng : '}
-          styleContent={{
-            color: result?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
-          }}
-          content={result?.issue_status}
-        />
-        <ComponentViewRow
-          title={'Tuyến cáp : '}
-          titleButton={'Chi tiết >>'}
-          onPress={() =>
-            navigation.navigate(
-              'DetailOpticCableIncident',
-              result?.optical_cable_id,
-            )
-          }
-          content={result?.optical_cable}
-        />
+      {loading ? (
+        <ActivityIndicator size="large" color={colors.mainColor} />
+      ) : (
+        <View style={{flex: 1}}>
+          <ScrollView style={styles.eachContainer}>
+            <Text style={[styles.title, {marginBottom: 10}]}>
+              Thông tin công việc
+            </Text>
+            <ComponentViewRow title={'Mã VC : '} content={result?.code} />
+            <ComponentViewRow title={'ID: '} content={result?.id} />
+            <ComponentViewRow
+              title={'Người tạo việc : '}
+              titleButton={'Chi tiết >>'}
+              onPress={() =>
+                navigation.navigate(
+                  'DetailUserIncident',
+                  result?.create_user_id,
+                )
+              }
+            />
+            <ComponentViewRow
+              title={'Nhân sự kỹ thuật : '}
+              titleButton={'Chi tiết >>'}
+              onPress={() =>
+                navigation.navigate(
+                  'DetailUserIncident',
+                  result?.user_assigned_id,
+                )
+              }
+              content={result?.user_assigned}
+            />
+            <ComponentViewRow
+              title={'Tình trạng : '}
+              styleContent={{
+                color:
+                  result?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
+              }}
+              content={result?.issue_status}
+            />
+            <ComponentViewRow
+              title={'Tuyến cáp : '}
+              titleButton={'Chi tiết >>'}
+              onPress={() =>
+                navigation.navigate(
+                  'DetailOpticCableIncident',
+                  result?.optical_cable_id,
+                )
+              }
+              content={result?.optical_cable}
+            />
 
-        <ComponentViewRow
-          title={'Mô tả sự cố : '}
-          content={result?.description}
-        />
-        <ComponentViewRow
-          title={'File đính kèm : '}
-          source={result?.document}
-        />
-        <ComponentViewRow
-          title={'Thời gian yêu cầu : '}
-          content={result?.required_time}
-        />
-        <ComponentViewRow
-          title={'Thời gian tiếp nhận : '}
-          content={result?.received_time}
-        />
-        <ComponentViewRow
-          title={'Thời gian hoàn thành : '}
-          content={result?.completion_time}
-        />
-        {(result?.issue_status == 'CHƯA NGHIỆM THU' ||
-          result?.issue_status == 'ĐÃ HOÀN THÀNH') && (
-          <ComponentViewRow
-            title={'Chi tiết báo cáo : '}
-            titleButton={'Chi tiết >>'}
-            onPress={() =>
-              navigation.navigate('ReportIncidentDetail', result?.id)
-            }
-          />
-        )}
-      </ScrollView>
-      {userInfor?.role == 'EMPLOYEE' && (
-        <ComponentTwoButton
-          accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
-          disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
-          disabledRight={
-            result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
-          }
-          disableSecondRight={
-            result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
-          }
-          onPressLeft={() => rejectIssue()}
-          onPressRight={() => receiveIssue()}
-          onPressSecondRight={() => reportRequest()}
-        />
+            <ComponentViewRow
+              title={'Mô tả sự cố : '}
+              content={result?.description}
+            />
+            <ComponentViewRow
+              title={'File đính kèm : '}
+              source={result?.document}
+            />
+            <ComponentViewRow
+              title={'Thời gian yêu cầu : '}
+              content={result?.required_time}
+            />
+            <ComponentViewRow
+              title={'Thời gian tiếp nhận : '}
+              content={result?.received_time}
+            />
+            <ComponentViewRow
+              title={'Thời gian hoàn thành : '}
+              content={result?.completion_time}
+            />
+            {(result?.issue_status == 'CHƯA NGHIỆM THU' ||
+              result?.issue_status == 'ĐÃ HOÀN THÀNH') && (
+              <ComponentViewRow
+                title={'Chi tiết báo cáo : '}
+                titleButton={'Chi tiết >>'}
+                onPress={() =>
+                  navigation.navigate('ReportIncidentDetail', result?.id)
+                }
+              />
+            )}
+          </ScrollView>
+          {userInfor?.role == 'EMPLOYEE' && (
+            <ComponentTwoButton
+              accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
+              disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
+              disabledRight={
+                result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
+              }
+              disableSecondRight={
+                result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
+              }
+              onPressLeft={() => rejectIssue()}
+              onPressRight={() => receiveIssue()}
+              onPressSecondRight={() => reportRequest()}
+            />
+          )}
+          {result?.issue_status == 'CHƯA NGHIỆM THU' &&
+            userInfor?.role != 'EMPLOYEE' && (
+              <View style={[styles.viewRow, {marginTop: 20}]}>
+                <CustomTextButton
+                  styleButton={styles.viewCustomTextButton}
+                  label={'Từ chối'}
+                  textStyle={styles.textCustomTextButton}
+                  onPress={() => rejectIssue()}
+                />
+                <CustomTextButton
+                  styleButton={styles.viewCustomTextButton}
+                  label={'Nghiệm thu'}
+                  textStyle={styles.textCustomTextButton}
+                  onPress={() => acceptance()}
+                />
+              </View>
+            )}
+          {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
+            userInfor?.role != 'EMPLOYEE' && (
+              <CustomTextButton
+                styleButton={styles.viewCustomTextButton}
+                label={'Hủy yêu cầu'}
+                textStyle={styles.textCustomTextButton}
+                onPress={() => rejectIssue()}
+              />
+            )}
+        </View>
       )}
-      {result?.issue_status == 'CHƯA NGHIỆM THU' &&
-        userInfor?.role != 'EMPLOYEE' && (
-          <View style={[styles.viewRow, {marginTop: 20}]}>
-            <CustomTextButton
-              styleButton={styles.viewCustomTextButton}
-              label={'Từ chối'}
-              textStyle={styles.textCustomTextButton}
-              onPress={() => rejectIssue()}
-            />
-            <CustomTextButton
-              styleButton={styles.viewCustomTextButton}
-              label={'Nghiệm thu'}
-              textStyle={styles.textCustomTextButton}
-              onPress={() => acceptance()}
-            />
-          </View>
-        )}
-      {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
-        userInfor?.role != 'EMPLOYEE' && (
-          <CustomTextButton
-            styleButton={styles.viewCustomTextButton}
-            label={'Hủy yêu cầu'}
-            textStyle={styles.textCustomTextButton}
-            onPress={() => rejectIssue()}
-          />
-        )}
     </View>
   );
 };
