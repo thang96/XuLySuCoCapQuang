@@ -27,7 +27,7 @@ const IncidentDetail = props => {
   const [result, setResult] = useState(null);
   useEffect(() => {
     getResult();
-  }, []);
+  }, [route]);
   const getResult = async () => {
     let id = route.params;
     await IncidentManagementAPI.GetIncidentIssueByIdAPI(token, id)

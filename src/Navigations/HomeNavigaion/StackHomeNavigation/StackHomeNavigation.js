@@ -1,6 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {HomeScreen, ContinueScreen, News, ListNews} from '../../../Screens';
+import {HomeScreen, ContinueScreen, WordList} from '../../../Screens';
 import StackIncidentManagement from './StackIncidentManagement/StackIncidentManagement';
 import StackEmployeeManager from './StackEmployeeManager/StackEmployeeManager';
 import StackMaintenanceManagement from './StackMaintenanceManagement/StackMaintenanceManagement';
@@ -13,6 +13,13 @@ const StackHomeNavigation = props => {
       <Stack.Screen
         component={HomeScreen}
         name={'HomeScreen'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={WordList}
+        name={'WordList'}
         options={{
           headerShown: false,
         }}

@@ -12,28 +12,35 @@ import {
   RefreshControl,
 } from 'react-native';
 import CustomAppBar from '../../../Components/CustomAppBar';
+import CustomTwoButtonFunction from '../../../Components/CustomTwoButtonFunction';
 import {colors, icons, images} from '../../../Constants';
 import CustomInput from '../../../Components/CustomInput';
 import {useNavigation} from '@react-navigation/native';
 import CustomButtonIcon from '../../../Components/CustomButtonIcon';
 import {useSelector} from 'react-redux';
 import IncidentManagementAPI from '../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
+import MaintenanceManagementAPI from '../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 
 const WordList = props => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const token = useSelector(state => state?.token?.token);
-  const [workList, setWorkList] = useState(null);
+  const [listIncident, setListIncident] = useState(null);
+  const [listMaintenance, setListMaintenance] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [isIncident, setIsIncident] = useState(true);
   useEffect(() => {
-    // setInterval(() => {
     getResult();
-    // }, 5000);
   }, [navigation, token]);
   const getResult = async () => {
+    await MaintenanceManagementAPI.GetMaintenanceIssuesAPI(token)
+      .then(res => {
+        setListMaintenance(res?.data?.data);
+      })
+      .catch(error => console.log(error));
     await IncidentManagementAPI.GetListIssuesAPI(token)
       .then(res => {
-        setWorkList(res?.data?.data);
+        setListIncident(res?.data?.data);
       })
       .catch(error => console.log(error));
   };
@@ -46,81 +53,43 @@ const WordList = props => {
       console.log(error);
     }
   }, []);
-  const renderItem = (item, index) => {
-    return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('WorkDetails', item)}
-        style={styles.viewRowChildren}>
-        <Text style={styles.textTitleChildren}>{item?.id}</Text>
-        <Text style={styles.textTitleChildren}>{item?.optical_cable}</Text>
-        <Text
-          style={[
-            styles.textTitleChildren,
-            {color: item?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green'},
-          ]}>
-          {item?.issue_status}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
   return (
     <View style={styles.container}>
-      <CustomAppBar
-        iconsLeft={icons.ic_back}
-        title={'Danh sách công việc'}
-        onPressIconsLeft={() => navigation.goBack()}
+      <CustomAppBar title={'Danh sách công việc'} />
+      <CustomTwoButtonFunction
+        labelLeft={'Xử lý\nsự cố'}
+        labelRight={'Bảo trì\nbảo dưỡng'}
+        isChoose={isIncident}
+        onPressLeftButton={() => setIsIncident(true)}
+        onPressRightButton={() => setIsIncident(false)}
       />
-      <View style={styles.eachContainer}>
-        <View style={styles.viewRow}>
-          <CustomInput
-            disabled={true}
-            styleInput={{flex: 1}}
-            placeholder={'Tìm kiếm công việc'}
-            source={icons.seach}
-          />
-        </View>
-        <View style={styles.viewRowParents}>
-          <Text style={styles.title}>Lọc</Text>
-          <Text style={{color: colors.purple}}>Lưu điều kiện lọc</Text>
-        </View>
-        <View style={[styles.viewRowParents]}>
-          <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-            style={styles.stylePicker}>
-            <Text style={{color: 'black', fontSize: 16}}>Theo thời gian</Text>
-            <Image
-              source={icons.ic_downArrow}
-              style={{width: 20, height: 20}}
-            />
-          </TouchableOpacity>
-          <View style={{height: 50}}>
-            <CustomButtonIcon source={icons.plus} />
-          </View>
-        </View>
-        <View style={styles.viewRowParents}>
-          <Text style={styles.textTitle}>ID</Text>
-          <Text style={styles.textTitle}>Tuyến cáp</Text>
-          <Text style={styles.textTitle}>Tình trạng</Text>
-        </View>
-        <View style={{flex: 1}}>
-          <FlatList
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            data={workList}
-            keyExtractor={key => key?.id}
-            renderItem={({item, index}) => renderItem(item, index)}
-          />
-        </View>
-        <View
-          style={[styles.viewRowParents, {height: 30, alignItems: 'center'}]}>
-          <Text>{`Tổng số : ${workList?.length}`}</Text>
-          <TouchableOpacity style={styles.buttonRowBottom}>
-            <Image source={icons.edit} style={{width: 20, height: 20}} />
-            <Text style={{color: colors.purple}}>Kết xuất báo cáo</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+      {isIncident ? (
+        <CustomListIncident
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          data={listIncident}
+          onPressItem={item => {
+            let id = item?.id;
+            navigation.navigate('StackIncidentManagement', {
+              screen: 'IncidentDetail',
+              params: id,
+            });
+          }}
+        />
+      ) : (
+        <CustomListMaintenance
+          data={listMaintenance}
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          onPressItem={item => {
+            let id = item?.id;
+            navigation.navigate('StackMaintenanceManagement', {
+              screen: 'FiberOpticCableDetail',
+              params: id,
+            });
+          }}
+        />
+      )}
     </View>
   );
 };
@@ -133,73 +102,103 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 10,
   },
-  styleButton: {
-    height: 50,
-    width: 70,
-    marginStart: 10,
-    backgroundColor: 'rgb(147,148,149)',
-    borderRadius: 10,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-    marginTop: 50,
-    marginBottom: 10,
-  },
-  viewRow: {
-    flexDirection: 'row',
-    width: '100%',
-    height: 50,
-    marginVertical: 10,
-  },
-  customButtonText: {
-    height: 50,
-    width: 120,
-    backgroundColor: colors.purple,
-    borderRadius: 10,
-    alignSelf: 'center',
-    marginTop: 20,
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: 'black',
-  },
-  viewRowParents: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 5,
-  },
-  textTitle: {
-    color: colors.grey,
-    fontWeight: '700',
-    fontSize: 18,
-  },
   viewRowChildren: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     backgroundColor: 'white',
-    height: 60,
-    alignItems: 'center',
-    paddingHorizontal: 5,
     marginVertical: 5,
-  },
-  textTitleChildren: {
-    fontWeight: 'bold',
-    fontSize: 14,
-    maxWidth: '30%',
-  },
-  buttonRowBottom: {flexDirection: 'row', alignItems: 'center'},
-  stylePicker: {
-    height: 50,
-    width: 200,
-    backgroundColor: 'white',
-    borderRadius: 15,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    minHeight: 50,
     alignItems: 'center',
-    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    paddingHorizontal: 5,
   },
+  textTitleChildren: {fontSize: 16, fontWeight: 'bold', color: 'black'},
 });
+
+const CustomListIncident = props => {
+  const {data, onPressItem, refreshing, onRefresh} = props;
+  const renderItem = (item, index) => {
+    return (
+      <TouchableOpacity
+        onPress={() => onPressItem(item)}
+        style={styles.viewRowChildren}>
+        <View
+          style={{flexDirection: 'row', alignItems: 'center', width: '55%'}}>
+          <Text style={[styles.textTitleChildren, {marginRight: 10}]}>
+            {item?.id}
+          </Text>
+          <Text style={[styles.textTitleChildren, {maxWidth: '90%'}]}>
+            {item?.optical_cable}
+          </Text>
+        </View>
+        <Text
+          style={[
+            styles.textTitleChildren,
+            {
+              color: item?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
+              maxWidth: '40%',
+            },
+          ]}>
+          {item?.issue_status}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  return (
+    <View style={{flex: 1}}>
+      <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        data={data}
+        keyExtractor={key => key?.id}
+        renderItem={({item, index}) => renderItem(item, index)}
+      />
+    </View>
+  );
+};
+
+const CustomListMaintenance = props => {
+  const {data, onPressItem, refreshing, onRefresh} = props;
+  const renderItem = (item, index) => {
+    return (
+      <TouchableOpacity
+        onPress={() => onPressItem(item)}
+        style={styles.viewRowChildren}>
+        <View
+          style={{flexDirection: 'row', alignItems: 'center', width: '55%'}}>
+          <Text style={[styles.textTitleChildren, {marginRight: 10}]}>
+            {item?.id}
+          </Text>
+          <Text style={[styles.textTitleChildren, {maxWidth: '90%'}]}>
+            {item?.optical_cable}
+          </Text>
+        </View>
+        <Text
+          style={[
+            styles.textTitleChildren,
+            {
+              color: item?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
+              maxWidth: '40%',
+            },
+          ]}>
+          {item?.issue_status}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+  return (
+    <View style={{flex: 1}}>
+      <FlatList
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        data={data}
+        keyExtractor={key => key?.id}
+        renderItem={({item, index}) => renderItem(item, index)}
+      />
+    </View>
+  );
+};
+
 export default WordList;

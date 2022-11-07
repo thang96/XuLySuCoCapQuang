@@ -29,7 +29,7 @@ const FiberOpticCableDetail = props => {
     getDetail();
   }, [route]);
   const getDetail = async () => {
-    let id = route.params?.item?.id;
+    let id = route.params;
     await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(token, id)
       .then(res => {
         setResult(res?.data?.data);

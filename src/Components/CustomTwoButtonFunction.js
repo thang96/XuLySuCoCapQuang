@@ -75,6 +75,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontWeight: '500',
+    textAlign: 'center',
   },
 });
 export default CustomTwoButtonFunction;

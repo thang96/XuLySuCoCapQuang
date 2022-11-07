@@ -46,10 +46,11 @@ const MaintenanceList = props => {
     }
   }, []);
   const renderItem = (item, index) => {
+    let id = item?.id;
     return (
       <TouchableOpacity
         style={styles.buttonRender}
-        onPress={() => navigation.navigate('FiberOpticCableDetail', {item})}>
+        onPress={() => navigation.navigate('FiberOpticCableDetail', id)}>
         <Text style={styles.titleRender}>{item?.optical_cable}</Text>
         <Text
           style={[
@@ -77,18 +78,18 @@ const MaintenanceList = props => {
             value={search}
             onChangeText={text => setSearch(text)}
           />
-        <View style={[styles.viewRowBetween,{marginVertical:5}]}>
-          <Text style={styles.title}>Lọc</Text>
-          <TouchableOpacity
-            onPress={() => setModalVisible(true)}
-            style={styles.stylePicker}>
-            <Text style={{color: 'black', fontSize: 16}}>Theo thời gian</Text>
-            <Image
-              source={icons.ic_downArrow}
-              style={{width: 20, height: 20}}
-            />
-          </TouchableOpacity>
-        </View>
+          <View style={[styles.viewRowBetween, {marginVertical: 5}]}>
+            <Text style={styles.title}>Lọc</Text>
+            <TouchableOpacity
+              onPress={() => setModalVisible(true)}
+              style={styles.stylePicker}>
+              <Text style={{color: 'black', fontSize: 16}}>Theo thời gian</Text>
+              <Image
+                source={icons.ic_downArrow}
+                style={{width: 20, height: 20}}
+              />
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.viewRow}>
             <Text style={[{width: '70%'}, styles.title]}>Tên tuyến</Text>
@@ -122,7 +123,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    
   },
   title: {
     fontSize: 18,
