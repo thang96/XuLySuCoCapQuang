@@ -23,7 +23,6 @@ const DetailOpticCable = props => {
   const token = useSelector(state => state?.token?.token);
   const route = useRoute();
   const [result, setResult] = useState(null);
-
   useEffect(() => {
     getOpticCableDetail();
   }, []);

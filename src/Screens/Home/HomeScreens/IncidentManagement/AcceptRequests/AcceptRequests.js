@@ -51,9 +51,10 @@ const AcceptRequests = props => {
     }
   }, []);
   const renderItem = (item, index) => {
+    let id = item?.id;
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('DetailRequest', item)}
+        onPress={() => navigation.navigate('DetailRequest', id)}
         style={[styles.viewRow, {backgroundColor: 'white', height: 50}]}>
         <Text style={styles.titleRender}>{item?.id}</Text>
         <Text style={styles.titleRender}>{item?.optical_cable}</Text>

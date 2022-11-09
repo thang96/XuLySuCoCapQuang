@@ -58,7 +58,7 @@ const MaintenanceManagement = () => {
               styleView={styles.customButtonFunction}
               styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_optical}
-              title={'Quản lý\nthông tin tuyến'}
+              title={'Quản lý\nthông tin\ntuyến'}
               titleColor={colors.mainColor}
               onPress={() => navigation.navigate('FiberOpticCableManagement')}
             />
@@ -66,7 +66,7 @@ const MaintenanceManagement = () => {
               styleView={styles.customButtonFunction}
               styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_documentManagement}
-              title={'Kết xuất\ntổng hợp'}
+              title={'Tổng hợp\nbáo cáo\nbảo trì'}
               titleColor={colors.mainColor}
               onPress={() => navigation.navigate('ContinueScreen')}
             />
@@ -77,7 +77,7 @@ const MaintenanceManagement = () => {
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
                 icon={icons.ic_receive_request}
-                title={'Tiếp nhận\nyêu cầu'}
+                title={'Tiếp nhận\nyêu cầu\nbảo trì'}
                 titleColor={colors.mainColor}
                 onPress={() => navigation.navigate('AcceptMaintenanceRequests')}
               />
@@ -86,7 +86,7 @@ const MaintenanceManagement = () => {
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
                 icon={icons.ic_edit}
-                title={'Tạo mới\nyêu cầu'}
+                title={'Tạo mới\nyêu cầu\nbảo trì'}
                 titleColor={colors.mainColor}
                 onPress={() => navigation.navigate('CreateAMaintenanceRequest')}
               />
@@ -99,14 +99,14 @@ const MaintenanceManagement = () => {
               titleColor={colors.mainColor}
               onPress={() => navigation.navigate('MaintenanceList')}
             />
-            <CustomButtonFunction
+            {/* <CustomButtonFunction
               styleView={styles.customButtonFunction}
               styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_report}
               title={'Kết xuất\nbáo cáo'}
               titleColor={colors.mainColor}
               onPress={() => navigation.navigate('ContinueScreen')}
-            />
+            /> */}
           </View>
           <View style={styles.viewRow}>
             <CustomButtonFunction

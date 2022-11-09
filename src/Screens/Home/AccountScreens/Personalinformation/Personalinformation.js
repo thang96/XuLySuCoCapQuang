@@ -144,22 +144,12 @@ const Personalinformation = props => {
           <Text style={styles.title}>Số điện thoại</Text>
           <View style={styles.viewRow}>
             <Text style={styles.textInfor}>{userInfor?.phone_number}</Text>
-            {/* <CustomButtonIcon
-              source={icons.ic_pencil}
-              styleButton={styles.customButtonIcon}
-              onPress={() => navigation.navigate('ChangeNumberPhone')}
-            /> */}
           </View>
         </View>
         <View style={styles.viewRowInfor}>
           <Text style={styles.title}>Email</Text>
           <View style={styles.viewRow}>
             <Text style={styles.textInfor}>{userInfor?.email}</Text>
-            {/* <CustomButtonIcon
-              source={icons.ic_pencil}
-              styleButton={styles.customButtonIcon}
-              onPress={() => navigation.navigate('ChangeEmail')}
-            /> */}
           </View>
         </View>
         <View style={styles.viewRowInfor}>
@@ -168,11 +158,6 @@ const Personalinformation = props => {
             <Text style={styles.textInfor} numberOfLines={1}>
               {userInfor?.address}
             </Text>
-            {/* <CustomButtonIcon
-              source={icons.ic_pencil}
-              styleButton={styles.customButtonIcon}
-              onPress={() => navigation.navigate('ChangeAddress')}
-            /> */}
           </View>
         </View>
       </View>
@@ -197,7 +182,7 @@ const styles = StyleSheet.create({
   customButtonIcon: {width: 40, height: 40},
   imageUser: {width: 60, height: 60, borderRadius: 60},
   title: {fontSize: 18, fontWeight: 'bold', color: 'black'},
-  name: {fontSize: 20, fontWeight: 'bold', color: colors.purple},
+  name: {fontSize: 20, fontWeight: 'bold', color: colors.mainColor},
   viewRowInfor: {
     flexDirection: 'row',
     justifyContent: 'space-between',

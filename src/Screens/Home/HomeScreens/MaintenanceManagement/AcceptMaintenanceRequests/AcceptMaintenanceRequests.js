@@ -37,9 +37,10 @@ const AcceptMaintenanceRequests = props => {
       .catch(error => console.log(error));
   }, [route]);
   const renderItem = (item, index) => {
+    let id = item?.id;
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('DetailMaintenanceRequests', item)}
+        onPress={() => navigation.navigate('DetailMaintenanceRequests', id)}
         style={[styles.viewRow, {backgroundColor: 'white', height: 50}]}>
         <Text style={styles.titleRender}>{item?.id}</Text>
         <Text style={styles.titleRender}>{item?.optical_cable}</Text>

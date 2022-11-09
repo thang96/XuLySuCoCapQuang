@@ -19,6 +19,7 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
 import IncidentManagementAPI from '../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
+import {uuid} from '../../../../../../utils/uuid';
 const IncidentDetail = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
@@ -26,6 +27,7 @@ const IncidentDetail = props => {
   const route = useRoute();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showImage, setShowImage] = useState(false);
   useEffect(() => {
     getResult();
   }, [route, token]);
@@ -82,7 +84,19 @@ const IncidentDetail = props => {
         console.log(error);
       });
   };
-
+  const renderDocumentFiles = item => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ShowImageScreen', item)}
+        style={{borderWidth: 1}}>
+        <Image
+          source={{uri: item?.path}}
+          style={{width: 200, height: 200, marginRight: 5}}
+          resizeMode={'contain'}
+        />
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.container}>
       <CustomAppBar
@@ -145,10 +159,17 @@ const IncidentDetail = props => {
               title={'Mô tả sự cố : '}
               content={result?.description}
             />
-            <ComponentViewRow
-              title={'File đính kèm : '}
-              source={result?.document}
-            />
+            <View>
+              <Text style={styles.content}>File đính kèm : </Text>
+              <FlatList
+                style={{height: 210}}
+                horizontal
+                data={result?.document_files}
+                keyExtractor={uuid}
+                renderItem={({item}) => renderDocumentFiles(item)}
+              />
+            </View>
+
             <ComponentViewRow
               title={'Thời gian yêu cầu : '}
               content={result?.required_time}
@@ -172,21 +193,23 @@ const IncidentDetail = props => {
               />
             )}
           </ScrollView>
-          {userInfor?.role == 'EMPLOYEE' && (
-            <ComponentTwoButton
-              accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
-              disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
-              disabledRight={
-                result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
-              }
-              disableSecondRight={
-                result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
-              }
-              onPressLeft={() => rejectIssue()}
-              onPressRight={() => receiveIssue()}
-              onPressSecondRight={() => reportRequest()}
-            />
-          )}
+          {userInfor?.role == 'EMPLOYEE' &&
+            (result?.issue_status == 'CHƯA TIẾP NHẬN' ||
+              result?.issue_status == 'ĐANG THỰC HIỆN') && (
+              <ComponentTwoButton
+                accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
+                disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
+                disabledRight={
+                  result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
+                }
+                disableSecondRight={
+                  result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
+                }
+                onPressLeft={() => navigation.goBack()}
+                onPressRight={() => receiveIssue()}
+                onPressSecondRight={() => reportRequest()}
+              />
+            )}
           {result?.issue_status == 'CHƯA NGHIỆM THU' &&
             userInfor?.role != 'EMPLOYEE' && (
               <View style={[styles.viewRow, {marginTop: 20}]}>
@@ -320,10 +343,10 @@ const ComponentTwoButton = props => {
         onPress={onPressLeft}
         style={styles.buttonComponentTwoButton}>
         <Image
-          source={icons.ic_edit}
+          source={icons.ic_back}
           style={[styles.imageComponentTwoButton, {tintColor: 'grey'}]}
         />
-        <Text>Từ chối</Text>
+        <Text>Quay lại</Text>
       </TouchableOpacity>
       {accept ? (
         <TouchableOpacity

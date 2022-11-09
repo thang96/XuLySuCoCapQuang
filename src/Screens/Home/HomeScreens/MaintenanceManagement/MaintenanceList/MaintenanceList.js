@@ -21,7 +21,7 @@ import MaintenanceManagementAPI from '../../../../../Api/Home/MaintenanceManagem
 const MaintenanceList = props => {
   const route = useRoute();
   const navigation = useNavigation();
-  const [listOpticalCables, setListOpticalCables] = useState(null);
+  const [workList, setWorkList] = useState([]);
   const token = useSelector(state => state?.token?.token);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
@@ -32,10 +32,17 @@ const MaintenanceList = props => {
   const getListOpticalCablesAPI = async () => {
     await MaintenanceManagementAPI.GetMaintenanceIssuesAPI(token)
       .then(res => {
-        setListOpticalCables(res?.data?.data);
+        setWorkList(res?.data?.data);
       })
       .catch(error => console.log(error));
   };
+  filteredworkList;
+  const filteredworkList = () =>
+    workList.filter(eachworkList =>
+      eachworkList?.optical_cable
+        .toLocaleLowerCase()
+        .includes(search.toLocaleLowerCase()),
+    );
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     try {
@@ -98,14 +105,20 @@ const MaintenanceList = props => {
         </View>
       </View>
       <View style={{flex: 1}}>
-        <FlatList
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          data={listOpticalCables}
-          keyExtractor={key => key.id}
-          renderItem={({item, index}) => renderItem(item, index)}
-        />
+        {filteredworkList().length > 0 ? (
+          <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            data={filteredworkList()}
+            keyExtractor={key => key?.id}
+            renderItem={({item, index}) => renderItem(item, index)}
+          />
+        ) : (
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={styles.textWarning}>Không tìm thấy sự cố</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -170,6 +183,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
+  },
+  textWarning: {
+    color: colors.mainColor,
+    fontWeight: 'bold',
+    fontSize: 28,
   },
 });
 export default MaintenanceList;

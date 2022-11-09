@@ -17,12 +17,15 @@ const HomeNavigation = props => {
       <View style={styles.view}>
         <Image
           source={icon}
-          style={[{tintColor: focused ? colors.purple : 'black'}, styles.image]}
+          style={[
+            {tintColor: focused ? colors.mainColor : 'black'},
+            styles.image,
+          ]}
           resizeMode="contain"
         />
         <Text
           style={[
-            {color: focused ? colors.purple : 'rgb(119,119,119)'},
+            {color: focused ? colors.mainColor : 'rgb(119,119,119)'},
             styles.text,
           ]}>
           {title}
@@ -50,7 +53,7 @@ const HomeNavigation = props => {
         name={'StackHomeNavigation'}
         options={{
           headerShown: false,
-          tabBarActiveTintColor: colors.purple,
+          tabBarActiveTintColor: colors.mainColor,
           tabBarInactiveTintColor: 'rgb(119,119,119)',
           tabBarIcon: ({color, focused, size}) =>
             renderTabBar(focused, icons.ic_home, 'trang chủ'),
@@ -61,7 +64,7 @@ const HomeNavigation = props => {
         name={'StackChatNavigation'}
         options={{
           headerShown: false,
-          tabBarActiveTintColor: colors.purple,
+          tabBarActiveTintColor: colors.mainColor,
           tabBarInactiveTintColor: 'rgb(119,119,119)',
           tabBarIcon: ({color, focused, size}) =>
             renderTabBar(focused, icons.ic_chats, 'Trò chuyện'),
@@ -72,7 +75,7 @@ const HomeNavigation = props => {
         name={'StackWordListNavigation'}
         options={{
           headerShown: false,
-          tabBarActiveTintColor: colors.purple,
+          tabBarActiveTintColor: colors.mainColor,
           tabBarInactiveTintColor: 'rgb(119,119,119)',
           tabBarIcon: ({color, focused, size}) => renderMidButton(),
         }}
@@ -83,7 +86,7 @@ const HomeNavigation = props => {
         name={'StackNotificationNavigation'}
         options={{
           headerShown: false,
-          tabBarActiveTintColor: colors.purple,
+          tabBarActiveTintColor: colors.mainColor,
           tabBarInactiveTintColor: 'rgb(119,119,119)',
           tabBarIcon: ({color, focused, size}) =>
             renderTabBar(focused, icons.ic_bell, 'Thông báo'),
@@ -94,7 +97,7 @@ const HomeNavigation = props => {
         name={'StackAccountNavigation'}
         options={{
           headerShown: false,
-          tabBarActiveTintColor: colors.purple,
+          tabBarActiveTintColor: colors.mainColor,
           tabBarInactiveTintColor: 'rgb(119,119,119)',
           tabBarIcon: ({color, focused, size}) =>
             renderTabBar(focused, icons.ic_gear, 'Tài khoản'),
@@ -111,7 +114,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
-    backgroundColor: colors.purple,
+    backgroundColor: colors.mainColor,
     justifyContent: 'center',
     alignItems: 'center',
   },

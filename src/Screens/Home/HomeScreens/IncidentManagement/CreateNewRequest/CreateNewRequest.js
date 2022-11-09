@@ -23,60 +23,32 @@ import CustomModalSelectUserAssigned from '../../../../../Components/CustomModal
 import UsersAPI from '../../../../../Api/Home/UsersAPI/UsersAPI';
 import CustomModalCamera from '../../../../../Components/CustomModalCamera';
 import common from '../../../../../utils/common';
+import {uuid} from '../../../../../utils/uuid';
 import ImagePicker from 'react-native-image-crop-picker';
 import IncidentManagementAPI from '../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
-import CustomModalDateTimePicker from '../../../../../Components/CustomModalDateTimePicker';
 const CreateNewRequest = props => {
   const navigation = useNavigation();
   const [opticalCableId, setOpticalCableId] = useState(null);
   const [userAssignedId, setUserAssignedId] = useState(null);
   const [requiredTime, setRequiredTime] = useState('');
   const [description, setDescription] = useState('');
-  const [image, setImage] = useState(null);
+  const [albumImage, setAlbumImage] = useState([]);
   const [modalOpticalCable, setModalOpticalCable] = useState(false);
   const [modaUserAssigned, setModalUserAssigned] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
   const token = useSelector(state => state?.token?.token);
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const [listOfEmployee, setListOfEmployee] = useState([]);
-  const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState(new Date());
-  const [formatValueDate, setFormaValuetDate] = useState();
-  const [formatValueTime, setFormaValuetTime] = useState();
-  const [modalDate, setModalDate] = useState(false);
-  const [modalTime, setModalTime] = useState(false);
   const isReady = () =>
     opticalCableId != null &&
     userAssignedId != null &&
-    requiredTime.length > 0 &&
     description.length > 0 &&
-    image != null;
+    albumImage != [];
 
   useEffect(() => {
     getListData();
   }, []);
-  const options = {
-    timeZone: 'Asia/Ho_Chi_Minh',
-    hour12: true,
-    hour: '2-digit',
-    minute: '2-digit',
-  };
-  useEffect(() => {
-    setFormaValuetDate(formatDate(date));
-    setFormaValuetTime(time.toLocaleTimeString('en-UK', options));
-    setRequiredTime(`${formatValueDate} ${formatValueTime}`);
-  }, [date, time]);
-  const formatDate = date => {
-    let d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
 
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [year, month, day].join('-');
-  };
   const getListData = async () => {
     await OpticalCablesAPI.GetOpticalCablesAPI(token)
       .then(res => {
@@ -104,8 +76,8 @@ const CreateNewRequest = props => {
   const openCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
       .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        setImage(imageConverted1);
+        const imageConverted = await common.resizeImageNotVideo(image);
+        addResult(imageConverted);
         setModalCamera(false);
       })
       .catch(e => {
@@ -116,8 +88,8 @@ const CreateNewRequest = props => {
   const openGallery = () => {
     ImagePicker.openPicker({})
       .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        setImage(imageConverted1);
+        const imageConverted = await common.resizeImageNotVideo(image);
+        addResult(imageConverted);
         setModalCamera(false);
       })
       .catch(e => {
@@ -125,21 +97,31 @@ const CreateNewRequest = props => {
         setModalCamera(false);
       });
   };
+  const addResult = image => {
+    const eachResult = [...albumImage, image];
+    setAlbumImage(eachResult);
+  };
+  const renderImage = image => {
+    return (
+      <Image
+        source={{uri: image?.uri}}
+        style={{width: 200, height: 200, marginHorizontal: 5}}
+        resizeMode={'contain'}
+      />
+    );
+  };
 
   const createRequest = async () => {
-    const descrip = description;
-    const required_time = requiredTime;
-    const optical_cable_id = parseInt(opticalCableId?.id);
-    const user_assigned_id = parseInt(userAssignedId?.id);
-    const img = image;
-
+    let description = description;
+    let optical_cable_id = parseInt(opticalCableId?.id);
+    let user_assigned_id = parseInt(userAssignedId?.id);
+    document_files = albumImage;
     await IncidentManagementAPI.CreateIssuesRequestAPI(
       token,
-      descrip,
-      required_time,
+      description,
       optical_cable_id,
       user_assigned_id,
-      img,
+      document_files,
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
@@ -160,12 +142,8 @@ const CreateNewRequest = props => {
             openCamera={() => openCamera()}
             openGallery={() => openGallery()}
             modalVisible={modalCamera}
-            onRequestClose={() => {
-              setModalCamera(false);
-            }}
-            cancel={() =>
-              setModalCamera(prev => (prev == false ? true : false))
-            }
+            onRequestClose={() => setModalCamera(false)}
+            cancel={() => setModalCamera(false)}
           />
         </View>
       )}
@@ -190,38 +168,6 @@ const CreateNewRequest = props => {
               setModalUserAssigned(false);
             }}
             onPress={item => chooseEmployee(item)}
-          />
-        </View>
-      )}
-      {modalDate && (
-        <View style={styles.styleModal}>
-          <CustomModalDateTimePicker
-            mode={'date'}
-            modalVisible={modalDate}
-            onRequestClose={() => setModalDate(false)}
-            openPicker={modalDate}
-            value={date}
-            onCancel={() => setModalDate(false)}
-            onDateChange={date => {
-              setDate(date);
-            }}
-            onPress={() => setModalDate(false)}
-          />
-        </View>
-      )}
-      {modalTime && (
-        <View style={styles.styleModal}>
-          <CustomModalDateTimePicker
-            mode={'time'}
-            modalVisible={modalTime}
-            onRequestClose={() => setModalTime(false)}
-            openPicker={modalTime}
-            value={time}
-            onCancel={() => setModalTime(false)}
-            onDateChange={date => {
-              setTime(date);
-            }}
-            onPress={() => setModalTime(false)}
           />
         </View>
       )}
@@ -252,27 +198,7 @@ const CreateNewRequest = props => {
             </Text>
             <Image source={icons.ic_downArrow} style={styles.imagePicker} />
           </TouchableOpacity>
-          <Text style={styles.title}>Thời gian yêu cầu</Text>
-          <View style={styles.viewDateTime}>
-            <TouchableOpacity
-              style={styles.buttonDateTime}
-              onPress={() => setModalTime(true)}>
-              <Text style={styles.textDateTime}>{formatValueTime}</Text>
-              <Image
-                source={icons.ic_downArrow}
-                style={{width: 15, height: 15}}
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.buttonDateTime}
-              onPress={() => setModalDate(true)}>
-              <Text style={styles.textDateTime}>{formatValueDate}</Text>
-              <Image
-                source={icons.ic_downArrow}
-                style={{width: 15, height: 15}}
-              />
-            </TouchableOpacity>
-          </View>
+
           <Text style={styles.title}>Nội dung</Text>
           <View style={styles.viewContent}>
             <TextInput
@@ -284,25 +210,19 @@ const CreateNewRequest = props => {
             />
           </View>
           <Text style={styles.title}>File đính kèm</Text>
-          {image ? (
-            <Image
-              source={{uri: Platform.OS == 'ios' ? image?.path : image?.uri}}
-              style={{
-                width: 300,
-                height: 300,
-                marginVertical: 10,
-                alignSelf: 'center',
-              }}
-              resizeMode={'contain'}
-            />
-          ) : (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setModalCamera(true)}>
-              <Image style={styles.imageUpload} source={icons.ic_upload} />
-              <Text style={styles.textUpload}>Up ảnh</Text>
-            </TouchableOpacity>
-          )}
+          <FlatList
+            horizontal
+            style={{height: 200}}
+            data={albumImage}
+            keyExtractor={uuid}
+            renderItem={({item}) => renderImage(item)}
+          />
+          <TouchableOpacity
+            style={[styles.button, {marginTop: 10}]}
+            onPress={() => setModalCamera(true)}>
+            <Image style={styles.imageUpload} source={icons.ic_upload} />
+            <Text style={styles.textUpload}>Up ảnh</Text>
+          </TouchableOpacity>
           <CustomTextButton
             disabled={isReady() ? false : true}
             label={'Xác nhận'}

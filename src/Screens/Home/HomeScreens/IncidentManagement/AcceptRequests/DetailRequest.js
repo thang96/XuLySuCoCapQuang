@@ -12,32 +12,40 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import IncidentManagementAPI from '../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
+import {uuid} from '../../../../../utils/uuid';
 const DetailRequest = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
   const route = useRoute();
-  const rejectIssue = async () => {
-    await IncidentManagementAPI.RejectIssueAPI(token, route.params?.id)
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    getResult();
+  }, [route, token]);
+  const getResult = async () => {
+    let id = route.params;
+    await IncidentManagementAPI.GetIncidentIssueByIdAPI(token, id)
       .then(res => {
-        if (res?.status == 200 && res?.data?.success == true) {
-          alert('Từ chối thành công');
-          navigation.navigate('AcceptRequests');
-        }
+        setResult(res?.data?.data);
+        setLoading(false);
       })
-      .catch(error => {
+      .catch(function (error) {
         console.log(error);
-        alert('Từ chối thất bại');
       });
   };
+  const rejectIssue = async () => {
+    navigation.goBack();
+  };
   const receiveIssue = async () => {
-    let id = route.params?.id;
+    let id = result?.id;
     await IncidentManagementAPI.ReceiveIssueAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
@@ -49,6 +57,19 @@ const DetailRequest = props => {
         console.log(error);
       });
   };
+  const renderDocumentFiles = item => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ShowImageScreen', item)}
+        style={{borderWidth: 1}}>
+        <Image
+          source={{uri: item?.path}}
+          style={{width: 200, height: 200, marginRight: 5}}
+          resizeMode={'contain'}
+        />
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={styles.container}>
       <CustomAppBar
@@ -56,54 +77,64 @@ const DetailRequest = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <ScrollView style={styles.eachContainer}>
-        <Text style={[styles.title, {marginBottom: 10}]}>
-          Thông tin công việc
-        </Text>
-        <ComponentViewRow title={'Mã VC : '} content={route.params?.code} />
-        <ComponentViewRow title={'ID: '} content={route.params?.id} />
-        <ComponentViewRow
-          title={'Nhân sự kỹ thuật : '}
-          content={route.params?.user_assigned}
-        />
-        <ComponentViewRow
-          title={'Tình trạng : '}
-          styleContent={{
-            color:
-              route.params?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
-          }}
-          content={route.params?.issue_status}
-        />
-        <ComponentViewRow
-          title={'Tuyến cáp : '}
-          content={route.params?.optical_cable}
-        />
-        <ComponentViewRow
-          title={'Thời gian yêu cầu : '}
-          content={route.params?.required_time}
-        />
-        <ComponentViewRow
-          title={'Mô tả sự cố : '}
-          content={route.params?.description}
-        />
-        <ComponentViewRow
-          title={'File đính kèm : '}
-          source={route.params?.document}
-        />
-        <ComponentViewRow
-          title={'Thời gian tiếp nhận : '}
-          content={route.params?.received_time}
-        />
-        <ComponentViewRow
-          title={'Thời gian hoàn thành : '}
-          content={route.params?.completion_time}
-        />
-      </ScrollView>
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <ScrollView style={styles.eachContainer}>
+          <Text style={[styles.title, {marginBottom: 10}]}>
+            Thông tin công việc
+          </Text>
+          <ComponentViewRow title={'Mã VC : '} content={result?.code} />
+          <ComponentViewRow title={'ID: '} content={result?.id} />
+          <ComponentViewRow
+            title={'Nhân sự kỹ thuật : '}
+            content={result?.user_assigned}
+          />
+          <ComponentViewRow
+            title={'Tình trạng : '}
+            styleContent={{
+              color: result?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
+            }}
+            content={result?.issue_status}
+          />
+          <ComponentViewRow
+            title={'Tuyến cáp : '}
+            content={result?.optical_cable}
+          />
+          <ComponentViewRow
+            title={'Thời gian yêu cầu : '}
+            content={result?.required_time}
+          />
+          <ComponentViewRow
+            title={'Mô tả sự cố : '}
+            content={result?.description}
+          />
+          <View>
+            <Text style={styles.content}>File đính kèm : </Text>
+            <FlatList
+              style={{height: 210}}
+              horizontal
+              data={result?.document_files}
+              keyExtractor={uuid}
+              renderItem={({item}) => renderDocumentFiles(item)}
+            />
+          </View>
+          <ComponentViewRow
+            title={'Thời gian tiếp nhận : '}
+            content={result?.received_time}
+          />
+          <ComponentViewRow
+            title={'Thời gian hoàn thành : '}
+            content={result?.completion_time}
+          />
+        </ScrollView>
+      )}
+
       {userInfor?.role != 'GENERAL_MANAGER' && (
         <ComponentTwoButton
-          disabledLeft={route.params?.issue_status == 'TỪ CHỐI' ? true : false}
+          disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
           disabledRight={
-            route.params?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
+            result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
           }
           onPressLeft={() => rejectIssue()}
           onPressRight={() => receiveIssue()}
@@ -176,10 +207,10 @@ const ComponentTwoButton = props => {
         onPress={onPressLeft}
         style={styles.buttonComponentTwoButton}>
         <Image
-          source={icons.ic_edit}
+          source={icons.ic_back}
           style={[styles.imageComponentTwoButton, {tintColor: 'grey'}]}
         />
-        <Text>Từ chối</Text>
+        <Text>Quay lại</Text>
       </TouchableOpacity>
       <TouchableOpacity
         disabled={disabledRight}

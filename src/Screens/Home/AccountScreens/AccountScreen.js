@@ -15,7 +15,6 @@ import CustomAppBar from '../../../Components/CustomAppBar';
 import {icons, colors, images} from '../../../Constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const AccountScreen = props => {
-  const windowWidth = Dimensions.get('screen').width;
   const navigation = useNavigation();
   const token = useSelector(state => state?.token?.token);
   const [userInfo, setUserInfo] = useState(null);
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 40,
   },
-  icon: {width: 30, height: 30, tintColor: colors.purple},
+  icon: {width: 30, height: 30, tintColor: colors.mainColor},
   title: {fontSize: 16, marginLeft: 5, color: colors.grey},
   iconNext: {width: 15, height: 15, tintColor: 'rgb(119,119,119)'},
   buttonLogOut: {

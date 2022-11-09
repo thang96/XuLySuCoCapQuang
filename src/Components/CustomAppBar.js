@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   viewAppBar: {
     height: 56,
     width: '100%',
-    backgroundColor: colors.purple,
+    backgroundColor: colors.mainColor,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',

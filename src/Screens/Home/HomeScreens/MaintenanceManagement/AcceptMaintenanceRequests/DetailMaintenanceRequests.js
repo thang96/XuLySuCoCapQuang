@@ -17,14 +17,29 @@ import {colors, icons, images} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
-import IncidentManagementAPI from '../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
+import MaintenanceManagementAPI from '../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
+import {uuid} from '../../../../../utils/uuid';
 const DetailMaintenanceRequests = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
+  const [result, setResult] = useState(null);
   const route = useRoute();
+  useEffect(() => {
+    getDetail();
+  }, [route, token]);
+  const getDetail = async () => {
+    let id = route.params;
+    await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(token, id)
+      .then(res => {
+        setResult(res?.data?.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   const rejectIssue = async () => {
-    await IncidentManagementAPI.RejectIssueAPI(token, route.params?.id)
+    await MaintenanceManagementAPI.RejectMaintenanceIssueAPI(token, result?.id)
       .then(res => {
         if (res?.status == 200) {
           alert('Từ chối thành công');
@@ -36,8 +51,8 @@ const DetailMaintenanceRequests = props => {
       });
   };
   const receiveIssue = async () => {
-    let id = route.params?.id;
-    await IncidentManagementAPI.ReceiveIssueAPI(token, id)
+    let id = result?.id;
+    await MaintenanceManagementAPI.ReceiveMaintenanceIssueAPI(token, id)
       .then(res => {
         if (res?.status == 200) {
           alert('Tiếp nhận thành công');
@@ -47,6 +62,19 @@ const DetailMaintenanceRequests = props => {
       .catch(error => {
         console.log(error);
       });
+  };
+  const renderDocumentFiles = item => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ShowImageScreen', item)}
+        style={{borderWidth: 1}}>
+        <Image
+          source={{uri: item?.path}}
+          style={{width: 200, height: 200, marginRight: 5}}
+          resizeMode={'contain'}
+        />
+      </TouchableOpacity>
+    );
   };
   return (
     <View style={styles.container}>
@@ -61,50 +89,55 @@ const DetailMaintenanceRequests = props => {
         <Text style={[styles.title, {marginBottom: 10}]}>
           Thông tin công việc
         </Text>
-        <ComponentViewRow title={'Mã VC : '} content={route.params?.code} />
-        <ComponentViewRow title={'ID: '} content={route.params?.id} />
+        <ComponentViewRow title={'Mã VC : '} content={result?.code} />
+        <ComponentViewRow title={'ID: '} content={result?.id} />
         <ComponentViewRow
           title={'Nhân sự kỹ thuật : '}
-          content={route.params?.user_assigned}
+          content={result?.user_assigned}
         />
         <ComponentViewRow
           title={'Tình trạng : '}
           styleContent={{
-            color:
-              route.params?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
+            color: result?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
           }}
-          content={route.params?.issue_status}
+          content={result?.issue_status}
         />
         <ComponentViewRow
           title={'Tuyến cáp : '}
-          content={route.params?.optical_cable}
+          content={result?.optical_cable}
         />
         <ComponentViewRow
           title={'Thời gian yêu cầu : '}
-          content={route.params?.required_time}
+          content={result?.required_time}
         />
         <ComponentViewRow
           title={'Mô tả sự cố : '}
-          content={route.params?.description}
+          content={result?.description}
         />
-        <ComponentViewRow
-          title={'File đính kèm : '}
-          source={route.params?.document}
-        />
+        <View>
+          <Text style={styles.content}>File đính kèm : </Text>
+          <FlatList
+            style={{height: 210}}
+            horizontal
+            data={result?.document_files}
+            keyExtractor={uuid}
+            renderItem={({item}) => renderDocumentFiles(item)}
+          />
+        </View>
         <ComponentViewRow
           title={'Thời gian tiếp nhận : '}
-          content={route.params?.received_time}
+          content={result?.received_time}
         />
         <ComponentViewRow
           title={'Thời gian hoàn thành : '}
-          content={route.params?.completion_time}
+          content={result?.completion_time}
         />
       </ScrollView>
       {userInfor?.role != 'GENERAL_MANAGER' && (
         <ComponentTwoButton
-          disabledLeft={route.params?.issue_status == 'TỪ CHỐI' ? true : false}
+          disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
           disabledRight={
-            route.params?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
+            result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
           }
           onPressLeft={() => rejectIssue()}
           onPressRight={() => receiveIssue()}
@@ -177,10 +210,10 @@ const ComponentTwoButton = props => {
         onPress={onPressLeft}
         style={styles.buttonComponentTwoButton}>
         <Image
-          source={icons.ic_edit}
+          source={icons.ic_back}
           style={[styles.imageComponentTwoButton, {tintColor: 'grey'}]}
         />
-        <Text>Từ chối</Text>
+        <Text style={{color: 'grey'}}>Quay lại</Text>
       </TouchableOpacity>
       <TouchableOpacity
         disabled={disabledRight}
@@ -193,7 +226,7 @@ const ComponentTwoButton = props => {
             {tintColor: colors.mainColor},
           ]}
         />
-        <Text>Tiếp nhận</Text>
+        <Text style={{color: colors.mainColor}}>Tiếp nhận</Text>
       </TouchableOpacity>
     </View>
   );

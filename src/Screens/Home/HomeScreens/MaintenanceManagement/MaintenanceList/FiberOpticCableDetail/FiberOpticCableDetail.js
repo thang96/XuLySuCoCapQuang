@@ -16,6 +16,7 @@ import {
 import {colors, icons, images} from '../../../../../../Constants';
 import CustomAppBar from '../../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
+import {uuid} from '../../../../../../utils/uuid';
 import {useSelector} from 'react-redux';
 import MaintenanceManagementAPI from '../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
@@ -28,7 +29,6 @@ const FiberOpticCableDetail = props => {
   useEffect(() => {
     getDetail();
   }, [route, token]);
-
   const getDetail = async () => {
     let id = route.params;
     await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(token, id)
@@ -83,6 +83,17 @@ const FiberOpticCableDetail = props => {
       .catch(function (error) {
         console.log(error);
       });
+  };
+  const renderDocumentFiles = image => {
+    return (
+      <TouchableOpacity style={{borderWidth: 1}}>
+        <Image
+          source={{uri: image?.path}}
+          style={{width: 200, height: 200, marginRight: 5}}
+          resizeMode={'contain'}
+        />
+      </TouchableOpacity>
+    );
   };
   return (
     <View style={styles.container}>
@@ -141,10 +152,17 @@ const FiberOpticCableDetail = props => {
           }}
           content={result?.issue_status}
         />
-        <ComponentViewRow
-          title={'File đính kèm : '}
-          source={result?.document}
-        />
+        <View>
+          <Text style={styles.content}>File đính kèm : </Text>
+          <FlatList
+            data={result?.document_files}
+            keyExtractor={uuid}
+            horizontal
+            style={{height: 210}}
+            renderItem={({item}) => renderDocumentFiles(item)}
+          />
+        </View>
+
         <ComponentViewRow
           title={'Thời gian tạo : '}
           content={result?.created_time}

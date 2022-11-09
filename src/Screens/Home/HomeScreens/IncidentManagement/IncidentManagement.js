@@ -22,15 +22,15 @@ const IncidentManagement = () => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
-  const getListHistoryIncident = async () => {
-    await IncidentManagementAPI.ExportIssueAPI(token)
-      .then(res => {
-        console.log(res?.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
+  // const getListHistoryIncident = async () => {
+  //   await IncidentManagementAPI.ExportIssueAPI(token)
+  //     .then(res => {
+  //       console.log(res?.data);
+  //     })
+  //     .catch(function (error) {
+  //       console.log(error);
+  //     });
+  // };
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView style={styles.container}>
@@ -68,7 +68,7 @@ const IncidentManagement = () => {
               styleView={styles.customButtonFunction}
               styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_optical}
-              title={'Quản lý\nthông tin tuyến'}
+              title={'Quản lý\nthông tin\ntuyến'}
               titleColor={colors.mainColor}
               onPress={() =>
                 navigation.navigate('InformationListOfCableRoutes')
@@ -78,7 +78,7 @@ const IncidentManagement = () => {
               styleView={styles.customButtonFunction}
               styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_documentManagement}
-              title={'Kết xuất\ntổng hợp'}
+              title={'Tổng hợp\nbáo cáo\nsự cố'}
               titleColor={colors.mainColor}
               onPress={() => navigation.navigate('ContinueScreen')}
             />
@@ -89,7 +89,7 @@ const IncidentManagement = () => {
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
                 icon={icons.ic_receive_request}
-                title={'Tiếp nhận\nyêu cầu'}
+                title={'Tiếp nhận\nyêu cầu\nsự cố'}
                 titleColor={colors.mainColor}
                 onPress={() => navigation.navigate('AcceptRequests')}
               />
@@ -98,7 +98,7 @@ const IncidentManagement = () => {
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
                 icon={icons.ic_edit}
-                title={'Tạo mới\nyêu cầu'}
+                title={'Tạo mới\nyêu cầu\nsự cố'}
                 titleColor={colors.mainColor}
                 onPress={() => navigation.navigate('CreateNewRequest')}
               />
@@ -107,18 +107,18 @@ const IncidentManagement = () => {
               styleView={styles.customButtonFunction}
               styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_checkList}
-              title={'Danh sách\ncông việc'}
+              title={'Danh sách\nsự cố'}
               titleColor={colors.mainColor}
               onPress={() => navigation.navigate('IncidentList')}
             />
-            <CustomButtonFunction
+            {/* <CustomButtonFunction
               styleView={styles.customButtonFunction}
               styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_report}
               title={'Kết xuất\nbáo cáo'}
               titleColor={colors.mainColor}
               onPress={() => getListHistoryIncident()}
-            />
+            /> */}
           </View>
           <View style={styles.viewRow}>
             <CustomButtonFunction
@@ -215,11 +215,6 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.grey,
     marginTop: 30,
     flexDirection: 'row',
-  },
-  customButtonFunction: {
-    height: 90,
-    width: 90,
-    marginRight: 5,
   },
 });
 export default IncidentManagement;

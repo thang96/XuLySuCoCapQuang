@@ -1,5 +1,5 @@
 import axios from 'axios';
-BASEURL = 'http://139.180.186.103';
+BASEURL = 'https://api-capquang-dev.iwannatechvn.com';
 const QUERY = '/api/v1/login/test-token';
 const LoginTestToken = token => {
   return new Promise((resolve, reject) => {

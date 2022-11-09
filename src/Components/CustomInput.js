@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
+import {colors} from '../Constants';
 const CustomInput = props => {
   const {
     styleInput,
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 18,
   },
-  image: {width: 25, height: 25},
+  image: {width: 25, height: 25, tintColor: colors.mainColor},
   button: {
     width: 50,
     height: 50,

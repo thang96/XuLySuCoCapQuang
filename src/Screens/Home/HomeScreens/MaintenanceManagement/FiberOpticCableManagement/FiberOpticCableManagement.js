@@ -23,7 +23,7 @@ import {ScreenStackHeaderSearchBarView} from 'react-native-screens';
 const FiberOpticCableManagement = props => {
   const navigation = useNavigation();
   const route = useRoute();
-  const [listOpticalCables, setListOpticalCables] = useState(null);
+  const [listOpticalCables, setListOpticalCables] = useState([]);
   const token = useSelector(state => state?.token?.token);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
@@ -37,6 +37,12 @@ const FiberOpticCableManagement = props => {
       })
       .catch(error => console.log(error));
   };
+  const filteredOpticalCables = () =>
+    listOpticalCables.filter(eachOpticalCables =>
+      eachOpticalCables?.name
+        .toLocaleLowerCase()
+        .includes(search.toLocaleLowerCase()),
+    );
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     try {
@@ -93,7 +99,11 @@ const FiberOpticCableManagement = props => {
               <Text style={{color: colors.mainColor}}>Tạo tuyến cáp</Text>
               <CustomButtonIcon
                 styleButton={styles.styleCustomButtonIcon}
-                imageStyle={{width: 40, height: 40}}
+                imageStyle={{
+                  width: 40,
+                  height: 40,
+                  tintColor: colors.mainColor,
+                }}
                 source={icons.ic_plusPurple}
                 onPress={() => navigation.navigate('CreateNewCableRoute')}
               />
@@ -107,14 +117,20 @@ const FiberOpticCableManagement = props => {
         </View>
       </View>
       <View style={{flex: 1}}>
-        <FlatList
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          data={listOpticalCables}
-          keyExtractor={key => key.id}
-          renderItem={({item, index}) => renderItem(item, index)}
-        />
+        {filteredOpticalCables().length > 0 ? (
+          <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            data={filteredOpticalCables()}
+            keyExtractor={key => key.id}
+            renderItem={({item, index}) => renderItem(item, index)}
+          />
+        ) : (
+          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={styles.textWarning}>Không tìm thấy tuyến cáp</Text>
+          </View>
+        )}
       </View>
     </View>
   );
@@ -170,6 +186,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  textWarning: {
+    color: colors.mainColor,
+    fontWeight: 'bold',
+    fontSize: 28,
   },
 });
 export default FiberOpticCableManagement;

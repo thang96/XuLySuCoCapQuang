@@ -23,12 +23,19 @@ const IncidentList = props => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const token = useSelector(state => state?.token?.token);
-  const [workList, setWorkList] = useState(null);
+  const [workList, setWorkList] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
   useEffect(() => {
     getResult();
   }, []);
+  filteredworkList;
+  const filteredworkList = () =>
+    workList.filter(eachworkList =>
+      eachworkList?.optical_cable
+        .toLocaleLowerCase()
+        .includes(search.toLocaleLowerCase()),
+    );
   const getResult = async () => {
     await IncidentManagementAPI.GetListIssuesAPI(token)
       .then(res => {
@@ -66,7 +73,7 @@ const IncidentList = props => {
     <View style={styles.container}>
       <CustomAppBar
         iconsLeft={icons.ic_back}
-        title={'Danh sách công việc'}
+        title={'Danh sách sự cố'}
         onPressIconsLeft={() => navigation.goBack()}
       />
       <View style={styles.eachContainer}>
@@ -80,7 +87,7 @@ const IncidentList = props => {
             onChangeText={text => setSearch(text)}
           />
         </View>
-        <View style={[styles.viewRowParents,{marginVertical:5}]}>
+        <View style={[styles.viewRowParents, {marginVertical: 5}]}>
           <Text style={styles.title}>Lọc</Text>
           <TouchableOpacity
             onPress={() => setModalVisible(true)}
@@ -92,21 +99,27 @@ const IncidentList = props => {
             />
           </TouchableOpacity>
         </View>
-      
+
         <View style={styles.viewRowParents}>
           <Text style={styles.textTitle}>ID</Text>
           <Text style={styles.textTitle}>Tuyến cáp</Text>
           <Text style={styles.textTitle}>Tình trạng</Text>
         </View>
         <View style={{flex: 1}}>
-          <FlatList
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            data={workList}
-            keyExtractor={key => key?.id}
-            renderItem={({item, index}) => renderItem(item, index)}
-          />
+          {filteredworkList().length > 0 ? (
+            <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              data={filteredworkList()}
+              keyExtractor={key => key?.id}
+              renderItem={({item, index}) => renderItem(item, index)}
+            />
+          ) : (
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={styles.textWarning}>Không tìm thấy sự cố</Text>
+            </View>
+          )}
         </View>
         <View
           style={[styles.viewRowParents, {height: 30, alignItems: 'center'}]}>
@@ -162,7 +175,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 5,
-    alignItems:'center'
+    alignItems: 'center',
   },
   textTitle: {
     color: colors.grey,
@@ -193,6 +206,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
+  },
+  textWarning: {
+    color: colors.mainColor,
+    fontWeight: 'bold',
+    fontSize: 28,
   },
 });
 export default IncidentList;

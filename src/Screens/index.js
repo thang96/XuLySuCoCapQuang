@@ -1,6 +1,7 @@
 //Splash
 import Splash from './Splash';
 import ContinueScreen from './ContinueScreen';
+import ShowImageScreen from './ShowImageScreen';
 //Login screen
 import LoginScreen from './Login/LoginScreen';
 import ForgotPassword from './Login/ForgotPassword';
@@ -78,6 +79,8 @@ import WordList from './Home/WordList/WorkList';
 export {
   Splash,
   ContinueScreen,
+  ShowImageScreen,
+  //Login
   LoginScreen,
   ForgotPassword,
   ConfirmSuccessfulPasswordChange,

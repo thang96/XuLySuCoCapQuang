@@ -1,5 +1,5 @@
 import axios from 'axios';
-BASEURL = 'http://139.180.186.103';
+BASEURL = 'https://api-capquang-dev.iwannatechvn.com';
 const QUERY = '/api/v1/login/access-token';
 const LoginAccessToken = (username, password) => {
   const formData = new FormData();

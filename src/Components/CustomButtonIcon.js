@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  TextInput,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
+import {View, Image, StyleSheet, TouchableOpacity} from 'react-native';
 const CustomButtonIcon = props => {
   const {styleButton, source, onPress, imageStyle} = props;
   return (

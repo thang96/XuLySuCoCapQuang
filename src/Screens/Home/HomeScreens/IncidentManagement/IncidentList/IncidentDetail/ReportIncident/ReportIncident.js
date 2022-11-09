@@ -21,26 +21,23 @@ import CustomInput from '../../../../../../../Components/CustomInput';
 import CustomTextInputChangeValue from '../../../../../../../Components/CustomTextInputChangeValue';
 import {colors, icons} from '../../../../../../../Constants';
 import common from '../../../../../../../utils/common';
+import {uuid} from '../../../../../../../utils/uuid';
 import ImagePicker from 'react-native-image-crop-picker';
 import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 import {useSelector} from 'react-redux';
 import RNLocation from 'react-native-location';
+import CustomButtonIcon from '../../../../../../../Components/CustomButtonIcon';
 const ReportIncident = props => {
   const navigation = useNavigation();
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const [request, setRequest] = useState(null);
   const [autoLocation, setAutoLocation] = useState(false);
-  const [autoTimeNow, setAutoTimeNow] = useState(false);
-
-  const [startTime, setStartTime] = useState('');
-  const [finishTime, setFinishTime] = useState('');
-  const [totalProcessingTime, setTotalProcessingTime] = useState('');
   const [locationLongitude, setLocationLongitude] = useState('');
   const [locationLatitude, setLocationLatitude] = useState('');
   const [reason, setReason] = useState('');
   const [solution, setSolution] = useState('');
-  const [reportDocument, setReportDocument] = useState(null);
+  const [reportDocument, setReportDocument] = useState([]);
 
   useEffect(() => {
     getRequest();
@@ -50,7 +47,6 @@ const ReportIncident = props => {
     await IncidentManagementAPI.GetIncidentIssueByIdAPI(token, id)
       .then(res => {
         setRequest(res?.data?.data);
-        setStartTime(res?.data?.data?.received_time);
       })
       .catch(error => {
         console.log(error);
@@ -58,14 +54,11 @@ const ReportIncident = props => {
   };
 
   const isValueOK = () =>
-    startTime.length != '' &&
-    finishTime.length != '' &&
-    totalProcessingTime.length != '' &&
     locationLongitude.length != '' &&
     locationLatitude.length != '' &&
     reason.length != '' &&
     solution.length != '' &&
-    reportDocument != null;
+    reportDocument != [];
 
   const [modalCamera, setModalCamera] = useState(false);
 
@@ -106,10 +99,11 @@ const ReportIncident = props => {
   };
 
   const openCamera = () => {
+    setModalCamera(true);
     ImagePicker.openCamera({width: 300, height: 400})
       .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        setReportDocument(imageConverted1);
+        const imageConverted = await common.resizeImageNotVideo(image);
+        addResult(imageConverted);
         setModalCamera(false);
       })
       .catch(e => {
@@ -119,10 +113,11 @@ const ReportIncident = props => {
   };
 
   const openGallery = () => {
+    setModalCamera(true);
     ImagePicker.openPicker({})
       .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        setReportDocument(imageConverted1);
+        const imageConverted = await common.resizeImageNotVideo(image);
+        addResult(imageConverted);
         setModalCamera(false);
       })
       .catch(e => {
@@ -143,15 +138,12 @@ const ReportIncident = props => {
         alert('Từ chối thất bại');
       });
   };
-  console.log(totalProcessingTime, 'origin');
+
   const sendReport = async () => {
     let issueId = request?.id;
     await IncidentManagementAPI.IssueReportAPI(
       token,
       issueId,
-      startTime,
-      finishTime,
-      totalProcessingTime,
       locationLongitude,
       locationLatitude,
       reason,
@@ -169,29 +161,31 @@ const ReportIncident = props => {
         alert('Gửi báo cáo thất bại');
       });
   };
-  const getTimeNow = () => {
-    setAutoTimeNow(prev => (prev == false ? true : false));
-    let now = new Date();
-    const formatDate = date => {
-      let d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
-
-      if (month.length < 2) month = '0' + month;
-      if (day.length < 2) day = '0' + day;
-
-      return [year, month, day].join('-');
-    };
-    const options = {
-      timeZone: 'Asia/Ho_Chi_Minh',
-      hour12: true,
-      hour: '2-digit',
-      minute: '2-digit',
-    };
-    const datenow = formatDate(now);
-    const timenow = now.toLocaleTimeString('en-UK', options);
-    setFinishTime(`${datenow} ${timenow}`);
+  const addResult = image => {
+    const eachResult = [...reportDocument, image];
+    setReportDocument(eachResult);
+  };
+  const renderImage = (image, index) => {
+    return (
+      <View style={{width: 200, height: 200}}>
+        <CustomButtonIcon
+          imageStyle={styles.imageClear}
+          source={icons.cancel}
+          styleButton={styles.buttonClear}
+          onPress={() => removeImage(index)}
+        />
+        <Image
+          source={{uri: image?.uri}}
+          style={{width: 200, height: 200, marginHorizontal: 5}}
+          resizeMode={'contain'}
+        />
+      </View>
+    );
+  };
+  const removeImage = indexID => {
+    const indexSelected = reportDocument[indexID];
+    const newArray = reportDocument.filter(item => item != indexSelected);
+    setReportDocument(newArray);
   };
   return (
     <View style={styles.container}>
@@ -262,37 +256,6 @@ const ReportIncident = props => {
             onChangeText={text => setLocationLatitude(text)}
           />
         )}
-        <Text style={styles.title}>{`Thời gian tiếp nhận : ${startTime}`}</Text>
-        <View style={styles.viewRow}>
-          <Text style={styles.title}>Thời gian hoàn thành</Text>
-          <CustomTextButton
-            textStyle={{color: colors.mainColor, fontWeight: 'bold'}}
-            styleButton={{height: 50}}
-            label={'Lấy thời gian >>'}
-            onPress={() => getTimeNow()}
-          />
-        </View>
-        {autoTimeNow == true ? (
-          <View style={styles.viewCustomTextInputChangeValue}>
-            <Text>{`${finishTime}`}</Text>
-          </View>
-        ) : (
-          <CustomInput
-            styleInput={{minHeight: 50, marginVertical: 5}}
-            placeholder={'Thời gian hoàn thành'}
-            value={finishTime}
-            onChangeText={text => setFinishTime(text)}
-          />
-        )}
-
-        <Text style={styles.title}>{'Tổng thời gian thực hiện (Giờ)'}</Text>
-        <CustomTextInputChangeValue
-          keyboardType={'numeric'}
-          styleViewInput={{height: 50, width: '100%', backgroundColor: 'white'}}
-          placeholder={'Nhập giờ'}
-          value={totalProcessingTime}
-          onChangeText={text => setTotalProcessingTime(text)}
-        />
         <Text style={styles.title}>Lý do</Text>
         <CustomTextInputChangeValue
           styleViewInput={{height: 50, width: '100%', backgroundColor: 'white'}}
@@ -308,25 +271,35 @@ const ReportIncident = props => {
           onChangeText={text => setSolution(text)}
         />
         <Text style={styles.title}>Hình ảnh báo cáo</Text>
-        {reportDocument ? (
+        <FlatList
+          horizontal
+          style={{height: 200}}
+          data={reportDocument}
+          keyExtractor={uuid}
+          renderItem={({item, index}) => renderImage(item, index)}
+        />
+        <TouchableOpacity
+          disabled={reportDocument.length < 5 ? false : true}
+          style={[styles.button, {marginTop: 10}]}
+          onPress={() => setModalCamera(true)}>
           <Image
-            source={{
-              uri:
-                Platform.OS == 'ios'
-                  ? reportDocument?.path
-                  : reportDocument?.uri,
-            }}
-            style={styles.image}
-            resizeMode={'contain'}
+            style={[
+              styles.imageUpload,
+              {
+                tintColor:
+                  reportDocument.length < 5 ? colors.mainColor : 'grey',
+              },
+            ]}
+            source={icons.ic_upload}
           />
-        ) : (
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => setModalCamera(true)}>
-            <Image style={styles.imageUpload} source={icons.ic_upload} />
-            <Text style={styles.textUpload}>Up ảnh</Text>
-          </TouchableOpacity>
-        )}
+          <Text
+            style={[
+              styles.textUpload,
+              {color: reportDocument.length < 5 ? colors.mainColor : 'grey'},
+            ]}>
+            Up ảnh
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
       <ComponentTwoButton
         disabledRight={isValueOK() ? false : true}
@@ -385,11 +358,10 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     marginRight: 5,
-    tintColor: colors.mainColor,
   },
   textUpload: {
     fontSize: 16,
-    color: colors.mainColor,
+
     fontWeight: 'bold',
   },
   button: {
@@ -402,47 +374,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-});
-const CustomComponentViewCheck = props => {
-  const {title, result, onPressOk, onPressNotOk} = props;
-  return (
-    <View style={styleComponent.view}>
-      <Text style={styles.title}>{title}</Text>
-      <View>
-        <TouchableOpacity
-          onPress={onPressOk}
-          style={styleComponent.buttonCheck}>
-          <Text style={{fontSize: 14, color: 'black'}}>Đạt</Text>
-          <Image
-            source={result == true ? icons.ic_check : icons.ic_no_check}
-            style={{height: 15, width: 15, marginLeft: 5}}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={onPressNotOk}
-          style={styleComponent.buttonCheck}>
-          <Text style={{fontSize: 14, color: 'black'}}>Không đạt</Text>
-          <Image
-            source={result == false ? icons.ic_check : icons.ic_no_check}
-            style={{height: 15, width: 15, marginLeft: 5}}
-          />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-};
-const styleComponent = StyleSheet.create({
-  view: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  buttonCheck: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginVertical: 5,
-  },
+  buttonClear: {position: 'absolute', top: 0, right: 0, zIndex: 2},
+  imageClear: {width: 25, height: 25, tintColor: 'red'},
 });
 const ComponentTwoButton = props => {
   const {onPressLeft, onPressRight, disabledLeft, disabledRight} = props;

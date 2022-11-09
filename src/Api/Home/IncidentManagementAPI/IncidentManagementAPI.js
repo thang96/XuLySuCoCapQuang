@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASEURL = 'http://139.180.186.103';
+const BASEURL = 'https://api-capquang-dev.iwannatechvn.com';
 
 const GetListIssuesAPI = token => {
   return new Promise((resolve, reject) => {
@@ -21,26 +21,28 @@ const GetListIssuesAPI = token => {
 
 const CreateIssuesRequestAPI = (
   token,
-  descrip,
-  required_time,
+  description,
   optical_cable_id,
   user_assigned_id,
-  img,
+  document_files,
 ) => {
   return new Promise((resolve, reject) => {
     const formDataCreate = new FormData();
-    formDataCreate.append('description', descrip ?? '');
+    formDataCreate.append('description', description ?? '');
     formDataCreate.append('required_time', required_time ?? '');
     formDataCreate.append('optical_cable_id', optical_cable_id ?? 0);
     formDataCreate.append('user_assigned_id', user_assigned_id ?? 0);
-    formDataCreate.append(
-      'document_file',
-      {
-        uri: Platform.OS === 'ios' ? '/private' + img?.path : img?.uri,
-        name: getFileName(img),
-        type: img?.type,
-      } ?? null,
-    );
+    for (let i = 0; i < document_files.length; i++) {
+      let image = document_files[i];
+      formDataCreate.append(
+        'document_files',
+        {
+          uri: image?.uri,
+          name: image?.name,
+          type: image?.type,
+        } ?? null,
+      );
+    }
     axios
       .post(`${BASEURL}/api/v1/issues/`, formDataCreate, {
         headers: {
@@ -158,9 +160,6 @@ const DetailIssueReportAPI = (token, id) => {
 const IssueReportAPI = (
   token,
   issueId,
-  startTime,
-  finishTime,
-  totalProcessingTime,
   locationLongitude,
   locationLatitude,
   reason,
@@ -169,27 +168,20 @@ const IssueReportAPI = (
 ) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
-    formData.append('start_time', startTime ?? '');
-    formData.append('finish_time', finishTime ?? '');
-    formData.append(
-      'total_processing_time',
-      parseFloat(totalProcessingTime) ?? 0,
-    );
-    formData.append('location_longitude', `${locationLongitude}` ?? '');
-    formData.append('location_latitude', `${locationLatitude}` ?? '');
+    formData.append('locationLongitude', locationLongitude ?? '');
+    formData.append('locationLatitude', locationLatitude ?? '');
     formData.append('reason', reason ?? '');
     formData.append('solution', solution ?? '');
-    formData.append(
-      'report_document',
-      {
-        uri:
-          Platform.OS === 'ios'
-            ? '/private' + reportDocument?.path
-            : reportDocument?.uri,
-        name: getFileName(reportDocument),
-        type: reportDocument?.mime,
-      } ?? null,
-    );
+    for (let i = 0; i < reportDocument.length; i++) {
+      formData.append(
+        'report_document',
+        {
+          uri: reportDocument?.uri,
+          name: reportDocument?.name,
+          type: reportDocument?.type,
+        } ?? null,
+      );
+    }
     axios
       .post(`${BASEURL}/api/v1/issues/${issueId}/issue_report`, formData, {
         headers: {

@@ -28,7 +28,7 @@ const CustomTwoButtonFunction = props => {
         style={[
           styles.button,
           {
-            borderBottomColor: isChoose ? colors.purple : 'rgb(119,119,119)',
+            borderBottomColor: isChoose ? colors.mainColor : 'rgb(119,119,119)',
             borderBottomWidth: isChoose ? 3 : 1,
           },
         ]}>
@@ -45,7 +45,7 @@ const CustomTwoButtonFunction = props => {
         style={[
           styles.button,
           {
-            borderBottomColor: isChoose ? 'rgb(119,119,119)' : colors.purple,
+            borderBottomColor: isChoose ? 'rgb(119,119,119)' : colors.mainColor,
             borderBottomWidth: isChoose ? 1 : 3,
           },
         ]}>
