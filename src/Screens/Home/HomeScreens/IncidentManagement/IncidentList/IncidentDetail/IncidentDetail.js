@@ -123,7 +123,11 @@ const IncidentDetail = props => {
       <CustomAppBar
         title={'Chi tiết công việc'}
         iconsLeft={icons.ic_back}
+        iconRight={
+          userInfor?.role == 'GENERAL_MANAGER' ? icons.ic_delete : null
+        }
         onPressIconsLeft={() => navigation.navigate('IncidentList')}
+        onPressIconsRight={() => setConfirm(true)}
       />
       {confirm && (
         <View style={styles.viewModal}>
@@ -215,6 +219,14 @@ const IncidentDetail = props => {
               title={'Thời gian hoàn thành : '}
               content={result?.completion_time}
             />
+            <ComponentViewRow
+              title={'Tổng thời gian thực hiện : '}
+              content={
+                result?.total_processing_time == null
+                  ? ''
+                  : `${result?.total_processing_time} phút`
+              }
+            />
             {(result?.issue_status == 'CHƯA NGHIỆM THU' ||
               result?.issue_status == 'ĐÃ HOÀN THÀNH') && (
               <ComponentViewRow
@@ -260,14 +272,6 @@ const IncidentDetail = props => {
                 />
               </View>
             )}
-          {userInfor?.role == 'GENERAL_MANAGER' && (
-            <CustomTextButton
-              textStyle={{color: 'red', fontSize: 18, fontWeight: 'bold'}}
-              styleButton={{width: 140, height: 50}}
-              label={'Xóa sự cố'}
-              onPress={() => setConfirm(true)}
-            />
-          )}
           {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
             userInfor?.role != 'EMPLOYEE' && (
               <CustomTextButton

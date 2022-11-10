@@ -107,7 +107,7 @@ const CableRouteReport = props => {
           />
         ) : (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không có tuyến cáp</Text>
+            <Text style={styles.textWarning}>Không tìm thấy tuyến cáp</Text>
           </View>
         )}
       </View>
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
   textWarning: {
     color: colors.mainColor,
     fontWeight: 'bold',
-    fontSize: 28,
+    fontSize: 20,
   },
 });
 export default CableRouteReport;

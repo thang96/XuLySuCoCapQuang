@@ -43,7 +43,7 @@ const CreateNewRequest = props => {
     opticalCableId != null &&
     userAssignedId != null &&
     description.length > 0 &&
-    albumImage != [];
+    albumImage == [];
 
   useEffect(() => {
     getListData();

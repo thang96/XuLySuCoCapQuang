@@ -44,13 +44,7 @@ const DetailOpticCableIncident = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.navigate('IncidentDetail')}
       />
-      <View style={styles.map}>
-        <Image
-          source={images.im_map}
-          style={{width: '100%', height: '100%'}}
-          resizeMode={'contain'}
-        />
-      </View>
+
       <ScrollView style={styles.eachContainer}>
         <CustomViewRow title={'Tên tuyến cáp : '} content={result?.name} />
         <CustomViewRow
@@ -143,12 +137,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     maxWidth: '65%',
-  },
-  map: {
-    width: 250,
-    height: 250,
-    alignSelf: 'center',
-    marginVertical: 20,
   },
 });
 const CustomViewRow = props => {

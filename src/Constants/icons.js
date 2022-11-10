@@ -40,6 +40,7 @@ export default {
   ic_optical: require('../Assets/Icons/ic_optical.png'),
   ic_receive_request: require('../Assets/Icons/ic_receive_request.png'),
   ic_area_manage: require('../Assets/Icons/ic_area_manage.png'),
+  ic_delete: require('../Assets/Icons/ic_delete.png'),
 
   vectorOk: require('../Assets/Icons/vectorOk.png'),
   next: require('../Assets/Icons/next.png'),

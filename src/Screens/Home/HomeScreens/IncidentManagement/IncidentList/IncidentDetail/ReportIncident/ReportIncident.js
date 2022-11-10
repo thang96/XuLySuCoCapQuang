@@ -58,7 +58,7 @@ const ReportIncident = props => {
     locationLatitude.length != '' &&
     reason.length != '' &&
     solution.length != '' &&
-    reportDocument != [];
+    reportDocument.length > 0;
 
   const [modalCamera, setModalCamera] = useState(false);
 

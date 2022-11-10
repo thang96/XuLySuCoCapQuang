@@ -69,7 +69,6 @@ const CableRouteDetails = props => {
         console.log(error);
       });
   };
-  console.log(isActive);
   const [keyboardIsShow, setKeyboardIsShow] = useState(false);
   const [editable, setEditable] = useState(false);
   useEffect(() => {
@@ -172,9 +171,13 @@ const CableRouteDetails = props => {
       <CustomAppBar
         title={'Chi tiết tuyến cáp'}
         iconsLeft={icons.ic_back}
+        iconRight={
+          userInfor?.role == 'GENERAL_MANAGER' ? icons.ic_delete : null
+        }
         onPressIconsLeft={() =>
           navigation.navigate('InformationListOfCableRoutes')
         }
+        onPressIconsRight={() => setConfirm(true)}
       />
       {confirm && (
         <View style={styles.viewModal}>
@@ -190,9 +193,6 @@ const CableRouteDetails = props => {
       )}
       {result ? (
         <ScrollView style={styles.eachContainer}>
-          {keyboardIsShow == false && (
-            <Image source={images.im_map} style={styles.imageMap} />
-          )}
           <View style={styles.viewRow}>
             <Text style={styles.title}>Chi tiết tuyến cáp</Text>
           </View>
@@ -514,14 +514,7 @@ const CableRouteDetails = props => {
               <Text style={styles.styleValueInput}>Chưa kích hoạt</Text>
             </TouchableOpacity>
           )}
-          {userInfor?.role == 'GENERAL_MANAGER' && (
-            <CustomTextButton
-              textStyle={{color: 'red', fontSize: 18, fontWeight: 'bold'}}
-              styleButton={{width: 140, height: 50}}
-              label={'Xóa tuyến cáp'}
-              onPress={() => setConfirm(true)}
-            />
-          )}
+
           {userInfor?.role == 'GENERAL_MANAGER' && (
             <CusttomTwoButtonBottom
               styleTwoButton={styles.viewCusttomTwoButtonBottom}

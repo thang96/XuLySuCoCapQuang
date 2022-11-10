@@ -19,6 +19,7 @@ const CustomAppBar = props => {
     <View style={styles.viewAppBar}>
       {iconsLeft ? (
         <CustomButtonIcon
+          imageStyle={styles.icon}
           styleButton={styles.buttonLeft}
           source={iconsLeft}
           onPress={onPressIconsLeft}
@@ -27,7 +28,8 @@ const CustomAppBar = props => {
       <Text style={styles.title}>{title}</Text>
       {iconRight ? (
         <CustomButtonIcon
-          styleButton={styles.buttonLeft}
+          imageStyle={styles.icon}
+          styleButton={styles.buttonRight}
           source={iconRight}
           onPress={onPressIconsRight}
         />
@@ -44,7 +46,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
   },
-
   title: {
     color: 'white',
     fontWeight: 'bold',

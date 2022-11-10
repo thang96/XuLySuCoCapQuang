@@ -104,7 +104,7 @@ const CompilationOfCrashReports = props => {
           />
         ) : (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không tìm thấy sự cố</Text>
+            <Text style={styles.textWarning}>Không tìm thấy báo cáo</Text>
           </View>
         )}
       </View>
@@ -140,6 +140,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  textWarning: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.mainColor,
   },
 });
 export default CompilationOfCrashReports;

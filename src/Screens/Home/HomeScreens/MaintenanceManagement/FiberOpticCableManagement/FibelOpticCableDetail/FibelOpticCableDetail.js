@@ -165,9 +165,13 @@ const FibelOpticCableDetail = props => {
       <CustomAppBar
         title={'Chi tiết tuyến cáp'}
         iconsLeft={icons.ic_back}
+        iconRight={
+          userInfor?.role == 'GENERAL_MANAGER' ? icons.ic_delete : null
+        }
         onPressIconsLeft={() =>
           navigation.navigate('FiberOpticCableManagement')
         }
+        onPressIconsRight={() => setConfirm(true)}
       />
       {confirm && (
         <View style={styles.viewModal}>
@@ -185,21 +189,8 @@ const FibelOpticCableDetail = props => {
         <ActivityIndicator size="large" color={colors.mainColor} />
       ) : (
         <ScrollView style={styles.eachContainer}>
-          {keyboardIsShow == false && (
-            <Image source={images.im_map} style={styles.imageMap} />
-          )}
           <View style={styles.viewRow}>
             <Text style={styles.title}>Chi tiết tuyến cáp</Text>
-            <CustomTextButton
-              styleButton={{height: 25}}
-              label={'Lịch sử xử lý sự cố'}
-              textStyle={{
-                color: colors.mainColor,
-                fontSize: 18,
-                fontWeight: 'bold',
-              }}
-              onPress={() => {}}
-            />
           </View>
 
           <CustomTextInputChangeValue
@@ -518,14 +509,6 @@ const FibelOpticCableDetail = props => {
               <Text style={styles.styleTitleInput}>Trạng thái : </Text>
               <Text style={styles.styleValueInput}>Chưa kích hoạt</Text>
             </TouchableOpacity>
-          )}
-          {userInfor?.role == 'GENERAL_MANAGER' && (
-            <CustomTextButton
-              textStyle={{color: 'red', fontSize: 18, fontWeight: 'bold'}}
-              styleButton={{width: 140, height: 50}}
-              label={'Xóa tuyến cáp'}
-              onPress={() => setConfirm(true)}
-            />
           )}
           {userInfor?.role == 'GENERAL_MANAGER' && (
             <CusttomTwoButtonBottom

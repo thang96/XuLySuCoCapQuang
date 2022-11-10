@@ -72,10 +72,10 @@ const ReportMaintenanceDetail = props => {
       />
       <ScrollView style={styles.container}>
         <CustomViewRow
-          title={'Mã sự cố : '}
+          title={'Mã bảo trì : '}
           content={result?.maintenance_issue_code}
         />
-        <CustomViewRow title={'ID sự cố : '} content={result?.id} />
+        <CustomViewRow title={'ID bảo trì : '} content={result?.id} />
 
         <CustomViewRow
           title={'Kết quả đo tuyến cáp  : '}

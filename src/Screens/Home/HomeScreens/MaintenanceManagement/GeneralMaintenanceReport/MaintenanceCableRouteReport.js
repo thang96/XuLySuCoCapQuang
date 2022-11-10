@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   textWarning: {
     color: colors.mainColor,
     fontWeight: 'bold',
-    fontSize: 28,
+    fontSize: 20,
   },
 });
 export default MaintenanceCableRouteReport;

@@ -63,7 +63,7 @@ const ReportMaintenance = props => {
 
   const isValueOK = () =>
     measureCableResult != null &&
-    measureCableResultDocument != [] &&
+    measureCableResultDocument.length > 0 &&
     cleanCableResult != null &&
     adjustTensionCable != null &&
     checkSupplies != null &&
@@ -72,7 +72,7 @@ const ReportMaintenance = props => {
     checkCableSocket != null &&
     checkCableOdfAdapter != null &&
     solutionProvide.length > 0 &&
-    documentFiles != [];
+    documentFiles.length > 0;
   const [modalResultCamera, setModalResultCamera] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
   const openResultCamera = () => {

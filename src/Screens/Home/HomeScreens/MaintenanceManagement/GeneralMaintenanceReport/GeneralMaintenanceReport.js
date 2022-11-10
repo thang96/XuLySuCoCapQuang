@@ -105,7 +105,7 @@ const GeneralMaintenanceReport = props => {
           />
         ) : (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không tìm thấy sự cố</Text>
+            <Text style={styles.textWarning}>Không tìm thấy bảo trì</Text>
           </View>
         )}
       </View>
@@ -142,5 +142,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  textWarning: {fontSize: 20, fontWeight: 'bold', color: colors.mainColor},
 });
 export default GeneralMaintenanceReport;

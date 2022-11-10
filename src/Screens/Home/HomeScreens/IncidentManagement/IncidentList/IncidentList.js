@@ -81,7 +81,7 @@ const IncidentList = props => {
           <CustomInput
             disabled={true}
             styleInput={{flex: 1}}
-            placeholder={'Tìm kiếm công việc'}
+            placeholder={'Tìm kiếm sự cố'}
             source={icons.seach}
             value={search}
             onChangeText={text => setSearch(text)}
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   textWarning: {
     color: colors.mainColor,
     fontWeight: 'bold',
-    fontSize: 28,
+    fontSize: 20,
   },
 });
 export default IncidentList;

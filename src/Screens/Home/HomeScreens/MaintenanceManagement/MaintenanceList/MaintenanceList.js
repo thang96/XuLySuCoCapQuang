@@ -80,7 +80,7 @@ const MaintenanceList = props => {
         <View style={styles.eachContainer}>
           <CustomInput
             styleInput={{height: 50, marginVertical: 10}}
-            placeholder={'Tìm kiếm tuyến cáp'}
+            placeholder={'Tìm kiếm bảo trì'}
             source={icons.ic_seach}
             value={search}
             onChangeText={text => setSearch(text)}
@@ -116,7 +116,7 @@ const MaintenanceList = props => {
           />
         ) : (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không tìm thấy sự cố</Text>
+            <Text style={styles.textWarning}>Không tìm thấy bảo trì</Text>
           </View>
         )}
       </View>
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
   textWarning: {
     color: colors.mainColor,
     fontWeight: 'bold',
-    fontSize: 28,
+    fontSize: 20,
   },
 });
 export default MaintenanceList;
