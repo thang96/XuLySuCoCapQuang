@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
-  ImageBackground,
+  Alert,
   StyleSheet,
   View,
   Image,
@@ -33,7 +33,7 @@ const AccountScreen = props => {
   const logOut = async () => {
     try {
       await AsyncStorage.removeItem('token').then(() => {
-        alert('Đã đăng xuất');
+        Alert.alert('Đăng xuất', 'Đăng xuất thành công');
         navigation.navigate('LoginNavigation');
       });
     } catch (error) {

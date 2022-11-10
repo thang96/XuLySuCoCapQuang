@@ -84,11 +84,13 @@ const FiberOpticCableDetail = props => {
         console.log(error);
       });
   };
-  const renderDocumentFiles = image => {
+  const renderDocumentFiles = item => {
     return (
-      <TouchableOpacity style={{borderWidth: 1}}>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ShowImageScreen', item)}
+        style={{borderWidth: 1}}>
         <Image
-          source={{uri: image?.path}}
+          source={{uri: item?.path}}
           style={{width: 200, height: 200, marginRight: 5}}
           resizeMode={'contain'}
         />
@@ -333,10 +335,10 @@ const ComponentTwoButton = props => {
         onPress={onPressLeft}
         style={styles.buttonComponentTwoButton}>
         <Image
-          source={icons.ic_edit}
+          source={icons.ic_back}
           style={[styles.imageComponentTwoButton, {tintColor: 'grey'}]}
         />
-        <Text>Từ chối</Text>
+        <Text style={{color: 'grey'}}>Quay lại</Text>
       </TouchableOpacity>
       {accept ? (
         <TouchableOpacity

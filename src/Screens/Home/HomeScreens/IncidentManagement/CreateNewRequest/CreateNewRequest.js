@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
-  ImageBackground,
+  Alert,
   Image,
   TouchableOpacity,
   View,
@@ -112,26 +112,26 @@ const CreateNewRequest = props => {
   };
 
   const createRequest = async () => {
-    let description = description;
+    let descriptionS = description;
     let optical_cable_id = parseInt(opticalCableId?.id);
     let user_assigned_id = parseInt(userAssignedId?.id);
-    document_files = albumImage;
+    let document_files = albumImage;
     await IncidentManagementAPI.CreateIssuesRequestAPI(
       token,
-      description,
+      descriptionS,
       optical_cable_id,
       user_assigned_id,
       document_files,
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          alert('Tạo yêu cầu thành công');
+          Alert.alert('Xử lý sự cố', 'Yêu cầu xử lý sự cố thành công');
           navigation.navigate('IncidentManagement');
         }
       })
       .catch(error => {
         console.log(error.response);
-        alert('Tạo yêu cầu thất bại');
+        Alert.alert('Xử lý sự cố', 'Yêu cầu xử lý sự cố thất bại');
       });
   };
   return (
@@ -218,10 +218,23 @@ const CreateNewRequest = props => {
             renderItem={({item}) => renderImage(item)}
           />
           <TouchableOpacity
+            disabled={albumImage.length < 5 ? false : true}
             style={[styles.button, {marginTop: 10}]}
             onPress={() => setModalCamera(true)}>
-            <Image style={styles.imageUpload} source={icons.ic_upload} />
-            <Text style={styles.textUpload}>Up ảnh</Text>
+            <Image
+              style={[
+                styles.imageUpload,
+                {tintColor: albumImage.length < 5 ? colors.mainColor : 'grey'},
+              ]}
+              source={icons.ic_upload}
+            />
+            <Text
+              style={[
+                styles.textUpload,
+                {color: albumImage.length < 5 ? colors.mainColor : 'grey'},
+              ]}>
+              Up ảnh
+            </Text>
           </TouchableOpacity>
           <CustomTextButton
             disabled={isReady() ? false : true}
@@ -297,11 +310,9 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     marginRight: 5,
-    tintColor: colors.mainColor,
   },
   textUpload: {
     fontSize: 16,
-    color: colors.mainColor,
     fontWeight: 'bold',
   },
   styleModal: {

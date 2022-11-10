@@ -1,7 +1,7 @@
 import {useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
-  ImageBackground,
+  Alert,
   StyleSheet,
   View,
   Image,
@@ -107,13 +107,13 @@ const CreateCableRoute = props => {
       .then(res => {
         console.log(res);
         if (res?.status == 200 && res?.data?.success == true) {
-          alert('Tạo tuyến cáp thành công');
+          Alert.alert('Tuyến cáp', 'Đã tạo tuyến cáp thành công');
           navigation.navigate('InformationListOfCableRoutes');
         }
       })
       .catch(function (error) {
         console.log(JSON.stringify(error));
-        alert('Tạo tuyến cáp thất bại');
+        Alert.alert('Tuyến cáp', 'Đã tạo tuyến cáp thất bại');
       });
   };
 

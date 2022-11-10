@@ -17,8 +17,8 @@ import {
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
-import CustomTextButton from '../../../../../../../Components/CustomTextButton';
-import CustomInput from '../../../../../../../Components/CustomInput';
+import {uuid} from '../../../../../../../utils/uuid';
+import CustomButtonIcon from '../../../../../../../Components/CustomButtonIcon';
 import CustomTextInputChangeValue from '../../../../../../../Components/CustomTextInputChangeValue';
 import {colors, icons} from '../../../../../../../Constants';
 import common from '../../../../../../../utils/common';
@@ -45,11 +45,11 @@ const ReportMaintenance = props => {
         console.log(error);
       });
   };
-  const [locationLongitude, setLocationLongitude] = useState('');
-  const [locationLatitude, setLocationLatitude] = useState('');
+
   const [measureCableResult, setMeasureCableResult] = useState(null);
-  const [measureCableResultDocument, setMeasureCableResultDocument] =
-    useState(null);
+  const [measureCableResultDocument, setMeasureCableResultDocument] = useState(
+    [],
+  );
   const [cleanCableResult, setCleanCableResult] = useState(null);
   const [adjustTensionCable, setAdjustTensionCable] = useState(null);
   const [checkSupplies, setCheckSupplies] = useState(null);
@@ -58,13 +58,11 @@ const ReportMaintenance = props => {
   const [checkCableSocket, setCheckCableSocket] = useState(null);
   const [checkCableOdfAdapter, setCheckCableOdfAdapter] = useState(null);
   const [solutionProvide, setSolutionProvide] = useState('');
-  const [reportDocument, setReportDocument] = useState(null);
+  const [documentFiles, setDocumentFiles] = useState([]);
 
   const isValueOK = () =>
-    locationLongitude.length > 0 &&
-    locationLatitude.length > 0 &&
     measureCableResult != null &&
-    measureCableResultDocument != null &&
+    measureCableResultDocument != [] &&
     cleanCableResult != null &&
     adjustTensionCable != null &&
     checkSupplies != null &&
@@ -73,78 +71,47 @@ const ReportMaintenance = props => {
     checkCableSocket != null &&
     checkCableOdfAdapter != null &&
     solutionProvide.length > 0 &&
-    reportDocument != null;
+    documentFiles != [];
   const [modalResultCamera, setModalResultCamera] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
-  const getLocation = () => {
-    setAutoLocation(prev => (prev == true ? false : true));
-    RNLocation.configure({
-      distanceFilter: 10, // Meters
-      desiredAccuracy: {
-        ios: 'best',
-        android: 'balancedPowerAccuracy',
-      },
-      // Android only
-      androidProvider: 'auto',
-      interval: 3000, // Milliseconds
-      fastestInterval: 5000, // Milliseconds
-      maxWaitTime: 3000, // Milliseconds
-      // iOS Only
-      activityType: 'other',
-      allowsBackgroundLocationUpdates: false,
-      headingFilter: 1, // Degrees
-      headingOrientation: 'portrait',
-      pausesLocationUpdatesAutomatically: false,
-      showsBackgroundLocationIndicator: false,
-    });
-    RNLocation.requestPermission({
-      ios: 'whenInUse',
-      android: {
-        detail: 'fine',
-      },
-    }).then(granted => {
-      if (granted) {
-        RNLocation.subscribeToLocationUpdates(locations => {
-          setLocationLongitude(locations[0].longitude);
-          setLocationLatitude(locations[0].latitude);
-        });
-      }
-    });
-  };
   const openResultCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
-        setMeasureCableResultDocument(imageConverted1);
+        addMeasureCableResultDocument(imageConverted1);
         setModalResultCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
         setModalResultCamera(false);
-      });
-  };
-  const openCamera = () => {
-    ImagePicker.openCamera({width: 300, height: 400})
-      .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        setReportDocument(imageConverted1);
-        setModalCamera(false);
-      })
-      .catch(e => {
-        ImagePicker.clean();
-        setModalCamera(false);
       });
   };
   const openResultGallery = () => {
     ImagePicker.openPicker({})
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
-        setMeasureCableResultDocument(imageConverted1);
+        addMeasureCableResultDocument(imageConverted1);
         setModalResultCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
         setModalResultCamera(false);
+      });
+  };
+  const addMeasureCableResultDocument = image => {
+    const eachResult = [...measureCableResultDocument, image];
+    setMeasureCableResultDocument(eachResult);
+  };
+  const openCamera = () => {
+    ImagePicker.openCamera({width: 300, height: 400})
+      .then(async image => {
+        const imageConverted1 = await common.resizeImageNotVideo(image);
+        addDocumentFiles(imageConverted1);
+        setModalCamera(false);
+      })
+      .catch(e => {
+        ImagePicker.clean();
+        setModalCamera(false);
       });
   };
 
@@ -152,13 +119,17 @@ const ReportMaintenance = props => {
     ImagePicker.openPicker({})
       .then(async image => {
         const imageConverted1 = await common.resizeImageNotVideo(image);
-        setReportDocument(imageConverted1);
+        addDocumentFiles(imageConverted1);
         setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
         setModalCamera(false);
       });
+  };
+  const addDocumentFiles = image => {
+    const eachResult = [...documentFiles, image];
+    setDocumentFiles(eachResult);
   };
   const rejectIssue = async () => {
     let issueId = request?.id;
@@ -173,13 +144,36 @@ const ReportMaintenance = props => {
         console.log(error);
       });
   };
+
+  const renderMeasureCableResultDocument = (item, index) => {
+    return (
+      <View style={styles.viewRender}>
+        <CustomButtonIcon
+          imageStyle={styles.imageClear}
+          source={icons.cancel}
+          styleButton={styles.buttonClear}
+          onPress={() => removeMeasureCableResultDocument(index)}
+        />
+        <Image
+          source={{uri: item?.uri}}
+          style={{width: '100%', height: '100%', marginHorizontal: 5}}
+          resizeMode={'contain'}
+        />
+      </View>
+    );
+  };
+  const removeMeasureCableResultDocument = indexID => {
+    const indexSelected = measureCableResultDocument[indexID];
+    const newArray = measureCableResultDocument.filter(
+      item => item != indexSelected,
+    );
+    setMeasureCableResultDocument(newArray);
+  };
   const sendReport = async () => {
     let issueId = request?.id;
     await MaintenanceManagementAPI.MaintenanceIssueReportAPI(
       token,
       issueId,
-      locationLongitude,
-      locationLatitude,
       measureCableResult,
       measureCableResultDocument,
       cleanCableResult,
@@ -190,7 +184,7 @@ const ReportMaintenance = props => {
       checkCableSocket,
       checkCableOdfAdapter,
       solutionProvide,
-      reportDocument,
+      documentFiles,
     )
       .then(res => {
         if (res?.status == 200) {
@@ -202,6 +196,29 @@ const ReportMaintenance = props => {
         console.log(JSON.stringify(error));
         alert('Gửi báo cáo thất bại');
       });
+  };
+
+  const renderDocumentFiles = (item, index) => {
+    return (
+      <View style={styles.viewRender}>
+        <CustomButtonIcon
+          imageStyle={styles.imageClear}
+          source={icons.cancel}
+          styleButton={styles.buttonClear}
+          onPress={() => removeDocumentFiles(index)}
+        />
+        <Image
+          source={{uri: item?.uri}}
+          style={{width: '100%', height: '100%', marginHorizontal: 5}}
+          resizeMode={'contain'}
+        />
+      </View>
+    );
+  };
+  const removeDocumentFiles = indexID => {
+    const indexSelected = documentFiles[indexID];
+    const newArray = documentFiles.filter(item => item != indexSelected);
+    setDocumentFiles(newArray);
   };
   return (
     <View style={styles.container}>
@@ -258,41 +275,6 @@ const ReportMaintenance = props => {
               styles.content
             }>{`Nhân sự kỹ thuật : ${request?.user_assigned}`}</Text>
           <View style={[styles.line, {marginVertical: 10}]} />
-          <View style={styles.viewRow}>
-            <Text style={styles.title}>Nhập thông tin vị trí</Text>
-            <CustomTextButton
-              textStyle={{color: colors.mainColor, fontWeight: 'bold'}}
-              styleButton={{height: 50}}
-              label={'Tự động lấy vị trí >>'}
-              onPress={() => getLocation()}
-            />
-          </View>
-          {autoLocation == true ? (
-            <View style={styles.viewCustomTextInputChangeValue}>
-              <Text style={styles.styleTitle}>Longitude : </Text>
-              <Text>{locationLongitude}</Text>
-            </View>
-          ) : (
-            <CustomInput
-              styleInput={{minHeight: 50, marginVertical: 5}}
-              placeholder={'Longitude'}
-              value={locationLongitude}
-              onChangeText={text => setLocationLongitude(text)}
-            />
-          )}
-          {autoLocation == true ? (
-            <View style={styles.viewCustomTextInputChangeValue}>
-              <Text style={styles.styleTitle}>Latitude : </Text>
-              <Text>{locationLatitude}</Text>
-            </View>
-          ) : (
-            <CustomInput
-              styleInput={{minHeight: 50, marginVertical: 5}}
-              placeholder={'Latitude'}
-              value={locationLatitude}
-              onChangeText={text => setLocationLatitude(text)}
-            />
-          )}
 
           <View style={styles.viewItem}>
             <CustomComponentViewCheck
@@ -301,28 +283,44 @@ const ReportMaintenance = props => {
               onPressOk={() => setMeasureCableResult(true)}
               onPressNotOk={() => setMeasureCableResult(false)}
             />
-            {measureCableResultDocument ? (
+            <FlatList
+              horizontal
+              style={{height: 210, backgroundColor: 'white'}}
+              data={measureCableResultDocument}
+              keyExtractor={uuid}
+              renderItem={({item, index}) =>
+                renderMeasureCableResultDocument(item, index)
+              }
+            />
+            <TouchableOpacity
+              disabled={measureCableResultDocument.length <= 5 ? false : true}
+              onPress={() => setModalResultCamera(true)}
+              style={styles.buttonUpload}>
               <Image
-                source={{
-                  uri:
-                    Platform.OS == 'ios'
-                      ? measureCableResultDocument?.path
-                      : measureCableResultDocument?.uri,
-                }}
-                style={styles.image}
-                resizeMode={'contain'}
+                source={icons.ic_report}
+                style={[
+                  styles.iconButtonUpload,
+                  {
+                    tintColor:
+                      measureCableResultDocument.length <= 5
+                        ? colors.mainColor
+                        : 'grey',
+                  },
+                ]}
               />
-            ) : (
-              <TouchableOpacity
-                onPress={() => setModalResultCamera(true)}
-                style={styles.buttonUpload}>
-                <Image
-                  source={icons.ic_report}
-                  style={styles.iconButtonUpload}
-                />
-                <Text style={styles.textButtonUpload}>Chụp kết quả đo</Text>
-              </TouchableOpacity>
-            )}
+              <Text
+                style={[
+                  styles.textButtonUpload,
+                  {
+                    color:
+                      measureCableResultDocument.length <= 5
+                        ? colors.mainColor
+                        : 'grey',
+                  },
+                ]}>
+                Chụp kết quả đo
+              </Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.viewItem}>
             <CustomComponentViewCheck
@@ -392,25 +390,19 @@ const ReportMaintenance = props => {
             onChangeText={text => setSolutionProvide(text)}
           />
           <Text style={styles.title}>Hình ảnh báo cáo</Text>
-          {reportDocument ? (
-            <Image
-              source={{
-                uri:
-                  Platform.OS == 'ios'
-                    ? reportDocument?.path
-                    : reportDocument?.uri,
-              }}
-              style={styles.image}
-              resizeMode={'contain'}
-            />
-          ) : (
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() => setModalCamera(true)}>
-              <Image style={styles.imageUpload} source={icons.ic_upload} />
-              <Text style={styles.textUpload}>Chụp báo cáo</Text>
-            </TouchableOpacity>
-          )}
+          <FlatList
+            horizontal
+            style={{height: 210, backgroundColor: 'white'}}
+            data={documentFiles}
+            keyExtractor={uuid}
+            renderItem={({item, index}) => renderDocumentFiles(item, index)}
+          />
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => setModalCamera(true)}>
+            <Image style={styles.imageUpload} source={icons.ic_upload} />
+            <Text style={styles.textUpload}>Chụp báo cáo</Text>
+          </TouchableOpacity>
         </ScrollView>
 
         <ComponentTwoButton
@@ -465,9 +457,8 @@ const styles = StyleSheet.create({
     height: 35,
     marginRight: 5,
     marginBottom: 10,
-    tintColor: colors.mainColor,
   },
-  textButtonUpload: {color: colors.mainColor, fontSize: 18, fontWeight: 'bold'},
+  textButtonUpload: {fontSize: 18, fontWeight: 'bold'},
   viewItem: {
     backgroundColor: 'white',
     paddingHorizontal: 10,
@@ -493,6 +484,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  buttonClear: {position: 'absolute', top: 0, right: 0, zIndex: 2},
+  imageClear: {width: 20, height: 20, tintColor: 'red'},
+  viewRender: {
+    width: 200,
+    height: 200,
+    borderWidth: 0.5,
+    padding: 5,
+    borderColor: colors.mainColor,
   },
 });
 const CustomComponentViewCheck = props => {
@@ -545,13 +545,13 @@ const ComponentTwoButton = props => {
         onPress={onPressLeft}
         style={styleComponentTwoButton.buttonComponentTwoButton}>
         <Image
-          source={icons.ic_edit}
+          source={icons.ic_back}
           style={[
             styleComponentTwoButton.imageComponentTwoButton,
             {tintColor: 'grey'},
           ]}
         />
-        <Text>Từ chối</Text>
+        <Text style={{color: 'grey'}}>Quay lại</Text>
       </TouchableOpacity>
       <TouchableOpacity
         disabled={disabledRight}

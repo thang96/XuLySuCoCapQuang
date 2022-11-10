@@ -158,8 +158,6 @@ const MaintenanceIssueReportDetailAPI = (token, id) => {
 const MaintenanceIssueReportAPI = (
   token,
   issueId,
-  locationLongitude,
-  locationLatitude,
   measureCableResult,
   measureCableResultDocument,
   cleanCableResult,
@@ -170,24 +168,21 @@ const MaintenanceIssueReportAPI = (
   checkCableSocket,
   checkCableOdfAdapter,
   solutionProvide,
-  reportDocument,
+  documentFiles,
 ) => {
   return new Promise((resolve, reject) => {
     const formDataReport = new FormData();
-    formDataReport.append('location_longitude', locationLongitude ?? '');
-    formDataReport.append('location_latitude', locationLatitude ?? '');
-    formDataReport.append('measure_cable_result', measureCableResult ?? false);
-    formDataReport.append(
-      'measure_cable_result_document',
-      {
-        uri:
-          Platform.OS === 'ios'
-            ? '/private' + measureCableResultDocument?.path
-            : measureCableResultDocument?.uri,
-        name: getFileName(measureCableResultDocument),
-        type: measureCableResultDocument?.mime,
-      } ?? null,
-    );
+    formDataReport.append('measure_cable_result', measureCableResult ?? '');
+    for (let i = 0; i < measureCableResultDocument.length; i++) {
+      formData.append(
+        'measure_cable_result_document_files',
+        {
+          uri: measureCableResultDocument?.uri,
+          name: measureCableResultDocument?.name,
+          type: measureCableResultDocument?.type,
+        } ?? null,
+      );
+    }
     formDataReport.append('clean_cable_result', cleanCableResult ?? false);
     formDataReport.append('adjust_tension_cable', adjustTensionCable ?? false);
     formDataReport.append('check_supplies', checkSupplies ?? false);
@@ -205,17 +200,16 @@ const MaintenanceIssueReportAPI = (
       checkCableOdfAdapter ?? false,
     );
     formDataReport.append('solution_provide', solutionProvide ?? '');
-    formDataReport.append(
-      'report_document',
-      {
-        uri:
-          Platform.OS === 'ios'
-            ? '/private' + reportDocument?.path
-            : reportDocument?.uri,
-        name: getFileName(reportDocument),
-        type: reportDocument?.mime,
-      } ?? null,
-    );
+    for (let i = 0; i < measureCableResultDocument.length; i++) {
+      formData.append(
+        'measure_cable_result_document_files',
+        {
+          uri: documentFiles?.uri,
+          name: documentFiles?.name,
+          type: documentFiles?.type,
+        } ?? null,
+      );
+    }
     axios
       .post(
         `${BASEURL}/api/v1/maintenance_issue/${issueId}/maintenance-report`,

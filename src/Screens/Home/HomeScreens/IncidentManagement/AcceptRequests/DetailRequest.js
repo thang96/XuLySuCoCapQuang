@@ -13,6 +13,7 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
@@ -48,13 +49,17 @@ const DetailRequest = props => {
     let id = result?.id;
     await IncidentManagementAPI.ReceiveIssueAPI(token, id)
       .then(res => {
+        console.log(res);
         if (res?.status == 200 && res?.data?.success == true) {
-          alert('Tiếp nhận thành công');
+          Alert.alert('Sự cố', 'Tiếp nhận sự cố thành công');
           navigation.navigate('IncidentList');
+        } else {
+          Alert.alert('Sự cố', 'Tiếp nhận sự cố thất bại');
         }
       })
       .catch(error => {
         console.log(error);
+        Alert.alert('Sự cố', 'Tiếp nhận sự cố thất bại');
       });
   };
   const renderDocumentFiles = item => {

@@ -12,6 +12,7 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
+  Alert,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../../Constants';
 import CustomAppBar from '../../../../../../Components/CustomAppBar';
@@ -27,7 +28,6 @@ const IncidentDetail = props => {
   const route = useRoute();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [showImage, setShowImage] = useState(false);
   useEffect(() => {
     getResult();
   }, [route, token]);
@@ -58,13 +58,17 @@ const IncidentDetail = props => {
     let id = result?.id;
     await IncidentManagementAPI.ReceiveIssueAPI(token, id)
       .then(res => {
-        if (res?.status == 200) {
-          alert('Tiếp nhận thành công');
-          navigation.navigate('ReportIncident', id);
+        console.log(res);
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Sự cố', 'Tiếp nhận sự cố thành công');
+          navigation.navigate('IncidentList');
+        } else {
+          Alert.alert('Sự cố', 'Tiếp nhận sự cố thất bại');
         }
       })
       .catch(error => {
         console.log(error);
+        Alert.alert('Sự cố', 'Tiếp nhận sự cố thất bại');
       });
   };
   const reportRequest = () => {

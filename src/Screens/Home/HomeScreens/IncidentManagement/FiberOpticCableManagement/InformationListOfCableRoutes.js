@@ -131,7 +131,7 @@ const InformationListOfCableRoutes = props => {
           />
         ) : (
           <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không tìm thấy tuyến cáp</Text>
+            <Text style={styles.textWarning}>Không có tuyến cáp</Text>
           </View>
         )}
       </View>

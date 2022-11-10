@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
-  ImageBackground,
+  Alert,
   StyleSheet,
   View,
   Image,
@@ -141,13 +141,13 @@ const CableRouteDetails = props => {
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
           console.log(res?.data?.success);
-          alert('Update tuyến cáp thành công');
+          Alert.alert('Tuyến cáp', 'Cập nhật tuyến cáp thành công');
           navigation.navigate('InformationListOfCableRoutes');
         }
       })
       .catch(function (error) {
         console.log(JSON.stringify(error));
-        alert('Update tuyến cáp thất bại');
+        Alert.alert('Tuyến cáp', 'Cập nhật tuyến cáp thất bại');
       });
   };
   return (

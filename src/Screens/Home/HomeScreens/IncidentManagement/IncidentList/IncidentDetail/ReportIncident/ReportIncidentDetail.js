@@ -15,16 +15,10 @@ import {
   TextInput,
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
-import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
-import CustomTextButton from '../../../../../../../Components/CustomTextButton';
-import CustomInput from '../../../../../../../Components/CustomInput';
-import CustomTextInputChangeValue from '../../../../../../../Components/CustomTextInputChangeValue';
 import {colors, icons} from '../../../../../../../Constants';
-import common from '../../../../../../../utils/common';
-import ImagePicker from 'react-native-image-crop-picker';
+import {uuid} from '../../../../../../../utils/uuid';
 import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 import {useSelector} from 'react-redux';
-import RNLocation from 'react-native-location';
 const ReportIncidentDetail = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -43,7 +37,15 @@ const ReportIncidentDetail = props => {
         console.log(error);
       });
   };
-  console.log(result);
+  const renderDocumentFiles = (item, index) => {
+    return (
+      <Image
+        resizeMode={'contain'}
+        source={{uri: item?.path}}
+        style={{width: 200, height: 200, marginRight: 5}}
+      />
+    );
+  };
   return (
     <View style={[styles.container, {backgroundColor: colors.background}]}>
       <CustomAppBar
@@ -54,18 +56,7 @@ const ReportIncidentDetail = props => {
       <ScrollView style={styles.container}>
         <CustomViewRow title={'Mã sự cố : '} content={result?.issue_code} />
         <CustomViewRow title={'ID sự cố : '} content={result?.id} />
-        <CustomViewRow
-          title={'Thời gian bắt đầu : '}
-          content={result?.start_time}
-        />
-        <CustomViewRow
-          title={'Thời gian kết thúc : '}
-          content={result?.finish_time}
-        />
-        <CustomViewRow
-          title={'Tổng thời gian thực hiện : '}
-          content={result?.total_processing_time}
-        />
+
         <CustomViewRow
           title={'Tọa độ longitude : '}
           content={result?.location_longitude}
@@ -76,11 +67,16 @@ const ReportIncidentDetail = props => {
         />
         <CustomViewRow title={'Lý do  : '} content={result?.reason} />
         <CustomViewRow title={'Giải pháp  : '} content={result?.solution} />
-
-        <CustomViewRow
-          title={'File báo cáo  : '}
-          source={result?.report_document}
-        />
+        <View>
+          <Text style={styles.title}>File báo cáo </Text>
+          <FlatList
+            style={{height: 210, backgroundColor: 'white'}}
+            horizontal
+            data={result?.document_files}
+            keyExtractor={uuid}
+            renderItem={({item, index}) => renderDocumentFiles(item, index)}
+          />
+        </View>
       </ScrollView>
     </View>
   );

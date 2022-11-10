@@ -157,7 +157,7 @@ const ReportIncident = props => {
         }
       })
       .catch(function (error) {
-        console.log(JSON.stringify(error));
+        console.log(JSON.stringify(error?.status));
         alert('Gửi báo cáo thất bại');
       });
   };
@@ -167,7 +167,7 @@ const ReportIncident = props => {
   };
   const renderImage = (image, index) => {
     return (
-      <View style={{width: 200, height: 200}}>
+      <View style={styles.viewRender}>
         <CustomButtonIcon
           imageStyle={styles.imageClear}
           source={icons.cancel}
@@ -176,7 +176,7 @@ const ReportIncident = props => {
         />
         <Image
           source={{uri: image?.uri}}
-          style={{width: 200, height: 200, marginHorizontal: 5}}
+          style={{width: '100%', height: '100%', marginHorizontal: 5}}
           resizeMode={'contain'}
         />
       </View>
@@ -273,7 +273,7 @@ const ReportIncident = props => {
         <Text style={styles.title}>Hình ảnh báo cáo</Text>
         <FlatList
           horizontal
-          style={{height: 200}}
+          style={{height: 210}}
           data={reportDocument}
           keyExtractor={uuid}
           renderItem={({item, index}) => renderImage(item, index)}
@@ -375,7 +375,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonClear: {position: 'absolute', top: 0, right: 0, zIndex: 2},
-  imageClear: {width: 25, height: 25, tintColor: 'red'},
+  imageClear: {width: 20, height: 20, tintColor: 'red'},
+  viewRender: {
+    width: 200,
+    height: 200,
+    borderWidth: 0.5,
+    padding: 5,
+    borderColor: colors.mainColor,
+  },
 });
 const ComponentTwoButton = props => {
   const {onPressLeft, onPressRight, disabledLeft, disabledRight} = props;

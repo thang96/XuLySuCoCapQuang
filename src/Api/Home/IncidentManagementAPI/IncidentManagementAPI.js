@@ -21,27 +21,23 @@ const GetListIssuesAPI = token => {
 
 const CreateIssuesRequestAPI = (
   token,
-  description,
+  descriptionS,
   optical_cable_id,
   user_assigned_id,
   document_files,
 ) => {
   return new Promise((resolve, reject) => {
     const formDataCreate = new FormData();
-    formDataCreate.append('description', description ?? '');
-    formDataCreate.append('required_time', required_time ?? '');
+    formDataCreate.append('description', descriptionS ?? '');
     formDataCreate.append('optical_cable_id', optical_cable_id ?? 0);
     formDataCreate.append('user_assigned_id', user_assigned_id ?? 0);
     for (let i = 0; i < document_files.length; i++) {
       let image = document_files[i];
-      formDataCreate.append(
-        'document_files',
-        {
-          uri: image?.uri,
-          name: image?.name,
-          type: image?.type,
-        } ?? null,
-      );
+      formDataCreate.append('document_files', {
+        uri: image?.uri,
+        name: image?.name,
+        type: image?.type,
+      });
     }
     axios
       .post(`${BASEURL}/api/v1/issues/`, formDataCreate, {
@@ -79,11 +75,9 @@ const GetIncidentIssueByIdAPI = (token, id) => {
 };
 
 const ReceiveIssueAPI = (token, id) => {
-  const formData = new FormData();
-  formData.append('id', parseInt(id) ?? 0);
   return new Promise((resolve, reject) => {
     axios
-      .post(`${BASEURL}/api/v1/issues/${id}/receive`, formData, {
+      .post(`${BASEURL}/api/v1/issues/${id}/receive`, id, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
@@ -168,19 +162,17 @@ const IssueReportAPI = (
 ) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
-    formData.append('locationLongitude', locationLongitude ?? '');
-    formData.append('locationLatitude', locationLatitude ?? '');
+    formData.append('location_longitude', locationLongitude ?? '');
+    formData.append('location_latitude', locationLatitude ?? '');
     formData.append('reason', reason ?? '');
     formData.append('solution', solution ?? '');
     for (let i = 0; i < reportDocument.length; i++) {
-      formData.append(
-        'report_document',
-        {
-          uri: reportDocument?.uri,
-          name: reportDocument?.name,
-          type: reportDocument?.type,
-        } ?? null,
-      );
+      let image = reportDocument[i];
+      formData.append('document_files', {
+        uri: image?.uri,
+        name: image?.name,
+        type: image?.type,
+      });
     }
     axios
       .post(`${BASEURL}/api/v1/issues/${issueId}/issue_report`, formData, {

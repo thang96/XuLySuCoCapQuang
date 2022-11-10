@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
 import {icons, images, colors} from '../../Constants';
 import CustomInput from '../../Components/CustomInput';
@@ -37,13 +38,10 @@ const LoginScreen = () => {
           dispatch(updateToken(token));
           navigation.navigate('HomeNavigation');
           setIsLoading(false);
-        } else if (res?.status == 500) {
-          alert('Đang bảo trì server');
-          setIsLoading(false);
         }
       })
       .catch(error => {
-        alert('Sai tài khoản hoặc mật khẩu');
+        Alert.alert('Đăng nhập', 'Sai tài khoản hoặc mật khẩu');
         setIsLoading(false);
       });
   };
