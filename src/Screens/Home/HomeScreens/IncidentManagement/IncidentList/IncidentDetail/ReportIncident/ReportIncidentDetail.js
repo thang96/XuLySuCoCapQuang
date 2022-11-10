@@ -23,6 +23,8 @@ const ReportIncidentDetail = props => {
   const navigation = useNavigation();
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
+  const userInfor = useSelector(state => state?.userInfor?.userInfor);
+  console.log('---', userInfor, '-----');
   const [result, setResult] = useState(null);
   useEffect(() => {
     getReportIncidentDetail();
@@ -39,11 +41,15 @@ const ReportIncidentDetail = props => {
   };
   const renderDocumentFiles = (item, index) => {
     return (
-      <Image
-        resizeMode={'contain'}
-        source={{uri: item?.path}}
-        style={{width: 200, height: 200, marginRight: 5}}
-      />
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ShowImageScreen', item)}
+        style={{padding: 5, borderWidth: 0.5, borderColor: colors.mainColor}}>
+        <Image
+          resizeMode={'contain'}
+          source={{uri: item?.path}}
+          style={{width: 200, height: 200, marginRight: 5}}
+        />
+      </TouchableOpacity>
     );
   };
   return (

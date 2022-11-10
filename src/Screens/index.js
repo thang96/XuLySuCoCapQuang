@@ -19,7 +19,6 @@ import EmployeeDetails from './Home/HomeScreens/EmployeeManager/EmployeeDetails'
 import IncidentManagement from './Home/HomeScreens/IncidentManagement/IncidentManagement';
 import InformationListOfCableRoutes from './Home/HomeScreens/IncidentManagement/FiberOpticCableManagement/InformationListOfCableRoutes';
 import CableRouteDetails from './Home/HomeScreens/IncidentManagement/FiberOpticCableManagement/CableRouteDetails/CableRouteDetails';
-import IncidentHistory from './Home/HomeScreens/IncidentManagement/FiberOpticCableManagement/CableRouteDetails/IncidentHistory/IncidentHistory';
 import IncidentList from './Home/HomeScreens/IncidentManagement/IncidentList/IncidentList';
 import IncidentDetail from './Home/HomeScreens/IncidentManagement/IncidentList/IncidentDetail/IncidentDetail';
 import DetailUserIncident from './Home/HomeScreens/IncidentManagement/IncidentList/IncidentDetail/DetailInformation/DetailUserIncident';
@@ -97,7 +96,6 @@ export {
   CableRouteDetails,
   IncidentList,
   IncidentDetail,
-  IncidentHistory,
   DetailUserIncident,
   DetailOpticCableIncident,
   ReportIncident,

@@ -23,26 +23,24 @@ const CreateMaintenanceIssueAPI = (
   token,
   repeat_by,
   descrip,
-  required_time,
   optical_cable_id,
   user_assigned_id,
-  img,
+  albumImage,
 ) => {
   return new Promise((resolve, reject) => {
     const formData = new FormData();
-    formData.append('repeat_by', repeat_by ?? '');
+    formData.append('repeat_by', repeat_by ?? 'MONTHLY');
     formData.append('description', descrip ?? '');
-    formData.append('required_time', required_time ?? '');
     formData.append('optical_cable_id', optical_cable_id ?? 0);
     formData.append('user_assigned_id', user_assigned_id ?? 0);
-    formData.append(
-      'document_file',
-      {
-        uri: Platform.OS === 'ios' ? '/private' + img?.path : img?.uri,
-        name: getFileName(img),
-        type: img?.mime,
-      } ?? null,
-    );
+    for (let i = 0; i < albumImage.length; i++) {
+      const element = albumImage[i];
+      formData.append('document_files', {
+        uri: element?.uri,
+        name: element?.name,
+        type: element?.type,
+      });
+    }
     axios
       .post(`${BASEURL}/api/v1/maintenance_issue/`, formData, {
         headers: {
@@ -61,11 +59,9 @@ const CreateMaintenanceIssueAPI = (
 };
 
 const ReceiveMaintenanceIssueAPI = (token, id) => {
-  const formData = new FormData();
-  formData.append('id', parseInt(id) ?? 0);
   return new Promise((resolve, reject) => {
     axios
-      .post(`${BASEURL}/api/v1/maintenance_issue/${id}/receive`, formData, {
+      .post(`${BASEURL}/api/v1/maintenance_issue/${id}/receive`, id, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'multipart/form-data',
@@ -82,14 +78,11 @@ const ReceiveMaintenanceIssueAPI = (token, id) => {
 };
 
 const RejectMaintenanceIssueAPI = (token, id) => {
-  const formData = new FormData();
-  formData.append('id', parseInt(id) ?? 0);
   return new Promise((resolve, reject) => {
     axios
-      .post(`${BASEURL}/api/v1/maintenance_issue/${id}/reject`, formData, {
+      .post(`${BASEURL}/api/v1/maintenance_issue/${id}/reject`, null, {
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
         },
       })
@@ -172,16 +165,14 @@ const MaintenanceIssueReportAPI = (
 ) => {
   return new Promise((resolve, reject) => {
     const formDataReport = new FormData();
-    formDataReport.append('measure_cable_result', measureCableResult ?? '');
+    formDataReport.append('measure_cable_result', measureCableResult ?? false);
     for (let i = 0; i < measureCableResultDocument.length; i++) {
-      formData.append(
-        'measure_cable_result_document_files',
-        {
-          uri: measureCableResultDocument?.uri,
-          name: measureCableResultDocument?.name,
-          type: measureCableResultDocument?.type,
-        } ?? null,
-      );
+      let image = measureCableResultDocument[i];
+      formDataReport.append('measure_cable_result_document_files', {
+        uri: image?.uri,
+        name: image?.name,
+        type: image?.type,
+      });
     }
     formDataReport.append('clean_cable_result', cleanCableResult ?? false);
     formDataReport.append('adjust_tension_cable', adjustTensionCable ?? false);
@@ -200,16 +191,16 @@ const MaintenanceIssueReportAPI = (
       checkCableOdfAdapter ?? false,
     );
     formDataReport.append('solution_provide', solutionProvide ?? '');
-    for (let i = 0; i < measureCableResultDocument.length; i++) {
-      formData.append(
-        'measure_cable_result_document_files',
-        {
-          uri: documentFiles?.uri,
-          name: documentFiles?.name,
-          type: documentFiles?.type,
-        } ?? null,
-      );
+
+    for (let i = 0; i < documentFiles.length; i++) {
+      let imageDoc = documentFiles[i];
+      formDataReport.append('document_files', {
+        uri: imageDoc?.uri,
+        name: imageDoc?.name,
+        type: imageDoc?.type,
+      });
     }
+    console.log(formDataReport);
     axios
       .post(
         `${BASEURL}/api/v1/maintenance_issue/${issueId}/maintenance-report`,

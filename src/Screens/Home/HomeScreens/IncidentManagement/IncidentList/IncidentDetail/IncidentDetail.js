@@ -92,7 +92,7 @@ const IncidentDetail = props => {
     return (
       <TouchableOpacity
         onPress={() => navigation.navigate('ShowImageScreen', item)}
-        style={{borderWidth: 1}}>
+        style={styles.renderDocumentFiles}>
         <Image
           source={{uri: item?.path}}
           style={{width: 200, height: 200, marginRight: 5}}
@@ -289,6 +289,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     marginVertical: 10,
+  },
+  renderDocumentFiles: {
+    borderWidth: 0.5,
+    borderColor: colors.mainColor,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

@@ -11,6 +11,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
@@ -36,7 +37,6 @@ const CreateAMaintenanceRequest = props => {
   });
   const [opticalCableId, setOpticalCableId] = useState(null);
   const [userAssignedId, setUserAssignedId] = useState(null);
-  const [requiredTime, setRequiredTime] = useState('');
   const [description, setDescription] = useState('');
   const [albumImage, setAlbumImage] = useState([]);
   const [modalOpticalCable, setModalOpticalCable] = useState(false);
@@ -49,7 +49,6 @@ const CreateAMaintenanceRequest = props => {
   const isReady = () =>
     opticalCableId != null &&
     userAssignedId != null &&
-    requiredTime.length > 0 &&
     description.length > 0 &&
     albumImage != [];
 
@@ -122,26 +121,24 @@ const CreateAMaintenanceRequest = props => {
     const repeat_by = repeatBy?.value;
     const optical_cable_id = parseInt(opticalCableId?.id);
     const user_assigned_id = parseInt(userAssignedId?.id);
-    const required_time = requiredTime;
     const descrip = description;
-    const img = image;
     await MaintenanceManagementAPI.CreateMaintenanceIssueAPI(
       token,
       repeat_by,
       descrip,
-      required_time,
       optical_cable_id,
       user_assigned_id,
-      img,
+      albumImage,
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          alert('Tạo yêu cầu thành công');
+          Alert.alert('Tạo yêu cầu bảo trì', 'Tạo yêu cầu thành công');
           navigation.goBack();
         }
       })
-      .catch(error => {
-        alert('Tạo yêu cầu thất bại');
+      .catch(function (error) {
+        console.log(error);
+        Alert.alert('Tạo yêu cầu bảo trì', 'Tạo yêu cầu thất bại');
       });
   };
 
@@ -189,7 +186,7 @@ const CreateAMaintenanceRequest = props => {
 
       <KeyboardAvoidingView style={styles.container}>
         <CustomAppBar
-          title={'Tạo việc'}
+          title={'Tạo yêu cầu bảo trì'}
           iconsLeft={icons.ic_back}
           onPressIconsLeft={() => navigation.goBack()}
         />
@@ -257,7 +254,7 @@ const CreateAMaintenanceRequest = props => {
             label={'Xác nhận'}
             styleButton={[
               styles.customButtonText,
-              {backgroundColor: isReady() ? colors.mainColor : colors.grey},
+              {backgroundColor: isReady() ? colors.mainColor : 'grey'},
             ]}
             textStyle={{color: 'white', fontSize: 16, fontWeight: 'bold'}}
             onPress={() => createRequest()}

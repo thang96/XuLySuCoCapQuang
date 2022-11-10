@@ -15,16 +15,10 @@ import {
   TextInput,
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
-import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
-import CustomTextButton from '../../../../../../../Components/CustomTextButton';
-import CustomInput from '../../../../../../../Components/CustomInput';
-import CustomTextInputChangeValue from '../../../../../../../Components/CustomTextInputChangeValue';
 import {colors, icons} from '../../../../../../../Constants';
-import common from '../../../../../../../utils/common';
-import ImagePicker from 'react-native-image-crop-picker';
+import {uuid} from '../../../../../../../utils/uuid';
 import MaintenanceManagementAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import {useSelector} from 'react-redux';
-import RNLocation from 'react-native-location';
 const ReportMaintenanceDetail = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -43,6 +37,32 @@ const ReportMaintenanceDetail = props => {
         console.log(error);
       });
   };
+  const renderResultDocumentFiles = (item, index) => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ShowImageScreen', item)}
+        style={{padding: 5, borderWidth: 0.5, borderColor: colors.mainColor}}>
+        <Image
+          resizeMode={'contain'}
+          source={{uri: item?.path}}
+          style={{width: 200, height: 200, marginRight: 5}}
+        />
+      </TouchableOpacity>
+    );
+  };
+  const renderDocumentFiles = (item, index) => {
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate('ShowImageScreen', item)}
+        style={{padding: 5, borderWidth: 0.5, borderColor: colors.mainColor}}>
+        <Image
+          resizeMode={'contain'}
+          source={{uri: item?.path}}
+          style={{width: 200, height: 200, marginRight: 5}}
+        />
+      </TouchableOpacity>
+    );
+  };
   return (
     <View style={[styles.container, {backgroundColor: colors.background}]}>
       <CustomAppBar
@@ -56,22 +76,24 @@ const ReportMaintenanceDetail = props => {
           content={result?.maintenance_issue_code}
         />
         <CustomViewRow title={'ID sự cố : '} content={result?.id} />
-        <CustomViewRow
-          title={'Tọa độ longitude : '}
-          content={result?.location_longitude}
-        />
-        <CustomViewRow
-          title={'Tọa độ latitude  : '}
-          content={result?.location_latitude}
-        />
+
         <CustomViewRow
           title={'Kết quả đo tuyến cáp  : '}
           content={result?.measure_cable_result == true ? 'Đạt' : 'Không đạt'}
         />
-        <CustomViewRow
-          title={'Kết quả đo  : '}
-          source={result?.measure_cable_result_document}
-        />
+        <View style={{backgroundColor: 'white', paddingHorizontal: 5}}>
+          <Text style={styles.title}>Kết quả đo</Text>
+          <FlatList
+            style={{height: 200}}
+            horizontal
+            data={result?.measure_cable_result_document_files}
+            keyExtractor={uuid}
+            renderItem={({item, index}) =>
+              renderResultDocumentFiles(item, index)
+            }
+          />
+        </View>
+
         <CustomViewRow
           title={'Phát quang dọc tuyến cáp  : '}
           content={result?.clean_cable_result == true ? 'Đạt' : 'Không đạt'}
@@ -108,10 +130,16 @@ const ReportMaintenanceDetail = props => {
           title={'Phương án đề xuất tối ưu : '}
           content={result?.solution_provide}
         />
-        <CustomViewRow
-          title={'Hình ảnh báo cáo : '}
-          source={result?.report_document}
-        />
+        <View style={{backgroundColor: 'white', paddingHorizontal: 5}}>
+          <Text style={styles.title}>Hình ảnh báo cáo</Text>
+          <FlatList
+            style={{height: 200}}
+            horizontal
+            data={result?.document_files}
+            keyExtractor={uuid}
+            renderItem={({item, index}) => renderDocumentFiles(item, index)}
+          />
+        </View>
       </ScrollView>
     </View>
   );

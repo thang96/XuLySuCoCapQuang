@@ -4,7 +4,6 @@ import {
   IncidentManagement,
   InformationListOfCableRoutes,
   CableRouteDetails,
-  IncidentHistory,
   CreateCableRoute,
   CreateNewRequest,
   AcceptRequests,
@@ -48,13 +47,7 @@ const StackIncidentManagement = props => {
           headerShown: false,
         }}
       />
-      <Stack.Screen
-        component={IncidentHistory}
-        name={'IncidentHistory'}
-        options={{
-          headerShown: false,
-        }}
-      />
+
       <Stack.Screen
         component={CreateNewRequest}
         name={'CreateNewRequest'}

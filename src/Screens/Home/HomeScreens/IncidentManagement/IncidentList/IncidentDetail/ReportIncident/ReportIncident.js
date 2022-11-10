@@ -125,19 +125,6 @@ const ReportIncident = props => {
         setModalCamera(false);
       });
   };
-  const rejectIssue = async () => {
-    await IncidentManagementAPI.RejectIssueAPI(token)
-      .then(res => {
-        if (res?.data == 200) {
-          alert('Từ chối thành công');
-          navigation.navigate('IncidentList');
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        alert('Từ chối thất bại');
-      });
-  };
 
   const sendReport = async () => {
     let issueId = request?.id;
@@ -303,7 +290,7 @@ const ReportIncident = props => {
       </ScrollView>
       <ComponentTwoButton
         disabledRight={isValueOK() ? false : true}
-        onPressLeft={() => rejectIssue()}
+        onPressLeft={() => navigation.goBack()}
         onPressRight={() => sendReport()}
       />
     </View>
@@ -393,13 +380,13 @@ const ComponentTwoButton = props => {
         onPress={onPressLeft}
         style={styleComponentTwoButton.buttonComponentTwoButton}>
         <Image
-          source={icons.ic_edit}
+          source={icons.ic_back}
           style={[
             styleComponentTwoButton.imageComponentTwoButton,
             {tintColor: 'grey'},
           ]}
         />
-        <Text>Từ chối</Text>
+        <Text>Quay lại</Text>
       </TouchableOpacity>
       <TouchableOpacity
         disabled={disabledRight}

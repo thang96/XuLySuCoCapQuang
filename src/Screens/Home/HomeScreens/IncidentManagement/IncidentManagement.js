@@ -216,5 +216,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
     flexDirection: 'row',
   },
+  customButtonFunction: {height: 80, width: 80, marginRight: 5},
 });
 export default IncidentManagement;

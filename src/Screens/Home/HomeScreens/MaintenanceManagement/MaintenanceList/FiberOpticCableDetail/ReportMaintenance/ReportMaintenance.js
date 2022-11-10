@@ -14,6 +14,7 @@ import {
   ScrollView,
   TextInput,
   KeyboardAvoidingView,
+  Alert,
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
@@ -187,14 +188,14 @@ const ReportMaintenance = props => {
       documentFiles,
     )
       .then(res => {
-        if (res?.status == 200) {
-          alert('Gửi báo cáo thành công');
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Báo cáo', 'Gửi báo cáo thành công');
           navigation.navigate('MaintenanceManagement');
         }
       })
       .catch(function (error) {
         console.log(JSON.stringify(error));
-        alert('Gửi báo cáo thất bại');
+        Alert.alert('Báo cáo', 'Gửi báo cáo thất bại');
       });
   };
 
@@ -293,7 +294,7 @@ const ReportMaintenance = props => {
               }
             />
             <TouchableOpacity
-              disabled={measureCableResultDocument.length <= 5 ? false : true}
+              disabled={measureCableResultDocument.length < 5 ? false : true}
               onPress={() => setModalResultCamera(true)}
               style={styles.buttonUpload}>
               <Image
@@ -302,7 +303,7 @@ const ReportMaintenance = props => {
                   styles.iconButtonUpload,
                   {
                     tintColor:
-                      measureCableResultDocument.length <= 5
+                      measureCableResultDocument.length < 5
                         ? colors.mainColor
                         : 'grey',
                   },
@@ -313,7 +314,7 @@ const ReportMaintenance = props => {
                   styles.textButtonUpload,
                   {
                     color:
-                      measureCableResultDocument.length <= 5
+                      measureCableResultDocument.length < 5
                         ? colors.mainColor
                         : 'grey',
                   },
@@ -398,15 +399,33 @@ const ReportMaintenance = props => {
             renderItem={({item, index}) => renderDocumentFiles(item, index)}
           />
           <TouchableOpacity
+            disabled={documentFiles.length < 5 ? false : true}
             style={styles.button}
             onPress={() => setModalCamera(true)}>
-            <Image style={styles.imageUpload} source={icons.ic_upload} />
-            <Text style={styles.textUpload}>Chụp báo cáo</Text>
+            <Image
+              style={[
+                styles.imageUpload,
+                {
+                  tintColor:
+                    documentFiles.length < 5 ? colors.mainColor : 'grey',
+                },
+              ]}
+              source={icons.ic_upload}
+            />
+            <Text
+              style={[
+                styles.textUpload,
+                {
+                  color: documentFiles.length < 5 ? colors.mainColor : 'grey',
+                },
+              ]}>
+              Chụp báo cáo
+            </Text>
           </TouchableOpacity>
         </ScrollView>
 
         <ComponentTwoButton
-          disabledRight={isValueOK() ? true : false}
+          disabledRight={isValueOK() ? false : true}
           onPressLeft={() => rejectIssue()}
           onPressRight={() => sendReport()}
         />
@@ -468,11 +487,9 @@ const styles = StyleSheet.create({
     width: 25,
     height: 25,
     marginRight: 5,
-    tintColor: colors.mainColor,
   },
   textUpload: {
     fontSize: 16,
-    color: colors.mainColor,
     fontWeight: 'bold',
   },
   button: {
