@@ -32,15 +32,6 @@ const HomeScreen = () => {
   const token = useSelector(state => state?.token?.token);
   const [seachText, setSeachText] = useState('');
   useEffect(() => {
-    messaging().onNotificationOpenedApp(remoteMessage => {
-      console.log('remoteMessage', remoteMessage);
-    });
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('Thông báo', JSON.stringify(remoteMessage));
-    });
-    return unsubscribe;
-  }, []);
-  useEffect(() => {
     requestUserPermission();
     getDeviceToken();
   }, []);
@@ -58,9 +49,17 @@ const HomeScreen = () => {
       .catch(function (error) {
         console.log(error);
       });
-    console.log(device_token, 'device_token');
-    console.log(deviceId, 'deviceId');
   };
+  useEffect(() => {
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log('remoteMessage', remoteMessage);
+    });
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('Thông báo', JSON.stringify(remoteMessage));
+    });
+    return unsubscribe;
+  }, []);
+
   const requestUserPermission = async () => {
     const authStatus = await messaging().requestPermission();
     const enabled =

@@ -50,7 +50,7 @@ const CreateAMaintenanceRequest = props => {
     opticalCableId != null &&
     userAssignedId != null &&
     description.length > 0 &&
-    albumImage != [];
+    albumImage.length > 0;
 
   useEffect(() => {
     getListData();

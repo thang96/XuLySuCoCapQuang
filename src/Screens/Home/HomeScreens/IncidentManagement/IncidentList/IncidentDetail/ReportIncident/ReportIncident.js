@@ -217,31 +217,17 @@ const ReportIncident = props => {
             onPress={() => getLocation()}
           />
         </View>
-        {autoLocation == true ? (
+        {autoLocation == true && (
           <View style={styles.viewCustomTextInputChangeValue}>
             <Text style={styles.styleTitle}>Longitude : </Text>
             <Text>{locationLongitude}</Text>
           </View>
-        ) : (
-          <CustomInput
-            styleInput={{minHeight: 50, marginVertical: 5}}
-            placeholder={'Longitude'}
-            value={locationLongitude}
-            onChangeText={text => setLocationLongitude(text)}
-          />
         )}
-        {autoLocation == true ? (
+        {autoLocation == true && (
           <View style={styles.viewCustomTextInputChangeValue}>
             <Text style={styles.styleTitle}>Latitude : </Text>
             <Text>{locationLatitude}</Text>
           </View>
-        ) : (
-          <CustomInput
-            styleInput={{minHeight: 50, marginVertical: 5}}
-            placeholder={'Latitude'}
-            value={locationLatitude}
-            onChangeText={text => setLocationLatitude(text)}
-          />
         )}
         <Text style={styles.title}>Lý do</Text>
         <CustomTextInputChangeValue
@@ -288,11 +274,15 @@ const ReportIncident = props => {
           </Text>
         </TouchableOpacity>
       </ScrollView>
-      <ComponentTwoButton
-        disabledRight={isValueOK() ? false : true}
-        onPressLeft={() => navigation.goBack()}
-        onPressRight={() => sendReport()}
-      />
+      <TouchableOpacity
+        disabled={isValueOK() ? false : true}
+        onPress={sendReport}
+        style={[
+          styles.styleButton,
+          {backgroundColor: isValueOK() ? colors.mainColor : 'grey'},
+        ]}>
+        <Text style={styles.textSendReport}>Gửi báo cáo</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -370,58 +360,16 @@ const styles = StyleSheet.create({
     padding: 5,
     borderColor: colors.mainColor,
   },
-});
-const ComponentTwoButton = props => {
-  const {onPressLeft, onPressRight, disabledLeft, disabledRight} = props;
-  return (
-    <View style={styleComponentTwoButton.viewComponentTwoButton}>
-      <TouchableOpacity
-        disabled={disabledLeft}
-        onPress={onPressLeft}
-        style={styleComponentTwoButton.buttonComponentTwoButton}>
-        <Image
-          source={icons.ic_back}
-          style={[
-            styleComponentTwoButton.imageComponentTwoButton,
-            {tintColor: 'grey'},
-          ]}
-        />
-        <Text>Quay lại</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        disabled={disabledRight}
-        onPress={onPressRight}
-        style={styleComponentTwoButton.buttonComponentTwoButton}>
-        <Image
-          source={icons.ic_document}
-          style={[
-            styleComponentTwoButton.imageComponentTwoButton,
-            {tintColor: colors.mainColor},
-          ]}
-        />
-        <Text style={{color: colors.mainColor}}>Gửi báo cáo</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-const styleComponentTwoButton = StyleSheet.create({
-  viewComponentTwoButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
+  styleButton: {
+    width: 150,
     height: 50,
-  },
-  buttonComponentTwoButton: {
-    height: 50,
-    width: '50%',
-    backgroundColor: 'white',
-    borderWidth: 0.5,
-    borderColor: colors.background,
-    flexDirection: 'row',
-    alignItems: 'center',
+    alignSelf: 'center',
+    borderRadius: 10,
+    marginVertical: 10,
     justifyContent: 'center',
+    alignItems: 'center',
   },
-  imageComponentTwoButton: {height: 25, width: 25, marginRight: 5},
+  textSendReport: {fontSize: 18, color: 'white', fontWeight: 'bold'},
 });
+
 export default ReportIncident;

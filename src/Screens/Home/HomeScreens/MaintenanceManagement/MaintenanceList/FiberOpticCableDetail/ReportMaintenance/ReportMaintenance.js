@@ -21,6 +21,7 @@ import CustomModalCamera from '../../../../../../../Components/CustomModalCamera
 import {uuid} from '../../../../../../../utils/uuid';
 import CustomButtonIcon from '../../../../../../../Components/CustomButtonIcon';
 import CustomTextInputChangeValue from '../../../../../../../Components/CustomTextInputChangeValue';
+import CustomTextButton from '../../../../../../../Components/CustomTextButton';
 import {colors, icons} from '../../../../../../../Constants';
 import common from '../../../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -424,11 +425,15 @@ const ReportMaintenance = props => {
           </TouchableOpacity>
         </ScrollView>
 
-        <ComponentTwoButton
-          disabledRight={isValueOK() ? false : true}
-          onPressLeft={() => rejectIssue()}
-          onPressRight={() => sendReport()}
-        />
+        <TouchableOpacity
+          disabled={isValueOK() ? false : true}
+          onPress={sendReport}
+          style={[
+            styles.styleButton,
+            {backgroundColor: isValueOK() ? colors.mainColor : 'grey'},
+          ]}>
+          <Text style={styles.textSendReport}>Gửi báo cáo</Text>
+        </TouchableOpacity>
       </KeyboardAvoidingView>
     </View>
   );
@@ -511,6 +516,16 @@ const styles = StyleSheet.create({
     padding: 5,
     borderColor: colors.mainColor,
   },
+  styleButton: {
+    width: 150,
+    height: 50,
+    alignSelf: 'center',
+    borderRadius: 10,
+    marginVertical: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textSendReport: {fontSize: 18, color: 'white', fontWeight: 'bold'},
 });
 const CustomComponentViewCheck = props => {
   const {title, result, onPressOk, onPressNotOk} = props;
@@ -553,57 +568,5 @@ const styleComponent = StyleSheet.create({
     marginVertical: 5,
   },
 });
-const ComponentTwoButton = props => {
-  const {onPressLeft, onPressRight, disabledLeft, disabledRight} = props;
-  return (
-    <View style={styleComponentTwoButton.viewComponentTwoButton}>
-      <TouchableOpacity
-        disabled={disabledLeft}
-        onPress={onPressLeft}
-        style={styleComponentTwoButton.buttonComponentTwoButton}>
-        <Image
-          source={icons.ic_back}
-          style={[
-            styleComponentTwoButton.imageComponentTwoButton,
-            {tintColor: 'grey'},
-          ]}
-        />
-        <Text style={{color: 'grey'}}>Quay lại</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        disabled={disabledRight}
-        onPress={onPressRight}
-        style={styleComponentTwoButton.buttonComponentTwoButton}>
-        <Image
-          source={icons.ic_document}
-          style={[
-            styleComponentTwoButton.imageComponentTwoButton,
-            {tintColor: colors.mainColor},
-          ]}
-        />
-        <Text style={{color: colors.mainColor}}>Gửi báo cáo</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-const styleComponentTwoButton = StyleSheet.create({
-  viewComponentTwoButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    height: 50,
-  },
-  buttonComponentTwoButton: {
-    height: 50,
-    width: '50%',
-    backgroundColor: 'white',
-    borderWidth: 0.5,
-    borderColor: colors.background,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  imageComponentTwoButton: {height: 25, width: 25, marginRight: 5},
-});
+
 export default ReportMaintenance;
