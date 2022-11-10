@@ -19,6 +19,9 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
 import ReadUserApi from '../../../Api/Account/ReadUserApi';
 import {updateUserInfor} from '../../../Store/slices/userInfoSlice';
+import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from 'react-native-device-info';
+import RegisterNotificationAPI from '../../../Api/RegisterNotificationAPI';
 
 const FAKE_DATA = [{id: 1}, {id: 2}, {id: 3}];
 const HomeScreen = () => {
@@ -28,16 +31,46 @@ const HomeScreen = () => {
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
   const [seachText, setSeachText] = useState('');
-  const [keyboardStatus, setKeyboardStatus] = useState(false);
-
   useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardStatus(true);
+    messaging().onNotificationOpenedApp(remoteMessage => {
+      console.log('remoteMessage', remoteMessage);
     });
-    Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardStatus(false);
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('Thông báo', JSON.stringify(remoteMessage));
     });
+    return unsubscribe;
   }, []);
+  useEffect(() => {
+    requestUserPermission();
+    getDeviceToken();
+  }, []);
+  const getDeviceToken = async () => {
+    let device_token = await messaging().getToken();
+    let deviceId = DeviceInfo.getDeviceId();
+    const data = {
+      token: device_token,
+      device_info: deviceId,
+    };
+    await RegisterNotificationAPI(token, data)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    console.log(device_token, 'device_token');
+    console.log(deviceId, 'deviceId');
+  };
+  const requestUserPermission = async () => {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  };
   const dispatch = useDispatch();
   useEffect(() => {
     readUser();
