@@ -15,9 +15,7 @@ import {colors, icons} from '../../../../Constants';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
-const FAKE_DATA = [{id: 1}, {id: 2}, {id: 3}];
 const MaintenanceManagement = () => {
-  const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
@@ -68,7 +66,7 @@ const MaintenanceManagement = () => {
               icon={icons.ic_documentManagement}
               title={'Tổng hợp\nbáo cáo\nbảo trì'}
               titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('ContinueScreen')}
+              onPress={() => navigation.navigate('MaintenanceCableRouteReport')}
             />
           </View>
           <View style={styles.viewRow}>

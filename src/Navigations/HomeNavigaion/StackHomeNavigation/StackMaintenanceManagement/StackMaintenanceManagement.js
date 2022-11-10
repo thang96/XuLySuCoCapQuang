@@ -14,6 +14,9 @@ import {
   CreateNewCableRoute,
   FibelOpticCableDetail,
   ReportMaintenanceDetail,
+  MaintenanceCableRouteReport,
+  GeneralMaintenanceReport,
+  DetailedMaintenanceReport,
 } from '../../../../Screens';
 const Stack = createStackNavigator();
 const StackMaintenanceManagement = props => {
@@ -106,6 +109,27 @@ const StackMaintenanceManagement = props => {
       <Stack.Screen
         component={ReportMaintenanceDetail}
         name={'ReportMaintenanceDetail'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={MaintenanceCableRouteReport}
+        name={'MaintenanceCableRouteReport'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={GeneralMaintenanceReport}
+        name={'GeneralMaintenanceReport'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={DetailedMaintenanceReport}
+        name={'DetailedMaintenanceReport'}
         options={{
           headerShown: false,
         }}

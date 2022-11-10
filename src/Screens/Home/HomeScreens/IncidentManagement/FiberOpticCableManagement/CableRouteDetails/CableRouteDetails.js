@@ -195,16 +195,6 @@ const CableRouteDetails = props => {
           )}
           <View style={styles.viewRow}>
             <Text style={styles.title}>Chi tiết tuyến cáp</Text>
-            <CustomTextButton
-              styleButton={{height: 25}}
-              label={'Lịch sử tuyến cáp'}
-              textStyle={{
-                color: colors.mainColor,
-                fontSize: 18,
-                fontWeight: 'bold',
-              }}
-              onPress={() => {}}
-            />
           </View>
 
           <CustomTextInputChangeValue

@@ -80,7 +80,7 @@ const IncidentManagement = () => {
               icon={icons.ic_documentManagement}
               title={'Tổng hợp\nbáo cáo\nsự cố'}
               titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('ContinueScreen')}
+              onPress={() => navigation.navigate('CableRouteReport')}
             />
           </View>
           <View style={styles.viewRow}>

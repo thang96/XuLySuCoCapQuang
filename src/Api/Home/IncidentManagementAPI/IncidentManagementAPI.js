@@ -18,6 +18,27 @@ const GetListIssuesAPI = token => {
       });
   });
 };
+const GetListReportsIssuesAPI = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${BASEURL}/api/v1/issues/`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          optical_cable_id: id,
+          issue_status_code: 'COMPLETION',
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 
 const CreateIssuesRequestAPI = (
   token,
@@ -227,6 +248,7 @@ const ExportIssueAPI = token => {
 
 const IncidentManagementAPI = {
   GetListIssuesAPI,
+  GetListReportsIssuesAPI,
   CreateIssuesRequestAPI,
   GetIncidentIssueByIdAPI,
   DeleteIncidentIssueByIdAPI,

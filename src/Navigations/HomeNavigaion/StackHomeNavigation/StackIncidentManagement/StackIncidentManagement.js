@@ -14,6 +14,9 @@ import {
   DetailOpticCableIncident,
   ReportIncident,
   ReportIncidentDetail,
+  CompilationOfCrashReports,
+  DetailOfCrashReports,
+  CableRouteReport,
 } from '../../../../Screens';
 const Stack = createStackNavigator();
 const StackIncidentManagement = props => {
@@ -107,6 +110,27 @@ const StackIncidentManagement = props => {
       <Stack.Screen
         component={ReportIncidentDetail}
         name={'ReportIncidentDetail'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={CableRouteReport}
+        name={'CableRouteReport'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={CompilationOfCrashReports}
+        name={'CompilationOfCrashReports'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={DetailOfCrashReports}
+        name={'DetailOfCrashReports'}
         options={{
           headerShown: false,
         }}

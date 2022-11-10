@@ -26,6 +26,11 @@ import ReportIncident from './Home/HomeScreens/IncidentManagement/IncidentList/I
 import DetailOpticCableIncident from './Home/HomeScreens/IncidentManagement/IncidentList/IncidentDetail/DetailInformation/DetailOpticCableIncident';
 import CreateCableRoute from './Home/HomeScreens/IncidentManagement/FiberOpticCableManagement/CreateCableRoute/CreateCableRoute';
 import ReportIncidentDetail from './Home/HomeScreens/IncidentManagement/IncidentList/IncidentDetail/ReportIncident/ReportIncidentDetail';
+//--CompilationOfCrashReports
+import CableRouteReport from './Home/HomeScreens/IncidentManagement/CompilationOfCrashReports/CableRouteReport';
+import CompilationOfCrashReports from './Home/HomeScreens/IncidentManagement/CompilationOfCrashReports/CompilationOfCrashReports';
+import DetailOfCrashReports from './Home/HomeScreens/IncidentManagement/CompilationOfCrashReports/DetailOfCrashReports';
+
 //-AcceptRequests DetailUserIncident DetailOpticCableIncident
 import AcceptRequests from './Home/HomeScreens/IncidentManagement/AcceptRequests/AcceptRequests';
 import DetailRequest from './Home/HomeScreens/IncidentManagement/AcceptRequests/DetailRequest';
@@ -46,6 +51,10 @@ import ReportMaintenance from './Home/HomeScreens/MaintenanceManagement/Maintena
 import CreateNewCableRoute from './Home/HomeScreens/MaintenanceManagement/FiberOpticCableManagement/CreateNewCableRoute/CreateNewCableRoute';
 import FibelOpticCableDetail from './Home/HomeScreens/MaintenanceManagement/FiberOpticCableManagement/FibelOpticCableDetail/FibelOpticCableDetail';
 import ReportMaintenanceDetail from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/FiberOpticCableDetail/ReportMaintenance/ReportMaintenanceDetail';
+//--GeneralMaintenanceReport
+import MaintenanceCableRouteReport from './Home/HomeScreens/MaintenanceManagement/GeneralMaintenanceReport/MaintenanceCableRouteReport';
+import GeneralMaintenanceReport from './Home/HomeScreens/MaintenanceManagement/GeneralMaintenanceReport/GeneralMaintenanceReport';
+import DetailedMaintenanceReport from './Home/HomeScreens/MaintenanceManagement/GeneralMaintenanceReport/DetailedMaintenanceReport';
 //
 import WarehouseManagement from './Home/HomeScreens/WarehouseManagement/WarehouseManagement';
 import ListOfSupplies from './Home/HomeScreens/WarehouseManagement/ProjectManagement/ListOfSupplies';
@@ -89,7 +98,7 @@ export {
   AreaManagement,
   DetailArea,
   DetailAreaUser,
-  //-IncidentManagement
+  //--IncidentManagement
   IncidentManagement,
   CreateCableRoute,
   InformationListOfCableRoutes,
@@ -100,6 +109,11 @@ export {
   DetailOpticCableIncident,
   ReportIncident,
   ReportIncidentDetail,
+
+  //--CompilationOfCrashReports
+  CableRouteReport,
+  CompilationOfCrashReports,
+  DetailOfCrashReports,
   //-AcceptRequests
   AcceptRequests,
   DetailRequest,
@@ -124,6 +138,10 @@ export {
   CreateNewCableRoute,
   FibelOpticCableDetail,
   ReportMaintenanceDetail,
+  //--GeneralMaintenanceReport
+  GeneralMaintenanceReport,
+  MaintenanceCableRouteReport,
+  DetailedMaintenanceReport,
   //-
   WarehouseManagement,
   ListOfSupplies,

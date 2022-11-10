@@ -18,6 +18,27 @@ const GetMaintenanceIssuesAPI = token => {
       });
   });
 };
+const GetListMaintenanceIssuesReportAPI = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${BASEURL}/api/v1/maintenance_issue/`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          optical_cable_id: id,
+          issue_status_code: 'COMPLETION',
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 
 const CreateMaintenanceIssueAPI = (
   token,
@@ -241,6 +262,7 @@ const MaintenanceIssueReportAPI = (
 
 const MaintenanceManagementAPI = {
   GetMaintenanceIssuesAPI,
+  GetListMaintenanceIssuesReportAPI,
   CreateMaintenanceIssueAPI,
   ReceiveMaintenanceIssueAPI,
   RejectMaintenanceIssueAPI,
