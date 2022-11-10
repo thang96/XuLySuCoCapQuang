@@ -16,7 +16,6 @@ import CustomButtonText from '../Components/CustomTextButton';
 const ShowImageScreen = props => {
   const route = useRoute();
   const navigation = useNavigation();
-  console.log(route.params);
   return (
     <View style={styles.container}>
       <TouchableOpacity

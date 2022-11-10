@@ -29,6 +29,7 @@ const HomeScreen = () => {
   const token = useSelector(state => state?.token?.token);
   const [seachText, setSeachText] = useState('');
   const [keyboardStatus, setKeyboardStatus] = useState(false);
+
   useEffect(() => {
     Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardStatus(true);
@@ -41,6 +42,7 @@ const HomeScreen = () => {
   useEffect(() => {
     readUser();
   }, []);
+
   useEffect(() => {
     readUser();
   }, [token]);
