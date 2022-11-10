@@ -21,6 +21,7 @@ import {useSelector} from 'react-redux';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
 import IncidentManagementAPI from '../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 import {uuid} from '../../../../../../utils/uuid';
+import CustomConfirm from '../../../../../../Components/CustomConfirm';
 const IncidentDetail = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
@@ -101,6 +102,22 @@ const IncidentDetail = props => {
       </TouchableOpacity>
     );
   };
+  const [confirm, setConfirm] = useState(false);
+  const deleteIncident = async () => {
+    let id = result?.id;
+    await IncidentManagementAPI.DeleteIncidentIssueByIdAPI(token, id)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Sự cố', 'Xóa sự cố thành công');
+          navigation.goBack();
+          setConfirm(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        Alert.alert('Sự cố', 'Xóa sự cố thất bại');
+      });
+  };
   return (
     <View style={styles.container}>
       <CustomAppBar
@@ -108,6 +125,18 @@ const IncidentDetail = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.navigate('IncidentList')}
       />
+      {confirm && (
+        <View style={styles.viewModal}>
+          <CustomConfirm
+            title={'Xóa sự cố'}
+            content={'Bạn có muốn xóa sự cố ?'}
+            leftLabel={'Trở lại'}
+            rightLabel={'Xóa'}
+            leftPress={() => setConfirm(false)}
+            rightPress={() => deleteIncident()}
+          />
+        </View>
+      )}
       {loading ? (
         <ActivityIndicator size="large" color={colors.mainColor} />
       ) : (
@@ -231,6 +260,14 @@ const IncidentDetail = props => {
                 />
               </View>
             )}
+          {userInfor?.role == 'GENERAL_MANAGER' && (
+            <CustomTextButton
+              textStyle={{color: 'red', fontSize: 18, fontWeight: 'bold'}}
+              styleButton={{width: 140, height: 50}}
+              label={'Xóa sự cố'}
+              onPress={() => setConfirm(true)}
+            />
+          )}
           {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
             userInfor?.role != 'EMPLOYEE' && (
               <CustomTextButton
@@ -295,6 +332,13 @@ const styles = StyleSheet.create({
     borderColor: colors.mainColor,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(119,119,119,0.5)',
+    position: 'absolute',
+    zIndex: 9999,
   },
 });
 

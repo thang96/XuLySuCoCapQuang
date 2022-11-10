@@ -22,6 +22,7 @@ import CustomTextInputChangeValue from '../../../../../../Components/CustomTextI
 import CusttomTwoButtonBottom from '../../../../../../Components/CusttomTwoButtonBottom';
 import {useSelector} from 'react-redux';
 import OpticalCablesAPI from '../../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
+import CustomConfirm from '../../../../../../Components/CustomConfirm';
 const CableRouteDetails = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -140,7 +141,6 @@ const CableRouteDetails = props => {
     await OpticalCablesAPI.UpdateOpticalCablesAPI(token, data, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          console.log(res?.data?.success);
           Alert.alert('Tuyến cáp', 'Cập nhật tuyến cáp thành công');
           navigation.navigate('InformationListOfCableRoutes');
         }
@@ -148,6 +148,23 @@ const CableRouteDetails = props => {
       .catch(function (error) {
         console.log(JSON.stringify(error));
         Alert.alert('Tuyến cáp', 'Cập nhật tuyến cáp thất bại');
+      });
+  };
+
+  const [confirm, setConfirm] = useState(false);
+  const deleteOptical = async () => {
+    let id = result?.id;
+    await OpticalCablesAPI.DeleteOpticalCablesAPI(token, id)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Tuyến cáp', 'Xóa tuyến cáp thành công');
+          navigation.goBack();
+          setConfirm(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        Alert.alert('Tuyến cáp', 'Xóa tuyến cáp thất bại');
       });
   };
   return (
@@ -159,6 +176,18 @@ const CableRouteDetails = props => {
           navigation.navigate('InformationListOfCableRoutes')
         }
       />
+      {confirm && (
+        <View style={styles.viewModal}>
+          <CustomConfirm
+            title={'Xóa tuyến cáp'}
+            content={'Bạn có muốn xóa tuyến cáp ?'}
+            leftLabel={'Trở lại'}
+            rightLabel={'Xóa'}
+            leftPress={() => setConfirm(false)}
+            rightPress={() => deleteOptical()}
+          />
+        </View>
+      )}
       {result ? (
         <ScrollView style={styles.eachContainer}>
           {keyboardIsShow == false && (
@@ -168,7 +197,7 @@ const CableRouteDetails = props => {
             <Text style={styles.title}>Chi tiết tuyến cáp</Text>
             <CustomTextButton
               styleButton={{height: 25}}
-              label={'Lịch sử xử lý sự cố'}
+              label={'Lịch sử tuyến cáp'}
               textStyle={{
                 color: colors.mainColor,
                 fontSize: 18,
@@ -496,6 +525,14 @@ const CableRouteDetails = props => {
             </TouchableOpacity>
           )}
           {userInfor?.role == 'GENERAL_MANAGER' && (
+            <CustomTextButton
+              textStyle={{color: 'red', fontSize: 18, fontWeight: 'bold'}}
+              styleButton={{width: 140, height: 50}}
+              label={'Xóa tuyến cáp'}
+              onPress={() => setConfirm(true)}
+            />
+          )}
+          {userInfor?.role == 'GENERAL_MANAGER' && (
             <CusttomTwoButtonBottom
               styleTwoButton={styles.viewCusttomTwoButtonBottom}
               styleButtonLeft={styles.button}
@@ -611,6 +648,13 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     backgroundColor: 'white',
     paddingHorizontal: 10,
+  },
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(119,119,119,0.5)',
+    position: 'absolute',
+    zIndex: 9999,
   },
 });
 

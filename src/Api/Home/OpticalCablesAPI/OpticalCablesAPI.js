@@ -73,10 +73,29 @@ const UpdateOpticalCablesAPI = (token, data, id) => {
       });
   });
 };
+const DeleteOpticalCablesAPI = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`${BASEURL}/api/v1/optical_cables/${id}`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 const OpticalCablesAPI = {
   GetOpticalCablesAPI,
   CreateOpticalCablesAPI,
   GetOpticalCablesByIdAPI,
   UpdateOpticalCablesAPI,
+  DeleteOpticalCablesAPI,
 };
 export default OpticalCablesAPI;

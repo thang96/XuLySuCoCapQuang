@@ -12,6 +12,7 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
+  Alert,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../../Constants';
 import CustomAppBar from '../../../../../../Components/CustomAppBar';
@@ -20,6 +21,7 @@ import {uuid} from '../../../../../../utils/uuid';
 import {useSelector} from 'react-redux';
 import MaintenanceManagementAPI from '../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
+import CustomConfirm from '../../../../../../Components/CustomConfirm';
 const FiberOpticCableDetail = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
@@ -97,6 +99,25 @@ const FiberOpticCableDetail = props => {
       </TouchableOpacity>
     );
   };
+  const [confirm, setConfirm] = useState(false);
+  const deleteMaintenance = async () => {
+    let id = result?.id;
+    await MaintenanceManagementAPI.DeleteMaintenanceIssueByIdAPI(token, id)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Bảo trì-bảo dưỡng', 'Xóa sự bảo trì-bảo dưỡng công');
+          navigation.goBack();
+          setConfirm(false);
+        } else {
+          Alert.alert('Bảo trì-bảo dưỡng', 'Xóa sự bảo trì-bảo dưỡng công');
+          setConfirm(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        Alert.alert('Bảo trì-bảo dưỡng', 'Xóa bảo trì-bảo dưỡng thất bại');
+      });
+  };
   return (
     <View style={styles.container}>
       <CustomAppBar
@@ -104,6 +125,18 @@ const FiberOpticCableDetail = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.navigate('MaintenanceList')}
       />
+      {confirm && (
+        <View style={styles.viewModal}>
+          <CustomConfirm
+            title={'Xóa bảo trì-bảo dưỡng'}
+            content={'Bạn có muốn xóa bảo trì-bảo dưỡng ?'}
+            leftLabel={'Trở lại'}
+            rightLabel={'Xóa'}
+            leftPress={() => setConfirm(false)}
+            rightPress={() => deleteMaintenance()}
+          />
+        </View>
+      )}
       <ScrollView style={styles.eachContainer}>
         <Text style={[styles.title, {marginBottom: 10}]}>
           Thông tin công việc
@@ -221,6 +254,14 @@ const FiberOpticCableDetail = props => {
             />
           </View>
         )}
+      {userInfor?.role == 'GENERAL_MANAGER' && (
+        <CustomTextButton
+          textStyle={{color: 'red', fontSize: 18, fontWeight: 'bold'}}
+          styleButton={{width: 140, height: 50}}
+          label={'Xóa sự cố'}
+          onPress={() => setConfirm(true)}
+        />
+      )}
       {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
         userInfor?.role != 'EMPLOYEE' && (
           <CustomTextButton
@@ -277,6 +318,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     marginVertical: 10,
+  },
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(119,119,119,0.5)',
+    position: 'absolute',
+    zIndex: 9999,
   },
 });
 

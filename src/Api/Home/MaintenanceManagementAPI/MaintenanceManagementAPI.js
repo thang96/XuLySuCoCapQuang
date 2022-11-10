@@ -131,6 +131,23 @@ const GetMaintenanceIssueByIdAPI = (token, id) => {
       });
   });
 };
+const DeleteMaintenanceIssueByIdAPI = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`${BASEURL}/api/v1/maintenance_issue/${id}`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 const MaintenanceIssueReportDetailAPI = (token, id) => {
   return new Promise((resolve, reject) => {
     axios
@@ -229,6 +246,7 @@ const MaintenanceManagementAPI = {
   RejectMaintenanceIssueAPI,
   AcceptanceMaintenanceRequestAPI,
   GetMaintenanceIssueByIdAPI,
+  DeleteMaintenanceIssueByIdAPI,
   MaintenanceIssueReportDetailAPI,
   MaintenanceIssueReportAPI,
 };

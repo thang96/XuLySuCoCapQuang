@@ -13,6 +13,7 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../../Constants';
 import CustomAppBar from '../../../../../../Components/CustomAppBar';
@@ -22,6 +23,7 @@ import CustomTextInputChangeValue from '../../../../../../Components/CustomTextI
 import CusttomTwoButtonBottom from '../../../../../../Components/CusttomTwoButtonBottom';
 import {useSelector} from 'react-redux';
 import OpticalCablesAPI from '../../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
+import CustomConfirm from '../../../../../../Components/CustomConfirm';
 const FibelOpticCableDetail = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -133,7 +135,6 @@ const FibelOpticCableDetail = props => {
     await OpticalCablesAPI.UpdateOpticalCablesAPI(token, data, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          console.log(res?.data?.success);
           alert('Update tuyến cáp thành công');
           navigation.navigate('FiberOpticCableManagement');
         }
@@ -141,6 +142,22 @@ const FibelOpticCableDetail = props => {
       .catch(function (error) {
         console.log(JSON.stringify(error));
         alert('Update tuyến cáp thất bại');
+      });
+  };
+  const [confirm, setConfirm] = useState(false);
+  const deleteOptical = async () => {
+    let id = result?.id;
+    await OpticalCablesAPI.DeleteOpticalCablesAPI(token, id)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Tuyến cáp', 'Xóa tuyến cáp thành công');
+          navigation.goBack();
+          setConfirm(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        Alert.alert('Tuyến cáp', 'Xóa tuyến cáp thất bại');
       });
   };
   return (
@@ -152,6 +169,18 @@ const FibelOpticCableDetail = props => {
           navigation.navigate('FiberOpticCableManagement')
         }
       />
+      {confirm && (
+        <View style={styles.viewModal}>
+          <CustomConfirm
+            title={'Xóa tuyến cáp'}
+            content={'Bạn có muốn xóa tuyến cáp ?'}
+            leftLabel={'Trở lại'}
+            rightLabel={'Xóa'}
+            leftPress={() => setConfirm(false)}
+            rightPress={() => deleteOptical()}
+          />
+        </View>
+      )}
       {loading ? (
         <ActivityIndicator size="large" color={colors.mainColor} />
       ) : (
@@ -491,6 +520,14 @@ const FibelOpticCableDetail = props => {
             </TouchableOpacity>
           )}
           {userInfor?.role == 'GENERAL_MANAGER' && (
+            <CustomTextButton
+              textStyle={{color: 'red', fontSize: 18, fontWeight: 'bold'}}
+              styleButton={{width: 140, height: 50}}
+              label={'Xóa tuyến cáp'}
+              onPress={() => setConfirm(true)}
+            />
+          )}
+          {userInfor?.role == 'GENERAL_MANAGER' && (
             <CusttomTwoButtonBottom
               styleTwoButton={styles.viewCusttomTwoButtonBottom}
               styleButtonLeft={styles.button}
@@ -604,6 +641,13 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     backgroundColor: 'white',
     paddingHorizontal: 10,
+  },
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(119,119,119,0.5)',
+    position: 'absolute',
+    zIndex: 9999,
   },
 });
 

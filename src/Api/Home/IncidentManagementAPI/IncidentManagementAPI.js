@@ -73,6 +73,23 @@ const GetIncidentIssueByIdAPI = (token, id) => {
       });
   });
 };
+const DeleteIncidentIssueByIdAPI = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(`${BASEURL}/api/v1/issues/${id}`, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 
 const ReceiveIssueAPI = (token, id) => {
   return new Promise((resolve, reject) => {
@@ -212,6 +229,7 @@ const IncidentManagementAPI = {
   GetListIssuesAPI,
   CreateIssuesRequestAPI,
   GetIncidentIssueByIdAPI,
+  DeleteIncidentIssueByIdAPI,
   ReceiveIssueAPI,
   RejectIssueAPI,
   AcceptIssueRequestAPI,
