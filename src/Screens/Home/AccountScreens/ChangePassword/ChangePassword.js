@@ -16,6 +16,7 @@ import CustomButtonText from '../../../../Components/CustomTextButton';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import AccountAPI from '../../../../Api/Account/AccountAPI';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const ChangePassword = props => {
   const navigation = useNavigation();
   const token = useSelector(state => state?.token?.token);
@@ -29,9 +30,9 @@ const ChangePassword = props => {
     newdPassword == reNewdPassword;
   const changePassword = async () => {
     const data = {
-      oldPassword: oldPassword,
-      newdPassword: newdPassword,
-      re_password: re_password,
+      password: oldPassword,
+      new_password: newdPassword,
+      renew_password: reNewdPassword,
     };
     await AccountAPI.ChangePasswordAPI(token, data)
       .then(res => {
@@ -49,13 +50,11 @@ const ChangePassword = props => {
       });
   };
   const logOut = async () => {
-    try {
-      await AsyncStorage.removeItem('token').then(() => {
+    await AsyncStorage.removeItem('token')
+      .then(() => {
         navigation.navigate('LoginNavigation');
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      })
+      .catch(error => console.log(error));
   };
   return (
     <View style={styles.container}>

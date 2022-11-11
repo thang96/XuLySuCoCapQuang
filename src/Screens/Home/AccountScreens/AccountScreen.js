@@ -31,14 +31,12 @@ const AccountScreen = props => {
       });
   };
   const logOut = async () => {
-    try {
-      await AsyncStorage.removeItem('token').then(() => {
+    await AsyncStorage.removeItem('token')
+      .then(() => {
         Alert.alert('Đăng xuất', 'Đăng xuất thành công');
         navigation.navigate('LoginNavigation');
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      })
+      .catch(error => console.log(error));
   };
   return (
     <View style={styles.container}>
