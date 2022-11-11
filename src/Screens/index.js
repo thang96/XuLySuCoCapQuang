@@ -81,7 +81,7 @@ import ChangeAddress from './Home/AccountScreens/Personalinformation/ChangeAddre
 import ChangeEmail from './Home/AccountScreens/Personalinformation/ChangeEmail';
 import ChangeNumberPhone from './Home/AccountScreens/Personalinformation/ChangeNumberPhone';
 import AppSetting from './Home/AccountScreens/Setting/AppSetting';
-import ChangePassword from './Home/AccountScreens/Setting/ChangePassword';
+import ChangePassword from './Home/AccountScreens/ChangePassword/ChangePassword';
 //Work list
 import WordList from './Home/WordList/WorkList';
 export {

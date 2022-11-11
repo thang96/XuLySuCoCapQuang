@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>704533782472-3htpn3vd8ito9c21pjjt57smhke1jfjp.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.704533782472-3htpn3vd8ito9c21pjjt57smhke1jfjp</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>704533782472-9gks7vdk7gmvbe90frk88fidc3nqktoe.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBmpjLwky_-8tli7SKEMhiSUnjlei_tUMo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>704533782472</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>org.reactjs.native.example.CapQuang</string>
+	<key>PROJECT_ID</key>
+	<string>optical-cables-management</string>
+	<key>STORAGE_BUCKET</key>
+	<string>optical-cables-management.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:704533782472:ios:75540b3ed9cfbb601ceafd</string>
+</dict>
+</plist>

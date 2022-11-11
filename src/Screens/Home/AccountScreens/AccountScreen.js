@@ -68,24 +68,33 @@ const AccountScreen = props => {
           </View>
           <Image source={icons.next} style={styles.iconNext} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonRow} onPress={() => {}}>
+        {/* <TouchableOpacity style={styles.buttonRow} onPress={() => {}}>
           <View style={styles.viewRow}>
             <Image source={icons.ic_gear} style={styles.icon} />
             <Text style={styles.title}>Cài đặt ứng dụng</Text>
           </View>
           <Image source={icons.next} style={styles.iconNext} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonRow} onPress={() => {}}>
+        </TouchableOpacity> */}
+        {/* <TouchableOpacity style={styles.buttonRow} onPress={() => {}}>
           <View style={styles.viewRow}>
             <Image source={icons.ic_star} style={styles.icon} />
             <Text style={styles.title}>Việc đã lưu</Text>
           </View>
           <Image source={icons.next} style={styles.iconNext} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonRow} onPress={() => {}}>
+        </TouchableOpacity> */}
+        {/* <TouchableOpacity style={styles.buttonRow} onPress={() => {}}>
           <View style={styles.viewRow}>
             <Image source={icons.ic_chats} style={styles.icon} />
             <Text style={styles.title}>Hướng dẫn</Text>
+          </View>
+          <Image source={icons.next} style={styles.iconNext} />
+        </TouchableOpacity> */}
+        <TouchableOpacity
+          style={styles.buttonRow}
+          onPress={() => navigation.navigate('ChangePassword')}>
+          <View style={styles.viewRow}>
+            <Image source={icons.ic_key} style={styles.icon} />
+            <Text style={styles.title}>Đổi mật khẩu</Text>
           </View>
           <Image source={icons.next} style={styles.iconNext} />
         </TouchableOpacity>

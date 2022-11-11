@@ -8,7 +8,9 @@ production = ENV["PRODUCTION"] == "1"
 
 target 'XuLySuCoCapQuang' do
   config = use_native_modules!
-
+  use_frameworks! :linkage => :static
+  $RNFirebaseAsStaticFramework = true
+  :flipper_configuration
   # Flags change depending on the env values.
   flags = get_default_flags()
 

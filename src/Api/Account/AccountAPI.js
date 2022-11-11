@@ -45,8 +45,25 @@ const UpdateUserAvatarAPI = async (token, img) => {
       });
   });
 };
-
-const AccountAPI = {ReadUserAPI, UpdateUserAvatarAPI};
+const ChangePasswordAPI = (token, data) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(`${BASEURL}/api/v1/users/me/reset-password/`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
+const AccountAPI = {ReadUserAPI, UpdateUserAvatarAPI, ChangePasswordAPI};
 export default AccountAPI;
 
 function getFileName(file) {

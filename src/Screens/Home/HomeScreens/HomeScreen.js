@@ -17,7 +17,7 @@ import {colors, icons} from '../../../Constants';
 import CustomInput from '../../../Components/CustomInput';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import ReadUserApi from '../../../Api/Account/ReadUserApi';
+import AccountAPI from '../../../Api/Account/AccountAPI';
 import {updateUserInfor} from '../../../Store/slices/userInfoSlice';
 import messaging from '@react-native-firebase/messaging';
 import DeviceInfo from 'react-native-device-info';
@@ -82,7 +82,7 @@ const HomeScreen = () => {
     readUser();
   }, [token]);
   const readUser = async () => {
-    await ReadUserApi(token)
+    await AccountAPI.ReadUserAPI(token)
       .then(res => {
         dispatch(updateUserInfor(res?.data?.data));
       })
