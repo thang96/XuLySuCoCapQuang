@@ -55,7 +55,10 @@ const HomeScreen = () => {
       console.log('remoteMessage', remoteMessage);
     });
     const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('Thông báo', JSON.stringify(remoteMessage));
+      Alert.alert(
+        'Thông báo',
+        JSON.stringify(`${remoteMessage?.notification?.body}`),
+      );
     });
     return unsubscribe;
   }, []);
