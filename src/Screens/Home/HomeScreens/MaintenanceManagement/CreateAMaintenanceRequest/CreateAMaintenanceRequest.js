@@ -25,7 +25,6 @@ import UsersAPI from '../../../../../Api/Home/UsersAPI/UsersAPI';
 import CustomModalCamera from '../../../../../Components/CustomModalCamera';
 import common from '../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
-import CustomModalDateTimePicker from '../../../../../Components/CustomModalDateTimePicker';
 import MaintenanceManagementAPI from '../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import {uuid} from '../../../../../utils/uuid';
 

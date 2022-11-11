@@ -11,7 +11,6 @@ export const userSlice = createSlice({
       // state.user = [...current(state.user), actions.payload];
     },
   },
-  extraReducers: {},
 });
 
 export const {updateUser} = userSlice.actions;

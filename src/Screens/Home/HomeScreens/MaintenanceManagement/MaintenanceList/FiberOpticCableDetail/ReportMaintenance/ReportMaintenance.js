@@ -26,7 +26,6 @@ import {colors, icons} from '../../../../../../../Constants';
 import common from '../../../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useSelector} from 'react-redux';
-import RNLocation from 'react-native-location';
 import MaintenanceManagementAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 const ReportMaintenance = props => {
   const navigation = useNavigation();

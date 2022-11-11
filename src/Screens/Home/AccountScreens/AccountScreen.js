@@ -31,7 +31,7 @@ const AccountScreen = props => {
       });
   };
   const logOut = async () => {
-    await AsyncStorage.removeItem('token')
+    await AsyncStorage.setItem('token', '1')
       .then(() => {
         Alert.alert('Đăng xuất', 'Đăng xuất thành công');
         navigation.navigate('LoginNavigation');

@@ -25,8 +25,8 @@ import {uuid} from '../../../../../../../utils/uuid';
 import ImagePicker from 'react-native-image-crop-picker';
 import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 import {useSelector} from 'react-redux';
-import RNLocation from 'react-native-location';
 import CustomButtonIcon from '../../../../../../../Components/CustomButtonIcon';
+import Geolocation from '@react-native-community/geolocation';
 const ReportIncident = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -41,6 +41,7 @@ const ReportIncident = props => {
 
   useEffect(() => {
     getRequest();
+    checkPer();
   }, []);
   const getRequest = async () => {
     let id = route.params;
@@ -52,7 +53,27 @@ const ReportIncident = props => {
         console.log(error);
       });
   };
-
+  const checkPer = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Truy cập vị trí',
+          message: 'Cho phép ứng dụng truy cập vị trí để báo cáo',
+          buttonNeutral: 'Hỏi sau',
+          buttonNegative: 'Hủy',
+          buttonPositive: 'Chấp nhận',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('OK');
+      } else {
+        console.log('NO');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
   const isValueOK = () =>
     locationLongitude.length != '' &&
     locationLatitude.length != '' &&
@@ -63,38 +84,9 @@ const ReportIncident = props => {
   const [modalCamera, setModalCamera] = useState(false);
 
   const getLocation = () => {
-    setAutoLocation(prev => (prev == true ? false : true));
-    RNLocation.configure({
-      distanceFilter: 10, // Meters
-      desiredAccuracy: {
-        ios: 'best',
-        android: 'balancedPowerAccuracy',
-      },
-      // Android only
-      androidProvider: 'auto',
-      interval: 3000, // Milliseconds
-      fastestInterval: 5000, // Milliseconds
-      maxWaitTime: 3000, // Milliseconds
-      // iOS Only
-      activityType: 'other',
-      allowsBackgroundLocationUpdates: false,
-      headingFilter: 1, // Degrees
-      headingOrientation: 'portrait',
-      pausesLocationUpdatesAutomatically: false,
-      showsBackgroundLocationIndicator: false,
-    });
-    RNLocation.requestPermission({
-      ios: 'whenInUse',
-      android: {
-        detail: 'coarse',
-      },
-    }).then(granted => {
-      if (granted) {
-        RNLocation.subscribeToLocationUpdates(locations => {
-          setLocationLongitude(locations[0].longitude);
-          setLocationLatitude(locations[0].latitude);
-        });
-      }
+    Geolocation.getCurrentPosition(info => {
+      setLocationLongitude(info?.coords?.longitude);
+      setLocationLatitude(info?.coords?.altitude);
     });
   };
 

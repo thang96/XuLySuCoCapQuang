@@ -11,7 +11,6 @@ export const userInforSlice = createSlice({
       // state.user = [...current(state.user), actions.payload];
     },
   },
-  extraReducers: {},
 });
 
 export const {updateUserInfor} = userInforSlice.actions;

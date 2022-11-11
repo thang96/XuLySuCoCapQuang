@@ -50,7 +50,7 @@ const ChangePassword = props => {
       });
   };
   const logOut = async () => {
-    await AsyncStorage.removeItem('token')
+    await AsyncStorage.setItem('token', '1')
       .then(() => {
         navigation.navigate('LoginNavigation');
       })
