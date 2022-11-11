@@ -30,7 +30,6 @@ const CreateNewRequest = props => {
   const navigation = useNavigation();
   const [opticalCableId, setOpticalCableId] = useState(null);
   const [userAssignedId, setUserAssignedId] = useState(null);
-  const [requiredTime, setRequiredTime] = useState('');
   const [description, setDescription] = useState('');
   const [albumImage, setAlbumImage] = useState([]);
   const [modalOpticalCable, setModalOpticalCable] = useState(false);
@@ -43,7 +42,7 @@ const CreateNewRequest = props => {
     opticalCableId != null &&
     userAssignedId != null &&
     description.length > 0 &&
-    albumImage == [];
+    albumImage.length > 0;
 
   useEffect(() => {
     getListData();

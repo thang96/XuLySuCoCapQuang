@@ -32,12 +32,12 @@ const ReportIncident = props => {
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const [request, setRequest] = useState(null);
-  const [autoLocation, setAutoLocation] = useState(false);
   const [locationLongitude, setLocationLongitude] = useState('');
   const [locationLatitude, setLocationLatitude] = useState('');
   const [reason, setReason] = useState('');
   const [solution, setSolution] = useState('');
   const [reportDocument, setReportDocument] = useState([]);
+  const [isLocation, setIsLocation] = useState(null);
 
   useEffect(() => {
     getRequest();
@@ -89,7 +89,7 @@ const ReportIncident = props => {
       setLocationLatitude(info?.coords?.altitude);
     });
   };
-
+  console.log(locationLongitude);
   const openCamera = () => {
     setModalCamera(true);
     ImagePicker.openCamera({width: 300, height: 400})
@@ -203,24 +203,26 @@ const ReportIncident = props => {
         <View style={styles.viewRow}>
           <Text style={styles.title}>Nhập thông tin vị trí</Text>
           <CustomTextButton
-            textStyle={{color: colors.mainColor, fontWeight: 'bold'}}
+            textStyle={{
+              color: colors.mainColor,
+              fontWeight: 'bold',
+              fontSize: 18,
+            }}
             styleButton={{height: 50}}
-            label={'Tự động lấy vị trí >>'}
+            label={'Lấy vị trí >>'}
             onPress={() => getLocation()}
           />
         </View>
-        {autoLocation == true && (
-          <View style={styles.viewCustomTextInputChangeValue}>
-            <Text style={styles.styleTitle}>Longitude : </Text>
-            <Text>{locationLongitude}</Text>
-          </View>
-        )}
-        {autoLocation == true && (
-          <View style={styles.viewCustomTextInputChangeValue}>
-            <Text style={styles.styleTitle}>Latitude : </Text>
-            <Text>{locationLatitude}</Text>
-          </View>
-        )}
+
+        <View style={styles.viewCustomTextInputChangeValue}>
+          <Text style={styles.styleTitle}>Longitude : </Text>
+          <Text>{locationLongitude}</Text>
+        </View>
+        <View style={styles.viewCustomTextInputChangeValue}>
+          <Text style={styles.styleTitle}>Latitude : </Text>
+          <Text>{locationLatitude}</Text>
+        </View>
+
         <Text style={styles.title}>Lý do</Text>
         <CustomTextInputChangeValue
           styleViewInput={{height: 50, width: '100%', backgroundColor: 'white'}}

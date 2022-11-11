@@ -27,6 +27,7 @@ import common from '../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
 import MaintenanceManagementAPI from '../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import {uuid} from '../../../../../utils/uuid';
+import CustomModalPicker from '../../../../../Components/CustomModalPicker';
 
 const CreateAMaintenanceRequest = props => {
   const navigation = useNavigation();
@@ -44,7 +45,7 @@ const CreateAMaintenanceRequest = props => {
   const token = useSelector(state => state?.token?.token);
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const [listOfEmployee, setListOfEmployee] = useState([]);
-  const [isChoose, setIssChoose] = useState(true);
+  const [isChoose, setIssChoose] = useState(false);
   const isReady = () =>
     opticalCableId != null &&
     userAssignedId != null &&
@@ -182,6 +183,21 @@ const CreateAMaintenanceRequest = props => {
           />
         </View>
       )}
+      {isChoose && (
+        <View style={styles.styleModal}>
+          <CustomModalPicker
+            modalVisible={isChoose}
+            onRequestClose={() => {
+              setModalUserAssigned(false);
+            }}
+            onPress={item => chooseEmployee(item)}
+            onPressChoose={item => {
+              setIssChoose(false);
+              setRepeatBy(item);
+            }}
+          />
+        </View>
+      )}
 
       <KeyboardAvoidingView style={styles.container}>
         <CustomAppBar
@@ -210,19 +226,11 @@ const CreateAMaintenanceRequest = props => {
             </Text>
             <Image source={icons.ic_downArrow} style={styles.imagePicker} />
           </TouchableOpacity>
-          {isChoose ? (
-            <ButtonPicker
-              repeatBy={repeatBy?.key}
-              onPressPicker={() => setIssChoose(false)}
-            />
-          ) : (
-            <CustomPicker
-              onPressChoose={item => {
-                setIssChoose(true);
-                setRepeatBy(item);
-              }}
-            />
-          )}
+
+          <ButtonPicker
+            repeatBy={repeatBy?.key}
+            onPressPicker={() => setIssChoose(true)}
+          />
 
           <Text style={styles.title}>Nội dung</Text>
           <View style={styles.viewContent}>
@@ -347,11 +355,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   textDateTime: {color: 'black', fontSize: 16},
-  viewDateTime: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
 });
 const ButtonPicker = props => {
   const {repeatBy, onPressPicker} = props;
@@ -365,27 +368,5 @@ const ButtonPicker = props => {
     </View>
   );
 };
-const DATA_PICKER = [
-  {key: 'Theo tháng', value: 'MONTHLY'},
-  {key: 'Theo quý', value: 'QUARTERLY'},
-  {key: 'Theo năm', value: 'YEARLY'},
-];
-const CustomPicker = props => {
-  const {onPressChoose} = props;
-  return (
-    <View>
-      <FlatList
-        data={DATA_PICKER}
-        key={key => key?.value}
-        renderItem={({item, index}) => (
-          <TouchableOpacity
-            onPress={() => onPressChoose(item)}
-            style={styles.buttonDateTime}>
-            <Text style={styles.textDateTime}>{item?.value}</Text>
-          </TouchableOpacity>
-        )}
-      />
-    </View>
-  );
-};
+
 export default CreateAMaintenanceRequest;
