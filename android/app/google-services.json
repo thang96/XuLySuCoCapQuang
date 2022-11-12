@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "704533782472",
+    "project_id": "optical-cables-management",
+    "storage_bucket": "optical-cables-management.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:704533782472:android:0367dc9dccb0b7971ceafd",
+        "android_client_info": {
+          "package_name": "com.xulysucocapquang"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "704533782472-spp42i7k762aphlk41ro8kbhh25ufe2s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xulysucocapquang",
+            "certificate_hash": "d63615456f4f68529cdb841b4fcd7db6e7979080"
+          }
+        },
+        {
+          "client_id": "704533782472-dugscnkh4as8mgps52kmoctghus40hjg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBViAuAD0B3cUWfGmkayhqePhsePjbjpLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "704533782472-dugscnkh4as8mgps52kmoctghus40hjg.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "704533782472-3htpn3vd8ito9c21pjjt57smhke1jfjp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.CapQuang"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
