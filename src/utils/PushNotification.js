@@ -1,5 +1,6 @@
 import messaging from '@react-native-firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Alert} from 'react-native';
 export const requestUserPermission = async () => {
   const authStatus = await messaging().requestPermission();
   const enabled =
@@ -32,7 +33,7 @@ export const NotificationServices = () => {
   });
   //App on foreground state
   messaging().onMessage(async remoteMessage => {
-    Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    Alert.alert('Bạn có thông báo mới', JSON.stringify(remoteMessage));
   });
   //Check whether an initial notification is available
   messaging()
