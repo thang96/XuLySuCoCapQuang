@@ -50,8 +50,8 @@ const CableRouteDetails = props => {
   const [endStationAddress, setEndStationAddress] = useState('');
   const [cableType, setCableType] = useState('');
   const [cableConnectionType, setCableConnectionType] = useState('');
-  const [startStationOdfType, setStartStationOdfType] = useState('');
-  const [endStationOdfType, setEndStationOdfType] = useState('');
+  const [startEndStationOdfType, setstartEndStationOdfType] = useState('');
+  const [cableInfrastructure, setCableInfrastructure] = useState('');
   const [areaId, setAreaId] = useState('');
   const [isActive, setIsActive] = useState(null);
 
@@ -101,12 +101,12 @@ const CableRouteDetails = props => {
     setEndStationAddress(result?.end_station_address ?? '');
     setCableType(result?.cable_type ?? '');
     setCableConnectionType(result?.cable_connection_type ?? '');
-    setStartStationOdfType(result?.start_station_odf_type ?? '');
-    setEndStationOdfType(result?.end_station_odf_type ?? '');
+    setstartEndStationOdfType(result?.start_station_odf_type ?? '');
+    setCableInfrastructure(result?.end_station_odf_type ?? '');
     setAreaId(`${result?.area_id}` ?? '');
     setIsActive(result?.is_active ?? null);
   }, [result]);
-
+  console.log(result?.id, '000-00-');
   const updateCable = async () => {
     setEditable(false);
     let id = result?.id;
@@ -132,8 +132,8 @@ const CableRouteDetails = props => {
       end_station_address: endStationAddress,
       cable_type: cableType,
       cable_connection_type: cableConnectionType,
-      start_station_odf_type: startStationOdfType,
-      end_station_odf_type: endStationOdfType,
+      start_end_station_odf_type: startEndStationOdfType,
+      cable_infrastructure: cableInfrastructure,
       area_id: parseInt(areaId),
       is_active: isActive,
     };
@@ -440,7 +440,7 @@ const CableRouteDetails = props => {
               styles.styleViewInputChange,
               {backgroundColor: editable ? 'white' : colors.background},
             ]}
-            title={'Chủng loại cáp (Ngầm/Treo) : '}
+            title={'Chủng loại cáp : '}
             styleTitle={styles.styleTitleInput}
             editable={editable}
             styleInput={styles.styleValueInput}
@@ -466,24 +466,24 @@ const CableRouteDetails = props => {
               styles.styleViewInputChange,
               {backgroundColor: editable ? 'white' : colors.background},
             ]}
-            title={'Loại ODF trạm đầu : '}
+            title={'Loại ODF trạm đầu-cuối : '}
             styleTitle={styles.styleTitleInput}
             editable={editable}
             styleInput={styles.styleValueInput}
-            value={startStationOdfType}
-            onChangeText={text => setStartStationOdfType(text)}
+            value={startEndStationOdfType}
+            onChangeText={text => setstartEndStationOdfType(text)}
           />
           <CustomTextInputChangeValue
             styleViewInput={[
               styles.styleViewInputChange,
               {backgroundColor: editable ? 'white' : colors.background},
             ]}
-            title={'Loại ODF trạm cuối : '}
+            title={'Hạ tầng (Ngầm/Treo) : '}
             styleTitle={styles.styleTitleInput}
             editable={editable}
             styleInput={styles.styleValueInput}
-            value={endStationOdfType}
-            onChangeText={text => setEndStationOdfType(text)}
+            value={cableInfrastructure}
+            onChangeText={text => setCableInfrastructure(text)}
           />
           <CustomTextInputChangeValue
             styleViewInput={[

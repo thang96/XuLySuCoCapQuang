@@ -9,6 +9,9 @@ const GetUsersAPI = token => {
           Accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
+        params: {
+          page_size: 1000,
+        },
       })
       .then(res => {
         resolve(res);
@@ -36,5 +39,23 @@ const GetUsersByIdAPI = (token, id) => {
       });
   });
 };
-const UsersAPI = {GetUsersAPI, GetUsersByIdAPI};
+const UpdateUsersByIdAPI = (token, data, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .put(`${BASEURL}/api/v1/users/${id}`, data, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
+const UsersAPI = {GetUsersAPI, GetUsersByIdAPI, UpdateUsersByIdAPI};
 export default UsersAPI;

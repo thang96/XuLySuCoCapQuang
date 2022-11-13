@@ -8,13 +8,9 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-const DATA_PICKER = [
-  {key: 'Theo tháng', value: 'MONTHLY'},
-  {key: 'Theo quý', value: 'QUARTERLY'},
-  {key: 'Theo năm', value: 'YEARLY'},
-];
+
 const CustomModalPicker = props => {
-  const {modalVisible, onRequestClose, onPressChoose} = props;
+  const {modalVisible, onRequestClose, onPressChoose, data} = props;
   const renderItem = (item, index) => {
     return (
       <TouchableOpacity
@@ -35,7 +31,7 @@ const CustomModalPicker = props => {
           <View style={styles.eachContainer}>
             <FlatList
               style={{flex: 1}}
-              data={DATA_PICKER}
+              data={data}
               key={key => key?.value}
               renderItem={({item, index}) => renderItem(item, index)}
             />

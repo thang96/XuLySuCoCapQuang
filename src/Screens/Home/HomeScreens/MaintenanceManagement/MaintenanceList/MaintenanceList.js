@@ -13,13 +13,13 @@ import {
 } from 'react-native';
 import {colors, icons} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import CustomInput from '../../../../../Components/CustomInput';
 import {useSelector} from 'react-redux';
 import MaintenanceManagementAPI from '../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 
 const MaintenanceList = props => {
-  const route = useRoute();
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [workList, setWorkList] = useState([]);
   const token = useSelector(state => state?.token?.token);
@@ -28,7 +28,7 @@ const MaintenanceList = props => {
 
   useEffect(() => {
     getListOpticalCablesAPI();
-  }, []);
+  }, [isFocused]);
   const getListOpticalCablesAPI = async () => {
     await MaintenanceManagementAPI.GetMaintenanceIssuesAPI(token)
       .then(res => {

@@ -28,12 +28,15 @@ export const NotificationServices = () => {
   messaging().onNotificationOpenedApp(remoteMessage => {
     console.log(
       'Notification caused app to open from background state:',
-      remoteMessage.notification,
+      remoteMessage.notification?.body,
     );
   });
   //App on foreground state
   messaging().onMessage(async remoteMessage => {
-    Alert.alert('Bạn có thông báo mới', JSON.stringify(remoteMessage));
+    Alert.alert(
+      'Bạn có thông báo mới',
+      JSON.stringify(remoteMessage?.notification?.body),
+    );
   });
   //Check whether an initial notification is available
   messaging()

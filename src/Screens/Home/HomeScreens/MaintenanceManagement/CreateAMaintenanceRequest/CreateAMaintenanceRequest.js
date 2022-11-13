@@ -28,7 +28,11 @@ import ImagePicker from 'react-native-image-crop-picker';
 import MaintenanceManagementAPI from '../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import {uuid} from '../../../../../utils/uuid';
 import CustomModalPicker from '../../../../../Components/CustomModalPicker';
-
+const DATA_PICKER = [
+  {key: 'Theo tháng', value: 'MONTHLY'},
+  {key: 'Theo quý', value: 'QUARTERLY'},
+  {key: 'Theo năm', value: 'YEARLY'},
+];
 const CreateAMaintenanceRequest = props => {
   const navigation = useNavigation();
   const [repeatBy, setRepeatBy] = useState({
@@ -45,7 +49,7 @@ const CreateAMaintenanceRequest = props => {
   const token = useSelector(state => state?.token?.token);
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const [listOfEmployee, setListOfEmployee] = useState([]);
-  const [isChoose, setIssChoose] = useState(false);
+  const [isChoose, setIsChoose] = useState(false);
   const isReady = () =>
     opticalCableId != null &&
     userAssignedId != null &&
@@ -65,9 +69,7 @@ const CreateAMaintenanceRequest = props => {
     await UsersAPI.GetUsersAPI(token)
       .then(res => {
         let allUser = res?.data?.data;
-        let staff = allUser.filter(
-          eachUsers => eachUsers?.role != 'GENERAL_MANAGER',
-        );
+        let staff = allUser.filter(eachUsers => eachUsers?.role == 'EMPLOYEE');
         setListOfEmployee(staff);
       })
       .catch(error => console.log(error));
@@ -186,13 +188,14 @@ const CreateAMaintenanceRequest = props => {
       {isChoose && (
         <View style={styles.styleModal}>
           <CustomModalPicker
+            data={DATA_PICKER}
             modalVisible={isChoose}
             onRequestClose={() => {
-              setModalUserAssigned(false);
+              setIsChoose(false);
             }}
             onPress={item => chooseEmployee(item)}
             onPressChoose={item => {
-              setIssChoose(false);
+              setIsChoose(false);
               setRepeatBy(item);
             }}
           />
@@ -229,7 +232,7 @@ const CreateAMaintenanceRequest = props => {
 
           <ButtonPicker
             repeatBy={repeatBy?.key}
-            onPressPicker={() => setIssChoose(true)}
+            onPressPicker={() => setIsChoose(true)}
           />
 
           <Text style={styles.title}>Nội dung</Text>

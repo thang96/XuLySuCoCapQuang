@@ -14,12 +14,13 @@ import {
 import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {colors, icons, images} from '../../../../../Constants';
 import CustomInput from '../../../../../Components/CustomInput';
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import CustomButtonIcon from '../../../../../Components/CustomButtonIcon';
 import {useSelector} from 'react-redux';
 import IncidentManagementAPI from '../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 
 const IncidentList = props => {
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const token = useSelector(state => state?.token?.token);
@@ -28,7 +29,7 @@ const IncidentList = props => {
   const [search, setSearch] = useState('');
   useEffect(() => {
     getResult();
-  }, []);
+  }, [isFocused]);
   filteredworkList;
   const filteredworkList = () =>
     workList.filter(eachworkList =>

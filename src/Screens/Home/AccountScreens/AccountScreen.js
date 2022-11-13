@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
   Alert,
@@ -15,12 +15,13 @@ import CustomAppBar from '../../../Components/CustomAppBar';
 import {icons, colors, images} from '../../../Constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const AccountScreen = props => {
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
   const token = useSelector(state => state?.token?.token);
   const [userInfo, setUserInfo] = useState(null);
   useEffect(() => {
     readUser(token);
-  }, [token]);
+  }, [token, isFocused]);
   const readUser = async token => {
     await AccountAPI.ReadUserAPI(token)
       .then(res => {
