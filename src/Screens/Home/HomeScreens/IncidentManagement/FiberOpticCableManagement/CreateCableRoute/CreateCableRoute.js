@@ -45,9 +45,16 @@ const CreateCableRoute = props => {
     foUsed.length > 0 &&
     foFree.length > 0 &&
     quantityOfSocket.length > 0 &&
-    startStationOdfType.length > 0 &&
-    endStationOdfType.length > 0 &&
+    startEndStationOdfType.length > 0 &&
+    cableInfrastructure.length > 0 &&
     areaId.length > 0;
+
+  // "cable_type": "string",
+  // "cableInfrastructure": "string",
+  // "cable_connection_type": "string",
+  // "start_end_station_odf_type": "string",
+  // "area_id": 0,
+  // "is_active": true
 
   const [nameCable, setNameCable] = useState('');
   const [acceptanceTime, setAcceptanceTime] = useState('');
@@ -70,8 +77,8 @@ const CreateCableRoute = props => {
   const [endStationAddress, setEndStationAddress] = useState('');
   const [cableType, setCableType] = useState('');
   const [cableConnectionType, setCableConnectionType] = useState('');
-  const [startStationOdfType, setStartStationOdfType] = useState('');
-  const [endStationOdfType, setEndStationOdfType] = useState('');
+  const [startEndStationOdfType, setStartEndStationOdfType] = useState('');
+  const [cableInfrastructure, setCableInfrastructure] = useState('');
   const [areaId, setAreaId] = useState('');
   const [isActive, setIsActive] = useState(true);
   const createCableRoute = async () => {
@@ -97,8 +104,8 @@ const CreateCableRoute = props => {
       end_station_address: endStationAddress,
       cable_type: cableType,
       cable_connection_type: cableConnectionType,
-      start_station_odf_type: startStationOdfType,
-      end_station_odf_type: endStationOdfType,
+      start_end_station_odf_type: startEndStationOdfType,
+      cable_infrastructure: cableInfrastructure,
       area_id: parseInt(areaId),
       is_active: isActive,
     };
@@ -323,7 +330,7 @@ const CreateCableRoute = props => {
         />
         <CustomTextInputChangeValue
           styleViewInput={[styles.styleViewInputChange]}
-          title={'Chủng loại cáp (Ngầm/Treo) : '}
+          title={'Chủng loại cáp : '}
           placeholder={'Nhập chủng loại cáp'}
           styleTitle={styles.styleTitleInput}
           editable={true}
@@ -345,23 +352,23 @@ const CreateCableRoute = props => {
 
         <CustomTextInputChangeValue
           styleViewInput={[styles.styleViewInputChange]}
-          title={'Loại ODF trạm đầu : '}
+          title={'Loại ODF trạm đầu-cuối : '}
           placeholder={'Nhập loại ODF trạm đầu'}
           styleTitle={styles.styleTitleInput}
           editable={true}
           styleInput={styles.styleValueInput}
-          value={startStationOdfType}
-          onChangeText={text => setStartStationOdfType(text)}
+          value={startEndStationOdfType}
+          onChangeText={text => setStartEndStationOdfType(text)}
         />
         <CustomTextInputChangeValue
           styleViewInput={[styles.styleViewInputChange]}
-          title={'Loại ODF trạm cuối : '}
+          title={'Hạ tầng (Ngầm/Treo) : '}
           placeholder={'Nhập loại ODF trạm cuối'}
           styleTitle={styles.styleTitleInput}
           editable={true}
           styleInput={styles.styleValueInput}
-          value={endStationOdfType}
-          onChangeText={text => setEndStationOdfType(text)}
+          value={cableInfrastructure}
+          onChangeText={text => setCableInfrastructure(text)}
         />
         <CustomTextInputChangeValue
           keyboardType={'numeric'}

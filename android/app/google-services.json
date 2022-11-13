@@ -1,49 +1,42 @@
 {
   "project_info": {
-    "project_number": "704533782472",
-    "project_id": "optical-cables-management",
-    "storage_bucket": "optical-cables-management.appspot.com"
+    "project_number": "913380687394",
+    "project_id": "operational-management",
+    "storage_bucket": "operational-management.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:704533782472:android:0367dc9dccb0b7971ceafd",
+        "mobilesdk_app_id": "1:913380687394:android:04b7709ad1f18db6a3147b",
         "android_client_info": {
           "package_name": "com.xulysucocapquang"
         }
       },
       "oauth_client": [
         {
-          "client_id": "704533782472-spp42i7k762aphlk41ro8kbhh25ufe2s.apps.googleusercontent.com",
+          "client_id": "913380687394-0cr7r14dj5gc2c137pq5mis466hj2s0i.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.xulysucocapquang",
-            "certificate_hash": "d63615456f4f68529cdb841b4fcd7db6e7979080"
+            "certificate_hash": "ff395b20c69ad0801050c2b5856e77259f0866f8"
           }
         },
         {
-          "client_id": "704533782472-dugscnkh4as8mgps52kmoctghus40hjg.apps.googleusercontent.com",
+          "client_id": "913380687394-h7utaqm8brtft98rgmk1m76494pvcrdq.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBViAuAD0B3cUWfGmkayhqePhsePjbjpLs"
+          "current_key": "AIzaSyD3dvCkoPRcOrKlpOxYK19XassWNougA4w"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "704533782472-dugscnkh4as8mgps52kmoctghus40hjg.apps.googleusercontent.com",
+              "client_id": "913380687394-h7utaqm8brtft98rgmk1m76494pvcrdq.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "704533782472-3htpn3vd8ito9c21pjjt57smhke1jfjp.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "org.reactjs.native.example.CapQuang"
-              }
             }
           ]
         }

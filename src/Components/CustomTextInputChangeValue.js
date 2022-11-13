@@ -20,7 +20,7 @@ const CustomTextInputChangeValue = props => {
     keyboardType,
   } = props;
   return (
-    <View style={[styleViewInput, {minHeight: 50}]}>
+    <View style={[styleViewInput]}>
       {title && <Text style={styleTitle}>{title}</Text>}
       <TextInput
         keyboardType={keyboardType}

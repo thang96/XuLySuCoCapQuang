@@ -57,9 +57,7 @@ const CreateNewRequest = props => {
     await UsersAPI.GetUsersAPI(token)
       .then(res => {
         let allUser = res?.data?.data;
-        let staff = allUser.filter(
-          eachUsers => eachUsers?.role != 'GENERAL_MANAGER',
-        );
+        let staff = allUser.filter(eachUsers => eachUsers?.role == 'EMPLOYEE');
         setListOfEmployee(staff);
       })
       .catch(error => console.log(error));
