@@ -10,17 +10,18 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Keyboard,
+  Platform,
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import CustomButtonFunction from '../../../Components/CustomButtonFunction';
 import {colors, icons} from '../../../Constants';
 import CustomInput from '../../../Components/CustomInput';
 import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch, useSelector, useIsFocused} from 'react-redux';
 import AccountAPI from '../../../Api/Account/AccountAPI';
 import {updateUserInfor} from '../../../Store/slices/userInfoSlice';
 import RegisterNotificationAPI from '../../../Api/RegisterNotificationAPI';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const FAKE_DATA = [{id: 1}, {id: 2}, {id: 3}];
 const HomeScreen = () => {
   const windowWidth = Dimensions.get('window').width;
@@ -29,12 +30,30 @@ const HomeScreen = () => {
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
   const [seachText, setSeachText] = useState('');
-
+  const [fcmToken, setFcmToken] = useState('');
   const dispatch = useDispatch();
   useEffect(() => {
     readUser();
+    sendNotification();
+    AsyncStorage.getItem('fcmToken')
+      .then(data => setFcmToken(data))
+      .catch(error => console.log(error));
   }, []);
 
+  const deviceId = Platform.OS == 'android' ? 'android' : 'ios';
+  const sendNotification = async () => {
+    let data = {
+      token: fcmToken,
+      device_info: deviceId,
+    };
+    await RegisterNotificationAPI(token, data)
+      .then(res => {
+        // console.log(res);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   useEffect(() => {
     readUser();
   }, [token]);

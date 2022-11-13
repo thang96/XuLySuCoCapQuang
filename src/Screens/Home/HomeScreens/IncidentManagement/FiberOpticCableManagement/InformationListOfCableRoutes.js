@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {colors, icons} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import CustomInput from '../../../../../Components/CustomInput';
 import CustomButtonIcon from '../../../../../Components/CustomButtonIcon';
 import {useSelector} from 'react-redux';
@@ -26,9 +26,10 @@ const InformationListOfCableRoutes = props => {
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
+  const isFocused = useIsFocused();
   useEffect(() => {
     getListOpticalCablesAPI();
-  }, []);
+  }, [isFocused]);
   const getListOpticalCablesAPI = async () => {
     await OpticalCablesAPI.GetOpticalCablesAPI(token)
       .then(res => {

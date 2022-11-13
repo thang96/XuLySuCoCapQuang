@@ -112,7 +112,6 @@ const CreateCableRoute = props => {
 
     await OpticalCablesAPI.CreateOpticalCablesAPI(token, data)
       .then(res => {
-        console.log(res);
         if (res?.status == 200 && res?.data?.success == true) {
           Alert.alert('Tuyến cáp', 'Đã tạo tuyến cáp thành công');
           navigation.navigate('InformationListOfCableRoutes');

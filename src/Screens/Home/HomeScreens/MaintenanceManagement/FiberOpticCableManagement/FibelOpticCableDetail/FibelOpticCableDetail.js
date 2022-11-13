@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
-  ImageBackground,
+  Alert,
   StyleSheet,
   View,
   Image,
@@ -13,7 +13,6 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
-  Alert,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../../Constants';
 import CustomAppBar from '../../../../../../Components/CustomAppBar';
@@ -29,7 +28,6 @@ const FibelOpticCableDetail = props => {
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
-  const [loading, setLoading] = useState(true);
   const [result, setResult] = useState(null);
   const [nameCable, setNameCable] = useState('');
   const [acceptanceTime, setAcceptanceTime] = useState('');
@@ -52,20 +50,20 @@ const FibelOpticCableDetail = props => {
   const [endStationAddress, setEndStationAddress] = useState('');
   const [cableType, setCableType] = useState('');
   const [cableConnectionType, setCableConnectionType] = useState('');
-  const [startStationOdfType, setStartStationOdfType] = useState('');
-  const [endStationOdfType, setEndStationOdfType] = useState('');
+  const [startEndStationOdfType, setstartEndStationOdfType] = useState('');
+  const [cableInfrastructure, setCableInfrastructure] = useState('');
   const [areaId, setAreaId] = useState('');
   const [isActive, setIsActive] = useState(null);
+
   useEffect(() => {
     getResult();
-  }, [route]);
+  }, []);
 
   const getResult = async () => {
     let id = route.params;
     await OpticalCablesAPI.GetOpticalCablesByIdAPI(token, id)
       .then(res => {
         setResult(res?.data?.data);
-        setLoading(false);
       })
       .catch(function (error) {
         console.log(error);
@@ -73,7 +71,14 @@ const FibelOpticCableDetail = props => {
   };
   const [keyboardIsShow, setKeyboardIsShow] = useState(false);
   const [editable, setEditable] = useState(false);
-
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', () => {
+      setKeyboardIsShow(true);
+    });
+    Keyboard.addListener('keyboardDidHide', () => {
+      setKeyboardIsShow(false);
+    });
+  }, []);
   useEffect(() => {
     setNameCable(result?.name ?? '');
     setAcceptanceTime(result?.acceptance_time ?? '');
@@ -96,12 +101,11 @@ const FibelOpticCableDetail = props => {
     setEndStationAddress(result?.end_station_address ?? '');
     setCableType(result?.cable_type ?? '');
     setCableConnectionType(result?.cable_connection_type ?? '');
-    setStartStationOdfType(result?.start_station_odf_type ?? '');
-    setEndStationOdfType(result?.end_station_odf_type ?? '');
+    setstartEndStationOdfType(result?.start_end_station_odf_type ?? '');
+    setCableInfrastructure(result?.cable_infrastructure ?? '');
     setAreaId(`${result?.area_id}` ?? '');
     setIsActive(result?.is_active ?? null);
   }, [result]);
-
   const updateCable = async () => {
     setEditable(false);
     let id = result?.id;
@@ -127,23 +131,24 @@ const FibelOpticCableDetail = props => {
       end_station_address: endStationAddress,
       cable_type: cableType,
       cable_connection_type: cableConnectionType,
-      start_station_odf_type: startStationOdfType,
-      end_station_odf_type: endStationOdfType,
+      start_end_station_odf_type: startEndStationOdfType,
+      cable_infrastructure: cableInfrastructure,
       area_id: parseInt(areaId),
       is_active: isActive,
     };
     await OpticalCablesAPI.UpdateOpticalCablesAPI(token, data, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          alert('Update tuyến cáp thành công');
+          Alert.alert('Tuyến cáp', 'Cập nhật tuyến cáp thành công');
           navigation.navigate('FiberOpticCableManagement');
         }
       })
       .catch(function (error) {
         console.log(JSON.stringify(error));
-        alert('Update tuyến cáp thất bại');
+        Alert.alert('Tuyến cáp', 'Cập nhật tuyến cáp thất bại');
       });
   };
+
   const [confirm, setConfirm] = useState(false);
   const deleteOptical = async () => {
     let id = result?.id;
@@ -168,9 +173,7 @@ const FibelOpticCableDetail = props => {
         iconRight={
           userInfor?.role == 'GENERAL_MANAGER' ? icons.ic_delete : null
         }
-        onPressIconsLeft={() =>
-          navigation.navigate('FiberOpticCableManagement')
-        }
+        onPressIconsLeft={() => navigation.goBack()}
         onPressIconsRight={() => setConfirm(true)}
       />
       {confirm && (
@@ -185,9 +188,7 @@ const FibelOpticCableDetail = props => {
           />
         </View>
       )}
-      {loading ? (
-        <ActivityIndicator size="large" color={colors.mainColor} />
-      ) : (
+      {result ? (
         <ScrollView style={styles.eachContainer}>
           <View style={styles.viewRow}>
             <Text style={styles.title}>Chi tiết tuyến cáp</Text>
@@ -436,7 +437,7 @@ const FibelOpticCableDetail = props => {
               styles.styleViewInputChange,
               {backgroundColor: editable ? 'white' : colors.background},
             ]}
-            title={'Chủng loại cáp (Ngầm/Treo) : '}
+            title={'Chủng loại cáp : '}
             styleTitle={styles.styleTitleInput}
             editable={editable}
             styleInput={styles.styleValueInput}
@@ -462,24 +463,24 @@ const FibelOpticCableDetail = props => {
               styles.styleViewInputChange,
               {backgroundColor: editable ? 'white' : colors.background},
             ]}
-            title={'Loại ODF trạm đầu : '}
+            title={'Loại ODF trạm đầu-cuối : '}
             styleTitle={styles.styleTitleInput}
             editable={editable}
             styleInput={styles.styleValueInput}
-            value={startStationOdfType}
-            onChangeText={text => setStartStationOdfType(text)}
+            value={startEndStationOdfType}
+            onChangeText={text => setstartEndStationOdfType(text)}
           />
           <CustomTextInputChangeValue
             styleViewInput={[
               styles.styleViewInputChange,
               {backgroundColor: editable ? 'white' : colors.background},
             ]}
-            title={'Loại ODF trạm cuối : '}
+            title={'Hạ tầng (Ngầm/Treo) : '}
             styleTitle={styles.styleTitleInput}
             editable={editable}
             styleInput={styles.styleValueInput}
-            value={endStationOdfType}
-            onChangeText={text => setEndStationOdfType(text)}
+            value={cableInfrastructure}
+            onChangeText={text => setCableInfrastructure(text)}
           />
           <CustomTextInputChangeValue
             styleViewInput={[
@@ -510,7 +511,8 @@ const FibelOpticCableDetail = props => {
               <Text style={styles.styleValueInput}>Chưa kích hoạt</Text>
             </TouchableOpacity>
           )}
-          {userInfor?.role == 'GENERAL_MANAGER' && (
+
+          {userInfor?.role != 'EMPLOYEE' && (
             <CusttomTwoButtonBottom
               styleTwoButton={styles.viewCusttomTwoButtonBottom}
               styleButtonLeft={styles.button}
@@ -542,6 +544,8 @@ const FibelOpticCableDetail = props => {
             />
           )}
         </ScrollView>
+      ) : (
+        <ActivityIndicator size="large" color={colors.mainColor} />
       )}
     </View>
   );

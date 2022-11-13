@@ -113,12 +113,12 @@ const DetailOpticCableIncident = props => {
           content={result?.cable_connection_type}
         />
         <CustomViewRow
-          title={'Loại ODF trạm đầu : '}
-          content={result?.start_station_odf_type}
+          title={'Chủng loại : '}
+          content={result?.cable_infrastructure}
         />
         <CustomViewRow
-          title={'Loại ODF trạm cuối : '}
-          content={result?.end_station_odf_type}
+          title={'Loại ODF trạm đầu-cuối : '}
+          content={result?.start_end_station_odf_type}
         />
         <CustomViewRow
           title={'Trạng thái : '}

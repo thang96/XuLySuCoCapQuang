@@ -31,7 +31,7 @@ const App = () => {
   const logInfor = async () => {
     await AsyncStorage.getItem('fcmToken').then(token => SetToken(token));
   };
-  console.log(token);
+  // console.log(token);
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden />

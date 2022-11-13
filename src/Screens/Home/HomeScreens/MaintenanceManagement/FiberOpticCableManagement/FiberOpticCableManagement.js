@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import {colors, icons} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import CustomInput from '../../../../../Components/CustomInput';
 import CustomButtonIcon from '../../../../../Components/CustomButtonIcon';
 import {useSelector} from 'react-redux';
@@ -22,6 +22,7 @@ import {ScreenStackHeaderSearchBarView} from 'react-native-screens';
 
 const FiberOpticCableManagement = props => {
   const navigation = useNavigation();
+  const IsFocused = useIsFocused();
   const route = useRoute();
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const token = useSelector(state => state?.token?.token);
@@ -29,7 +30,7 @@ const FiberOpticCableManagement = props => {
   const [search, setSearch] = useState('');
   useEffect(() => {
     getListOpticalCablesAPI();
-  }, [route]);
+  }, [IsFocused]);
   const getListOpticalCablesAPI = async () => {
     await OpticalCablesAPI.GetOpticalCablesAPI(token)
       .then(res => {

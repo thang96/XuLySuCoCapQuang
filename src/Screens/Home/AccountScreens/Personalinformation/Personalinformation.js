@@ -8,25 +8,32 @@ import {
   TouchableOpacity,
   Dimensions,
   Modal,
+  Alert,
 } from 'react-native';
 import CustomAppBar from '../../../../Components/CustomAppBar';
 import {colors, icons, images} from '../../../../Constants';
 import CustomButtonIcon from '../../../../Components/CustomButtonIcon';
 import {useNavigation} from '@react-navigation/native';
-import CustomModalUploadImage from '../../../../Components/CustomModalUploadImage';
+import CustomModalCamera from '../../../../Components/CustomModalCamera';
 import {useDispatch, useSelector} from 'react-redux';
 import common from '../../../../utils/common';
-import CustomLoading from '../../../../Components/CustomLoading';
 import ImagePicker from 'react-native-image-crop-picker';
 import {updateUserInfor} from '../../../../Store/slices/userInfoSlice';
 import AccountAPI from '../../../../Api/Account/AccountAPI';
+import CustomTextInputChangeValue from '../../../../Components/CustomTextInputChangeValue';
+import CustomTextButton from '../../../../Components/CustomTextButton';
 const Personalinformation = props => {
   const navigation = useNavigation();
   const [modalVisible, setModalVisible] = useState(false);
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
-  const [createImage, setCreateImage] = useState(false);
+  const [editable, setEditable] = useState(false);
   const dispatch = useDispatch();
+  const [result, setResult] = useState(null);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [address, setAddress] = useState('');
   useEffect(() => {
     readUser();
   }, []);
@@ -34,13 +41,19 @@ const Personalinformation = props => {
     await AccountAPI.ReadUserAPI(token)
       .then(res => {
         dispatch(updateUserInfor(res?.data?.data));
+        setResult(res?.data?.data);
       })
       .catch(error => {
         console.log(error);
       });
   };
+  useEffect(() => {
+    setFullName(result?.full_name);
+    setEmail(result?.email);
+    setPhoneNumber(result?.phone_number);
+    setAddress(result?.address);
+  }, [result]);
   const pickSingleWithCamera = () => {
-    setCreateImage(true);
     ImagePicker.openCamera({
       cropperToolbarTitle: '',
     })
@@ -49,7 +62,6 @@ const Personalinformation = props => {
         await AccountAPI.UpdateUserAvatarAPI(token, imageConverted)
           .then(res => {
             if (res?.status == 200 && res?.data?.success == true) {
-              setCreateImage(false);
               setModalVisible(false);
               readUser();
             }
@@ -57,59 +69,75 @@ const Personalinformation = props => {
           .catch(error => {
             console.log(error);
             setModalVisible(false);
-            setCreateImage(false);
           });
       })
       .catch(e => {
         ImagePicker.clean();
-        setCreateImage(false);
         setModalVisible(false);
       });
   };
 
   const openGallery = () => {
-    setCreateImage(true);
     ImagePicker.openPicker({})
       .then(async image => {
         const imageConverted2 = await common.resizeImageNotVideo(image);
         await AccountAPI.UpdateUserAvatarAPI(token, imageConverted2)
           .then(res => {
             if (res?.status == 200 && res?.data?.success == true) {
-              setCreateImage(false);
               setModalVisible(false);
               readUser();
             }
           })
           .catch(function (error) {
             alert('Update avatar thất bại');
-            setCreateImage(false);
             setModalVisible(false);
           });
       })
       .catch(e => {
         ImagePicker.clean();
-        setCreateImage(false);
         setModalVisible(false);
       });
   };
-  // if (createImage) {
-  //   return <CustomLoading />;
-  // }
+  const updateUser = async () => {
+    let data = {
+      full_name: fullName,
+      email: email,
+      phone_number: phoneNumber,
+      address: address,
+    };
+    await AccountAPI.UpdateUserMeAPI(token, data)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          setEditable(false);
+          Alert.alert('Cập nhật thông tin', 'Cập nhật thông tin thành công');
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+        Alert.alert('Cập nhật thông tin', 'Cập nhật thông tin thất bại');
+      });
+  };
+
   return (
     <View style={styles.container}>
       {modalVisible && (
-        <CustomModalUploadImage
-          onRequestClose={() => {
-            setModalVisible(false);
-          }}
-          cancel={() => setModalVisible(false)}
-          takePicture={() => {
-            pickSingleWithCamera();
-          }}
-          uploadImage={() => {
-            openGallery();
-          }}
-        />
+        <View style={styles.styleModal}>
+          <CustomModalCamera
+            openCamera={() => {
+              pickSingleWithCamera();
+            }}
+            openGallery={() => {
+              openGallery();
+            }}
+            modalVisible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(false);
+            }}
+            cancel={() =>
+              setModalVisible(prev => (prev == false ? true : false))
+            }
+          />
+        </View>
       )}
       <CustomAppBar
         title={'Thông tin cá nhân'}
@@ -136,30 +164,69 @@ const Personalinformation = props => {
             />
           </View>
         </View>
-        <View style={styles.viewRowInfor}>
-          <Text style={styles.title}>Tên</Text>
-          <Text style={styles.name}>{userInfor?.full_name}</Text>
-        </View>
-        <View style={styles.viewRowInfor}>
-          <Text style={styles.title}>Số điện thoại</Text>
-          <View style={styles.viewRow}>
-            <Text style={styles.textInfor}>{userInfor?.phone_number}</Text>
-          </View>
-        </View>
-        <View style={styles.viewRowInfor}>
-          <Text style={styles.title}>Email</Text>
-          <View style={styles.viewRow}>
-            <Text style={styles.textInfor}>{userInfor?.email}</Text>
-          </View>
-        </View>
-        <View style={styles.viewRowInfor}>
-          <Text style={styles.title}>Địa chỉ</Text>
-          <View style={styles.viewRow}>
-            <Text style={styles.textInfor} numberOfLines={1}>
-              {userInfor?.address}
-            </Text>
-          </View>
-        </View>
+        <CustomTextInputChangeValue
+          styleViewInput={[
+            styles.viewRowInfor,
+            {backgroundColor: editable ? 'white' : colors.background},
+          ]}
+          title={'Tên : '}
+          styleTitle={styles.title}
+          editable={editable}
+          styleInput={styles.name}
+          value={fullName}
+          onChangeText={text => setFullName(text)}
+        />
+        <CustomTextInputChangeValue
+          styleViewInput={[
+            styles.viewRowInfor,
+            {backgroundColor: editable ? 'white' : colors.background},
+          ]}
+          title={'Số điện thoại : '}
+          styleTitle={styles.title}
+          editable={editable}
+          styleInput={styles.name}
+          value={phoneNumber}
+          onChangeText={text => setPhoneNumber(text)}
+        />
+        <CustomTextInputChangeValue
+          styleViewInput={[
+            styles.viewRowInfor,
+            {backgroundColor: editable ? 'white' : colors.background},
+          ]}
+          title={'Email : '}
+          styleTitle={styles.title}
+          editable={editable}
+          styleInput={styles.name}
+          value={email}
+          onChangeText={text => setEmail(text)}
+        />
+        <CustomTextInputChangeValue
+          styleViewInput={[
+            styles.viewRowInfor,
+            {backgroundColor: editable ? 'white' : colors.background},
+          ]}
+          title={'Địa chỉ : '}
+          styleTitle={styles.title}
+          editable={editable}
+          styleInput={styles.name}
+          value={address}
+          onChangeText={text => setAddress(text)}
+        />
+        {editable == false ? (
+          <CustomTextButton
+            label={'Thay đổi thông tin'}
+            textStyle={styles.textButton}
+            styleButton={[styles.viewRowInfor]}
+            onPress={() => setEditable(true)}
+          />
+        ) : (
+          <CustomTextButton
+            label={'Lưu thông tin'}
+            textStyle={styles.textButton}
+            styleButton={[styles.viewRowInfor]}
+            onPress={() => updateUser()}
+          />
+        )}
       </View>
     </View>
   );
@@ -181,23 +248,33 @@ const styles = StyleSheet.create({
   },
   customButtonIcon: {width: 40, height: 40},
   imageUser: {width: 60, height: 60, borderRadius: 60},
-  title: {fontSize: 18, fontWeight: 'bold', color: 'black'},
-  name: {fontSize: 20, fontWeight: 'bold', color: colors.mainColor},
+  title: {fontSize: 18, fontWeight: 'bold', color: 'black', width: '30%'},
+  name: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: colors.mainColor,
+    width: '70%',
+  },
   viewRowInfor: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 50,
     width: '100%',
     borderBottomWidth: 0.5,
     marginBottom: 10,
   },
   viewRow: {flexDirection: 'row', alignItems: 'center'},
-  textInfor: {
-    fontSize: 14,
-    fontWeight: '500',
-    textAlign: 'center',
-    maxWidth: 200,
+  styleModal: {
+    backgroundColor: 'rgba(119,119,119,0.7)',
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex: 9999,
+  },
+  textButton: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.mainColor,
   },
 });
 export default Personalinformation;

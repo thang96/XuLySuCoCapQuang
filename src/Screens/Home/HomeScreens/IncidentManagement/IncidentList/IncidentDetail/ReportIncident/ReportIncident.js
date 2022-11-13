@@ -13,6 +13,7 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
+  PermissionsAndroid,
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
@@ -37,7 +38,6 @@ const ReportIncident = props => {
   const [reason, setReason] = useState('');
   const [solution, setSolution] = useState('');
   const [reportDocument, setReportDocument] = useState([]);
-  const [isLocation, setIsLocation] = useState(null);
 
   useEffect(() => {
     getRequest();
@@ -89,7 +89,6 @@ const ReportIncident = props => {
       setLocationLatitude(info?.coords?.altitude);
     });
   };
-  console.log(locationLongitude);
   const openCamera = () => {
     setModalCamera(true);
     ImagePicker.openCamera({width: 300, height: 400})

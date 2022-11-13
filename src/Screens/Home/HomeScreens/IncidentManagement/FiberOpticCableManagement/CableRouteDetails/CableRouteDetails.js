@@ -101,12 +101,11 @@ const CableRouteDetails = props => {
     setEndStationAddress(result?.end_station_address ?? '');
     setCableType(result?.cable_type ?? '');
     setCableConnectionType(result?.cable_connection_type ?? '');
-    setstartEndStationOdfType(result?.start_station_odf_type ?? '');
-    setCableInfrastructure(result?.end_station_odf_type ?? '');
+    setstartEndStationOdfType(result?.start_end_station_odf_type ?? '');
+    setCableInfrastructure(result?.cable_infrastructure ?? '');
     setAreaId(`${result?.area_id}` ?? '');
     setIsActive(result?.is_active ?? null);
   }, [result]);
-  console.log(result?.id, '000-00-');
   const updateCable = async () => {
     setEditable(false);
     let id = result?.id;
@@ -515,7 +514,7 @@ const CableRouteDetails = props => {
             </TouchableOpacity>
           )}
 
-          {userInfor?.role == 'GENERAL_MANAGER' && (
+          {userInfor?.role != 'EMPLOYEE' && (
             <CusttomTwoButtonBottom
               styleTwoButton={styles.viewCusttomTwoButtonBottom}
               styleButtonLeft={styles.button}

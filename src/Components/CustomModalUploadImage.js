@@ -85,6 +85,6 @@ const styles = StyleSheet.create({
     elevation: 2,
     zIndex: 2,
   },
-  title: {fontSize: 18, fontWeight: 'bold', color: colors.purple},
+  title: {fontSize: 18, fontWeight: 'bold', color: colors.mainColor},
 });
 export default CustomModalUploadImage;

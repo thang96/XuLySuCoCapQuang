@@ -19,6 +19,24 @@ const ReadUserAPI = token => {
       });
   });
 };
+const UpdateUserMeAPI = (token, data) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .put(`${BASEURL}/api/v1/users/me`, data, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 
 const UpdateUserAvatarAPI = async (token, img) => {
   const formData = new FormData();
@@ -63,20 +81,10 @@ const ChangePasswordAPI = (token, data) => {
       });
   });
 };
-const AccountAPI = {ReadUserAPI, UpdateUserAvatarAPI, ChangePasswordAPI};
+const AccountAPI = {
+  ReadUserAPI,
+  UpdateUserAvatarAPI,
+  ChangePasswordAPI,
+  UpdateUserMeAPI,
+};
 export default AccountAPI;
-
-function getFileName(file) {
-  if (file.name !== undefined) {
-    return file.name;
-  } else if (file.filename !== undefined && file.filename !== null) {
-    return file.filename;
-  } else {
-    const type = file?.mime || file?.type;
-    return (
-      Math.floor(Math.random() * Math.floor(999999999)) +
-      '.' +
-      type.split('/')[1]
-    );
-  }
-}
