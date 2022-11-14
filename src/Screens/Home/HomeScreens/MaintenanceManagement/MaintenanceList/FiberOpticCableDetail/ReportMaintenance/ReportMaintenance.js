@@ -32,7 +32,6 @@ const ReportMaintenance = props => {
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const [request, setRequest] = useState(null);
-  const [autoLocation, setAutoLocation] = useState(false);
   useEffect(() => {
     getRequest();
   }, []);

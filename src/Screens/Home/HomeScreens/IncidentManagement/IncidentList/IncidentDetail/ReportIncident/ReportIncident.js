@@ -86,7 +86,7 @@ const ReportIncident = props => {
   const getLocation = () => {
     Geolocation.getCurrentPosition(info => {
       setLocationLongitude(info?.coords?.longitude);
-      setLocationLatitude(info?.coords?.altitude);
+      setLocationLatitude(info?.coords?.latitude);
     });
   };
   const openCamera = () => {
