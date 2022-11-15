@@ -50,7 +50,7 @@ const LoginScreen = () => {
   }
   return (
     <View style={styles.container}>
-      <Image resizeMode="cover" source={icons.ic_logo} style={styles.image} />
+      <Image resizeMode="contain" source={icons.ic_logo} style={styles.image} />
       <CustomInput
         onChangeText={text => setUserName(text)}
         value={userName}

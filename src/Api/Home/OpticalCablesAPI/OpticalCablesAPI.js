@@ -9,6 +9,9 @@ const GetOpticalCablesAPI = token => {
           Accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
+        params: {
+          page_size: 1000,
+        },
       })
       .then(res => {
         resolve(res);
