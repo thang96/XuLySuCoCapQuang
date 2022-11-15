@@ -3,8 +3,7 @@ import {View, Text, TouchableOpacity, Modal, StyleSheet} from 'react-native';
 import {colors} from '../Constants';
 
 const CustomModalCamera = props => {
-  const {onRequestClose, modalVisible, openCamera, selectGallery, cancel} =
-    props;
+  const {onRequestClose, modalVisible, openCamera, openGallery, cancel} = props;
   return (
     <View style={styles.container}>
       <Modal
@@ -12,20 +11,22 @@ const CustomModalCamera = props => {
         transparent={true}
         visible={modalVisible}
         onRequestClose={onRequestClose}>
-        <View style={styles.eachContainer}>
-          <TouchableOpacity
-            onPress={openCamera}
-            style={styles.buttonTakePicture}>
-            <Text style={styles.title}>Chụp ảnh</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={selectGallery}
-            style={styles.buttonUploadImage}>
-            <Text style={styles.title}>Tải ảnh lên</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={cancel} style={styles.buttonCancel}>
-            <Text style={styles.title}>Hủy bỏ</Text>
-          </TouchableOpacity>
+        <View style={styles.container}>
+          <View style={styles.eachContainer}>
+            <TouchableOpacity
+              onPress={openCamera}
+              style={styles.buttonTakePicture}>
+              <Text style={styles.title}>Chụp ảnh</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={openGallery}
+              style={styles.buttonUploadImage}>
+              <Text style={styles.title}>Tải ảnh lên</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={cancel} style={styles.buttonCancel}>
+              <Text style={styles.title}>Hủy bỏ</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </View>
@@ -35,7 +36,6 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
-    backgroundColor: 'rgba(119,119,119,0.5)',
     position: 'absolute',
   },
   eachContainer: {
@@ -86,6 +86,6 @@ const styles = StyleSheet.create({
     zIndex: 2,
     marginBottom: 5,
   },
-  title: {fontSize: 18, fontWeight: 'bold', color: 'black'},
+  title: {fontSize: 18, fontWeight: 'bold', color: colors.mainColor},
 });
 export default CustomModalCamera;

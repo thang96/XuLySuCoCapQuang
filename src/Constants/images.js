@@ -1,7 +1,5 @@
 export default {
-  backgroundZ: require('../Assets/images/backgroundZ.png'),
-  background: require('../Assets/images/background.png'),
-  im_commonCard: require('../Assets/images/im_commonCard.png'),
-  im_otherCard: require('../Assets/images/im_otherCard.png'),
-  im_otherCard: require('../Assets/images/im_otherCard.png'),
+  im_plash: require('../Assets/Images/im_plash.png'),
+  im_splashPurple: require('../Assets/Images/im_splashPurple.png'),
+  im_map: require('../Assets/Images/im_map.png'),
 };

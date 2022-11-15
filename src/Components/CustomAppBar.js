@@ -1,69 +1,77 @@
-import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
-import {icons} from '../Constants';
-import CustomButtonLogo from './CustomButtonLogo';
-const CustomAppbar = props => {
-  const {
-    styleAppBar,
-    iconLeft,
-    onPressLeftIcon,
-    title,
-    iconRight1,
-    iconRight2,
-  } = props;
+import React, {useEffect, useState} from 'react';
+import {
+  StyleSheet,
+  Text,
+  ImageBackground,
+  Image,
+  TouchableOpacity,
+  View,
+  Dimensions,
+  FlatList,
+  KeyboardAvoidingView,
+} from 'react-native';
+import {colors, icons} from '../Constants';
+import CustomButtonIcon from './CustomButtonIcon';
+const CustomAppBar = props => {
+  const {title, iconsLeft, iconRight, onPressIconsLeft, onPressIconsRight} =
+    props;
   return (
-    <View style={[styles.container, styleAppBar]}>
-      <View>
-        {iconLeft && (
-          <CustomButtonLogo
-            styleButton={styles.customButtonLogo}
-            source={iconLeft}
-            onPress={onPressLeftIcon}
-          />
-        )}
-      </View>
+    <View style={styles.viewAppBar}>
+      {iconsLeft ? (
+        <CustomButtonIcon
+          imageStyle={styles.icon}
+          styleButton={styles.buttonLeft}
+          source={iconsLeft}
+          onPress={onPressIconsLeft}
+        />
+      ) : null}
       <Text style={styles.title}>{title}</Text>
-      <View style={styles.viewRow}>
-        {iconRight1 && (
-          <CustomButtonLogo
-            styleButton={styles.customButtonLogoRight}
-            source={iconRight1}
-            onPress={onPressLeftIcon}
-          />
-        )}
-        {iconRight2 && (
-          <CustomButtonLogo
-            styleButton={styles.customButtonLogoRight}
-            source={iconRight2}
-            onPress={onPressLeftIcon}
-          />
-        )}
-      </View>
+      {iconRight ? (
+        <CustomButtonIcon
+          imageStyle={styles.icon}
+          styleButton={styles.buttonRight}
+          source={iconRight}
+          onPress={onPressIconsRight}
+        />
+      ) : null}
     </View>
   );
 };
 const styles = StyleSheet.create({
-  container: {
+  viewAppBar: {
     height: 56,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    width: '100%',
+    backgroundColor: colors.mainColor,
+    justifyContent: 'center',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: 'grey',
+    flexDirection: 'row',
   },
-  customButtonLogo: {
+  title: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 22,
+    alignSelf: 'center',
+  },
+  buttonLeft: {
+    width: 40,
+    height: 40,
+    position: 'absolute',
+    left: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonRight: {
+    width: 40,
+    height: 40,
+    position: 'absolute',
+    right: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
     width: 25,
     height: 25,
-  },
-  title: {color: 'grey', fontWeight: '900', fontSize: 18, textAlign: 'center'},
-  viewRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  customButtonLogoRight: {
-    width: 25,
-    height: 25,
-    marginLeft: 5,
+    tintColor: 'white',
   },
 });
-export default CustomAppbar;
+export default CustomAppBar;

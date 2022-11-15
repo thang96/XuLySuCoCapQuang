@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
+
 import com.android.build.OutputFile
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -137,7 +137,7 @@ android {
 
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
-        applicationId 'com.zziger'
+        applicationId 'com.xulysucocapquang'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

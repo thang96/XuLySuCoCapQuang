@@ -1,49 +1,33 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import {colors} from '../Constants';
-
-const CustomModalCamera = props => {
-  const {onRequestClose, modalVisible, openCamera, selectGallery, cancel} =
-    props;
+const CustomLoading = props => {
   return (
-    <View style={styles.container}>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={onRequestClose}>
-        <View style={styles.container}>
-          <View style={styles.eachContainer}>
-            <Text style={styles.title}>Loading...</Text>
-            <ActivityIndicator color={colors.backgroundButton} size={'large'} />
-          </View>
-        </View>
-      </Modal>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20,
+        backgroundColor: 'rgba(119,119,119,0.3)',
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+      }}>
+      <View
+        style={{
+          height: 120,
+          backgroundColor: 'white',
+          width: '100%',
+          borderRadius: 20,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text style={{fontWeight: '900', fontSize: 24}}>Loading...</Text>
+        <ActivityIndicator size="large" color={colors.purple} />
+      </View>
     </View>
   );
 };
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  eachContainer: {
-    height: 150,
-    width: '90%',
-    backgroundColor: 'white',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-  },
-  title: {fontSize: 28, fontWeight: '900', color: 'black'},
-});
-export default CustomModalCamera;
+const styles = StyleSheet.create({});
+export default CustomLoading;

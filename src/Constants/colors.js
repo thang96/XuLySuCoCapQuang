@@ -1,6 +1,6 @@
 export default {
-  backgroundInput: 'rgb(243,243,243)',
-  backgroundButton: 'rgb(77,141,255)',
-  backgroundButtonRed: 'rgb(251,132,124)',
-  backgroundButtonGreen: 'rgb(45,204,112)',
+  mainColor: 'rgba(0,151,206,255)',
+  purple: 'rgb(141,92,167)',
+  background: 'rgb(242,242,244)',
+  grey: 'rgb(119,119,119)',
 };

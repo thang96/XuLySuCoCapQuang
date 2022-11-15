@@ -60,7 +60,7 @@ function checkSizeImageChat(element) {
 async function resizeImageNotVideo(image) {
   let convert = {};
   let isShowAlertImage = true;
-  await ImageResizer.createResizedImage(image.path, 3000, 4000, 'JPEG', 100)
+  await ImageResizer.createResizedImage(image.path, 300, 400, 'PNG', 100)
     .then(response => {
       if (checkSizeImageChat(response)) {
         convert = {
