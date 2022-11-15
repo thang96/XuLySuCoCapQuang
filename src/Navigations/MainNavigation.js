@@ -10,18 +10,18 @@ import {
   View,
 } from 'react-native';
 
-import {Splash} from '../Screens';
+import {SplashScreen} from '../Screens';
 import {createStackNavigator} from '@react-navigation/stack';
 const Stack = createStackNavigator();
 import LoginNavigation from './LoginNavigation/LoginNavigation';
-import HomeNavigation from './HomeNavigaion/HomeNavigation';
+import HomeNavigation from './HomeNavigation/HomeNavigation';
 
 const MainNavigation = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        component={Splash}
-        name={'Splash'}
+        component={SplashScreen}
+        name={'SplashScreen'}
         options={{headerShown: false}}
       />
       <Stack.Screen
