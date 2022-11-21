@@ -27,6 +27,7 @@ const FAKE_DATA = [{id: 1}, {id: 2}, {id: 3}];
 const HomeScreen = () => {
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
+  const viewBottomHeight = windowHeight - 350;
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
@@ -132,7 +133,7 @@ const HomeScreen = () => {
           <Text style={styles.textQLKV}>{`Trang chủ`}</Text>
         </View>
 
-        <View style={[styles.viewBottom, {height: windowHeight - 270}]}>
+        <View style={[styles.viewBottom, {height: viewBottomHeight}]}>
           <ScrollView>
             <View
               style={{
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
   viewTop: {
     backgroundColor: colors.mainColor,
     width: '100%',
-    height: 250,
+    height: '100%',
     paddingStart: 30,
   },
   viewUse: {
