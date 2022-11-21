@@ -135,7 +135,6 @@ const EditMaintenance = props => {
 
   const updateRequest = async () => {
     let idUpdate = route?.params?.id;
-    console.log(idUpdate);
     let repeat_by = repeatBy?.value;
     let optical_cable_id = parseInt(opticalCableId?.id);
     let user_assigned_id = parseInt(userAssignedId?.id);

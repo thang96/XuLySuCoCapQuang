@@ -10,6 +10,7 @@ import {
   FlatList,
   Modal,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {colors, icons} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
@@ -26,7 +27,7 @@ const GeneralMaintenanceReport = props => {
   const token = useSelector(state => state?.token?.token);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
-  const userInfor = useSelector(state => state?.userInfor?.userInfor);
+  const [loading, setLoading] = useState(true);
   const route = useRoute();
   useEffect(() => {
     getListOpticalCablesAPI();
@@ -36,9 +37,10 @@ const GeneralMaintenanceReport = props => {
     await MaintenanceManagementAPI.GetListMaintenanceIssuesReportAPI(token, id)
       .then(res => {
         setListIncidentReport(res?.data?.data);
+        setLoading(false);
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
 
@@ -77,38 +79,47 @@ const GeneralMaintenanceReport = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <View>
-        <View style={styles.eachContainer}>
-          <CustomInput
-            styleInput={{height: 50, marginVertical: 10}}
-            placeholder={'Tìm kiếm mã công việc'}
-            source={icons.ic_seach}
-            value={search}
-            onChangeText={text => setSearch(text)}
-          />
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <View style={{flex: 1}}>
+          <View>
+            <View style={styles.eachContainer}>
+              <CustomInput
+                styleInput={{height: 50, marginVertical: 10}}
+                placeholder={'Tìm kiếm mã công việc'}
+                source={icons.ic_seach}
+                value={search}
+                onChangeText={text => setSearch(text)}
+              />
 
-          <View style={styles.viewRowBetween}>
-            <Text style={[styles.title]}>Mã CV</Text>
-            <Text style={[styles.title]}>Mô tả</Text>
+              <View style={styles.viewRowBetween}>
+                <Text style={[styles.title]}>Mã CV</Text>
+                <Text style={[styles.title]}>Mô tả</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{flex: 1}}>
+            {filteredListReport().length > 0 ? (
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                data={filteredListReport()}
+                keyExtractor={uuid}
+                renderItem={({item, index}) => renderItem(item, index)}
+              />
+            ) : (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.textWarning}>Không tìm thấy báo cáo</Text>
+              </View>
+            )}
           </View>
         </View>
-      </View>
-      <View style={{flex: 1}}>
-        {filteredListReport().length > 0 ? (
-          <FlatList
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            data={filteredListReport()}
-            keyExtractor={uuid}
-            renderItem={({item, index}) => renderItem(item, index)}
-          />
-        ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không tìm thấy bảo trì</Text>
-          </View>
-        )}
-      </View>
+      )}
     </View>
   );
 };

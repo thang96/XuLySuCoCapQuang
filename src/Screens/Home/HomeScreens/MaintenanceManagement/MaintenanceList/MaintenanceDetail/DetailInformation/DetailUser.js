@@ -13,6 +13,7 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import UsersAPI from '../../../../../../../Api/Home/UsersAPI/UsersAPI';
@@ -23,6 +24,7 @@ const DetailUser = props => {
   const navigation = useNavigation();
   const token = useSelector(state => state?.token?.token);
   const [userInfo, setUserInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getUserDetail();
   }, [route]);
@@ -31,6 +33,7 @@ const DetailUser = props => {
     await UsersAPI.GetUsersByIdAPI(token, id)
       .then(res => {
         setUserInfo(res?.data?.data);
+        setLoading(false);
       })
       .catch(function (error) {
         console.log(error);
@@ -43,25 +46,29 @@ const DetailUser = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <ScrollView style={styles.eachContainer}>
-        <Image
-          resizeMode={'contain'}
-          style={styles.avatar}
-          source={
-            userInfo?.avatar_img ? {uri: userInfo?.avatar_img} : icons.ic_user
-          }
-        />
-        <CustomViewRow title={'Tên : '} content={userInfo?.full_name} />
-        <CustomViewRow title={'SĐT : '} content={userInfo?.phone_number} />
-        <CustomViewRow title={'Email : '} content={userInfo?.email} />
-        <CustomViewRow title={'Địa chỉ : '} content={userInfo?.address} />
-        <CustomViewRow
-          title={'Chức vụ : '}
-          content={
-            userInfo?.role == 'GENERAL_MANAGER' ? 'Quản lý' : 'Nhân viên'
-          }
-        />
-      </ScrollView>
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <ScrollView style={styles.eachContainer}>
+          <Image
+            resizeMode={'contain'}
+            style={styles.avatar}
+            source={
+              userInfo?.avatar_img ? {uri: userInfo?.avatar_img} : icons.ic_user
+            }
+          />
+          <CustomViewRow title={'Tên : '} content={userInfo?.full_name} />
+          <CustomViewRow title={'SĐT : '} content={userInfo?.phone_number} />
+          <CustomViewRow title={'Email : '} content={userInfo?.email} />
+          <CustomViewRow title={'Địa chỉ : '} content={userInfo?.address} />
+          <CustomViewRow
+            title={'Chức vụ : '}
+            content={
+              userInfo?.role == 'GENERAL_MANAGER' ? 'Quản lý' : 'Nhân viên'
+            }
+          />
+        </ScrollView>
+      )}
     </View>
   );
 };

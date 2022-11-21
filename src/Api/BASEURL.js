@@ -1,1 +1,1 @@
-export const  BASEURL = 'https://api-capquang.iwannatechvn.com'
+export const BASEURL = 'https://api-capquang.iwannatechvn.com';

@@ -1,24 +1,30 @@
 import {useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
+  ImageBackground,
   StyleSheet,
   View,
   Image,
   Text,
+  TouchableOpacity,
+  Dimensions,
+  FlatList,
+  Modal,
+  Keyboard,
   ScrollView,
+  TextInput,
   ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import OpticalCablesAPI from '../../../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import {colors, icons, images} from '../../../../../../../Constants';
-const DetailOpticCableIncident = props => {
+const DetailOpticCable = props => {
   const navigation = useNavigation();
   const token = useSelector(state => state?.token?.token);
   const route = useRoute();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
-  console.log(result);
   useEffect(() => {
     getOpticCableDetail();
   }, []);
@@ -30,7 +36,7 @@ const DetailOpticCableIncident = props => {
         setLoading(false);
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
   return (
@@ -117,7 +123,7 @@ const DetailOpticCableIncident = props => {
             content={result?.cable_connection_type}
           />
           <CustomViewRow
-            title={'Chủng loại : '}
+            title={'Chủng loại  : '}
             content={result?.cable_infrastructure}
           />
           <CustomViewRow
@@ -159,4 +165,4 @@ const CustomViewRow = props => {
     </View>
   );
 };
-export default DetailOpticCableIncident;
+export default DetailOpticCable;

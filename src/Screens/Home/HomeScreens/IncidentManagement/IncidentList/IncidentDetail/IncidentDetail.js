@@ -40,9 +40,7 @@ const IncidentDetail = props => {
         setResult(res?.data?.data);
         setLoading(false);
       })
-      .catch(function (error) {
-        console.log(error);
-      });
+      .catch(function (error) {});
   };
   const rejectIssue = async () => {
     await IncidentManagementAPI.RejectIssueAPI(token, result?.id)
@@ -50,12 +48,11 @@ const IncidentDetail = props => {
         if (res?.status == 200 && res?.data?.success == true) {
           Alert.alert('Sự cố', 'Từ chối thành công');
           navigation.navigate('IncidentManagement');
-        } else if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Sự cố', 'Từ chối thất bại');
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Sự cố', 'Không thể từ chôi');
         }
       })
       .catch(error => {
-        console.log(error);
         Alert.alert('Sự cố', 'Từ chối thất bại');
       });
   };
@@ -63,16 +60,14 @@ const IncidentDetail = props => {
     let id = result?.id;
     await IncidentManagementAPI.ReceiveIssueAPI(token, id)
       .then(res => {
-        console.log(res);
         if (res?.status == 200 && res?.data?.success == true) {
           Alert.alert('Sự cố', 'Tiếp nhận sự cố thành công');
           navigation.navigate('IncidentList');
         } else if (res?.status == 200 && res?.data?.success == false) {
-          Alert.alert('Sự cố', 'Bạn không thể tiếp nhận sự cố này');
+          Alert.alert('Sự cố', 'Không thể tiếp nhận sự cố');
         }
       })
       .catch(error => {
-        console.log(error);
         Alert.alert('Sự cố', 'Tiếp nhận sự cố thất bại');
       });
   };
@@ -87,11 +82,12 @@ const IncidentDetail = props => {
         if (res?.status == 200 && res?.data?.success == true) {
           Alert.alert('Nghiệm thu', 'Nghiệm thu thành công');
           navigation.navigate('IncidentManagement');
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Nghiệm thu', 'Không thể nghiệm thu');
         }
       })
       .catch(function (error) {
         Alert.alert('Nghiệm thu', 'Nghiệm thu thất bại');
-        console.log(error);
       });
   };
   const renderDocumentFiles = item => {
@@ -135,14 +131,17 @@ const IncidentDetail = props => {
     await IncidentManagementAPI.DeleteIncidentIssueByIdAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Sự cố', 'Xóa sự cố thành công');
+          Alert.alert('Sự cố', 'Xóa yêu cầu xử lý sự cố thành công');
           navigation.goBack();
+          setConfirm(false);
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Sự cố', 'Không thể xóa yêu cầu xử lý sự cố');
           setConfirm(false);
         }
       })
       .catch(function (error) {
-        console.log(error);
-        Alert.alert('Sự cố', 'Xóa sự cố thất bại');
+        Alert.alert('Sự cố', 'Xóa yêu cầu xử lý sự cố thất bại');
+        setConfirm(false);
       });
   };
   const [edit, setEdit] = useState(false);

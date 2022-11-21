@@ -34,22 +34,19 @@ import CreateNewCableRoute from './Home/HomeScreens/FiberOpticCableManagement/Cr
 import FibelOpticCableDetail from './Home/HomeScreens/FiberOpticCableManagement/FibelOpticCableDetail/FibelOpticCableDetail';
 //-AcceptRequests DetailUserIncident DetailOpticCableIncident
 import AcceptRequests from './Home/HomeScreens/IncidentManagement/AcceptRequests/AcceptRequests';
-import DetailRequest from './Home/HomeScreens/IncidentManagement/AcceptRequests/DetailRequest';
 //-CreateNewRequest
 import CreateNewRequest from './Home/HomeScreens/IncidentManagement/CreateNewRequest/CreateNewRequest';
-import ProjectList from './Home/HomeScreens/IncidentManagement/CreateNewRequest/PersonnelList';
 //-MaintenanceManagement
 import MaintenanceManagement from './Home/HomeScreens/MaintenanceManagement/MaintenanceManagement';
 import MaintenanceList from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/MaintenanceList';
-import FiberOpticCableDetail from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/FiberOpticCableDetail/FiberOpticCableDetail';
-import DetailUser from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/FiberOpticCableDetail/DetailInformation/DetailUser';
-import DetailOpticCable from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/FiberOpticCableDetail/DetailInformation/DetailOpticCable';
+import MaintenanceDetail from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/MaintenanceDetail/MaintenanceDetail';
+import DetailUser from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/MaintenanceDetail/DetailInformation/DetailUser';
+import DetailOpticCable from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/MaintenanceDetail/DetailInformation/DetailOpticCable';
 import CreateAMaintenanceRequest from './Home/HomeScreens/MaintenanceManagement/CreateAMaintenanceRequest/CreateAMaintenanceRequest';
-import EditMaintenance from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/FiberOpticCableDetail/EditMaintenance/EditMaintenance';
+import EditMaintenance from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/MaintenanceDetail/EditMaintenance/EditMaintenance';
 import AcceptMaintenanceRequests from './Home/HomeScreens/MaintenanceManagement/AcceptMaintenanceRequests/AcceptMaintenanceRequests';
-import DetailMaintenanceRequests from './Home/HomeScreens/MaintenanceManagement/AcceptMaintenanceRequests/DetailMaintenanceRequests';
-import ReportMaintenance from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/FiberOpticCableDetail/ReportMaintenance/ReportMaintenance';
-import ReportMaintenanceDetail from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/FiberOpticCableDetail/ReportMaintenance/ReportMaintenanceDetail';
+import ReportMaintenance from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/MaintenanceDetail/ReportMaintenance/ReportMaintenance';
+import ReportMaintenanceDetail from './Home/HomeScreens/MaintenanceManagement/MaintenanceList/MaintenanceDetail/ReportMaintenance/ReportMaintenanceDetail';
 //--GeneralMaintenanceReport
 import MaintenanceCableRouteReport from './Home/HomeScreens/MaintenanceManagement/GeneralMaintenanceReport/MaintenanceCableRouteReport';
 import GeneralMaintenanceReport from './Home/HomeScreens/MaintenanceManagement/GeneralMaintenanceReport/GeneralMaintenanceReport';
@@ -113,7 +110,6 @@ export {
   DetailOfCrashReports,
   //-AcceptRequests
   AcceptRequests,
-  DetailRequest,
   //-EmployeeManager
   EmployeeManager,
   EmployeeDetails,
@@ -124,13 +120,12 @@ export {
   //-MaintenanceManagement
   MaintenanceManagement,
   MaintenanceList,
-  FiberOpticCableDetail,
+  MaintenanceDetail,
   DetailUser,
   DetailOpticCable,
   CreateAMaintenanceRequest,
   EditMaintenance,
   AcceptMaintenanceRequests,
-  DetailMaintenanceRequests,
   ReportMaintenance,
   ReportMaintenanceDetail,
   //--GeneralMaintenanceReport
@@ -140,7 +135,6 @@ export {
   //-
   WarehouseManagement,
   ListOfSupplies,
-  ProjectList,
   ProjectManagement,
   SuppliesInformation,
   ImportAndExportManagementList,

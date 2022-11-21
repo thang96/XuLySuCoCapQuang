@@ -11,7 +11,7 @@ import {
   Modal,
   Keyboard,
   ScrollView,
-  TextInput,
+  ActivityIndicator,
   Alert,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../../Constants';
@@ -29,6 +29,7 @@ const FiberOpticCableDetail = props => {
   const token = useSelector(state => state?.token?.token);
   const route = useRoute();
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getDetail();
   }, [route, token]);
@@ -37,22 +38,24 @@ const FiberOpticCableDetail = props => {
     await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(token, id)
       .then(res => {
         setResult(res?.data?.data);
+        setLoading(false);
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
   const rejectMaintenanceIssue = async () => {
     let id = result?.id;
     await MaintenanceManagementAPI.RejectMaintenanceIssueAPI(token, id)
       .then(res => {
-        if (res?.status == 200) {
+        if (res?.status == 200 && res?.data?.success == true) {
           Alert.alert('Bảo trì', 'Từ chối thành công');
           navigation.goBack();
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Bảo trì', 'Không thể từ chôi');
         }
       })
       .catch(error => {
-        console.log(error);
         Alert.alert('Bảo trì', 'Từ chối thất bại');
       });
   };
@@ -60,14 +63,14 @@ const FiberOpticCableDetail = props => {
     let id = result?.id;
     await MaintenanceManagementAPI.ReceiveMaintenanceIssueAPI(token, id)
       .then(res => {
-        console.log(res);
-        if (res?.status == 200) {
+        if (res?.status == 200 && res?.data?.success == true) {
           Alert.alert('Bảo trì', 'Tiếp nhận thành công');
-          navigation.navigate('MaintenanceManagement', id);
+          navigation.navigate('MaintenanceList');
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Bảo trì', 'Không thể tiếp nhận');
         }
       })
       .catch(error => {
-        console.log(error);
         Alert.alert('Bảo trì', 'Tiếp nhận thất bại');
       });
   };
@@ -79,13 +82,15 @@ const FiberOpticCableDetail = props => {
     let id = result?.id;
     await MaintenanceManagementAPI.AcceptanceMaintenanceRequestAPI(token, id)
       .then(res => {
-        if (res?.status == 200) {
-          alert('Nghiệm thu thành công');
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Bảo trì', 'Nghiệm thu thành công');
           navigation.navigate('MaintenanceManagement');
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Bảo trì', 'Không thể nghiệm thu');
         }
       })
       .catch(function (error) {
-        console.log(error);
+        Alert.alert('Bảo trì', 'Nghiệm thu thất bại');
       });
   };
   const renderDocumentFiles = item => {
@@ -129,14 +134,18 @@ const FiberOpticCableDetail = props => {
     await MaintenanceManagementAPI.DeleteMaintenanceIssueByIdAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Yêu cầu bảo trì', 'Xóa Yêu cầu bảo trì thành công');
+          Alert.alert(
+            'Yêu cầu bảo trì',
+            'Xóa yêu cầu xử lý bảo trì thành công',
+          );
           navigation.goBack();
           setConfirm(false);
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Yêu cầu bảo trì', 'Không thể xóa yêu cầu xử lý bảo trì');
         }
       })
       .catch(function (error) {
-        console.log(error);
-        Alert.alert('Yêu cầu bảo trì', 'Xóa Yêu cầu bảo trì thất bại');
+        Alert.alert('Yêu cầu bảo trì', 'Xóa yêu cầu xử lý bảo trì thất bại');
       });
   };
   const [edit, setEdit] = useState(false);
@@ -178,159 +187,169 @@ const FiberOpticCableDetail = props => {
           />
         </View>
       )}
-      <ScrollView style={styles.eachContainer}>
-        <Text style={[styles.title, {marginBottom: 10}]}>
-          Thông tin công việc
-        </Text>
-        <ComponentViewRow title={'Mã VC : '} content={result?.code} />
-        <ComponentViewRow title={'ID: '} content={result?.id} />
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <View style={{flex: 1}}>
+          <ScrollView style={styles.eachContainer}>
+            <Text style={[styles.title, {marginBottom: 10}]}>
+              Thông tin công việc
+            </Text>
+            <ComponentViewRow title={'Mã VC : '} content={result?.code} />
+            <ComponentViewRow title={'ID: '} content={result?.id} />
 
-        <ComponentViewRow
-          title={'Người được chỉ định : '}
-          titleButton={'Chi tiết >>'}
-          onPress={() =>
-            navigation.navigate('DetailUser', result?.user_assigned_id)
-          }
-          content={result?.user_assigned}
-        />
-        <ComponentViewRow
-          title={'Người tạo chỉ định : '}
-          titleButton={'Chi tiết >>'}
-          onPress={() =>
-            navigation.navigate('DetailUser', result?.create_user_id)
-          }
-        />
+            <ComponentViewRow
+              title={'Người được chỉ định : '}
+              titleButton={'Chi tiết >>'}
+              onPress={() =>
+                navigation.navigate('DetailUser', result?.user_assigned_id)
+              }
+              content={result?.user_assigned}
+            />
+            <ComponentViewRow
+              title={'Người tạo chỉ định : '}
+              titleButton={'Chi tiết >>'}
+              onPress={() =>
+                navigation.navigate('DetailUser', result?.create_user_id)
+              }
+            />
 
-        <ComponentViewRow
-          title={'Thời gian yêu cầu : '}
-          content={result?.required_time}
-        />
-        <ComponentViewRow
-          title={'Tuyến cáp : '}
-          titleButton={'Chi tiết >>'}
-          onPress={() =>
-            navigation.navigate('DetailOpticCable', result?.optical_cable_id)
-          }
-          content={result?.optical_cable}
-        />
-        <ComponentViewRow
-          title={'Mô tả bảo trì : '}
-          content={result?.description}
-        />
-        <ComponentViewRow
-          title={'Lặp lại : '}
-          content={
-            result?.repeat_by == 'MONTHLY'
-              ? 'Hằng tháng'
-              : result?.repeat_by == 'QUARTERLY'
-              ? 'Hằng quý'
-              : result?.repeat_by == 'YEARLY'
-              ? 'Hằng năm'
-              : null
-          }
-        />
+            <ComponentViewRow
+              title={'Thời gian yêu cầu : '}
+              content={result?.required_time}
+            />
+            <ComponentViewRow
+              title={'Tuyến cáp : '}
+              titleButton={'Chi tiết >>'}
+              onPress={() =>
+                navigation.navigate(
+                  'DetailOpticCable',
+                  result?.optical_cable_id,
+                )
+              }
+              content={result?.optical_cable}
+            />
+            <ComponentViewRow
+              title={'Mô tả bảo trì : '}
+              content={result?.description}
+            />
+            <ComponentViewRow
+              title={'Lặp lại : '}
+              content={
+                result?.repeat_by == 'MONTHLY'
+                  ? 'Hằng tháng'
+                  : result?.repeat_by == 'QUARTERLY'
+                  ? 'Hằng quý'
+                  : result?.repeat_by == 'YEARLY'
+                  ? 'Hằng năm'
+                  : null
+              }
+            />
 
-        <ComponentViewRow
-          title={'Tình trạng : '}
-          styleContent={{
-            color: result?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
-          }}
-          content={result?.issue_status}
-        />
-        <View>
-          <Text style={styles.content}>File đính kèm : </Text>
-          <FlatList
-            data={result?.document_files}
-            keyExtractor={uuid}
-            horizontal
-            style={{height: 210}}
-            renderItem={({item}) => renderDocumentFiles(item)}
-          />
+            <ComponentViewRow
+              title={'Tình trạng : '}
+              styleContent={{
+                color:
+                  result?.issue_status == 'CHƯA TIẾP NHẬN' ? 'red' : 'green',
+              }}
+              content={result?.issue_status}
+            />
+            <View>
+              <Text style={styles.content}>File đính kèm : </Text>
+              <FlatList
+                data={result?.document_files}
+                keyExtractor={uuid}
+                horizontal
+                style={{height: 210}}
+                renderItem={({item}) => renderDocumentFiles(item)}
+              />
+            </View>
+
+            <ComponentViewRow
+              title={'Thời gian tạo : '}
+              content={result?.created_time}
+            />
+            <ComponentViewRow
+              title={'Thời gian tiếp nhận : '}
+              content={result?.received_time}
+            />
+            <ComponentViewRow
+              title={'Thời gian hoàn thành : '}
+              content={result?.completion_time}
+            />
+            <ComponentViewRow
+              title={'Tổng thời gian hoàn thành : '}
+              content={
+                result?.total_processing_time == null
+                  ? ''
+                  : `${result?.total_processing_time} phút`
+              }
+            />
+            {(result?.issue_status == 'CHƯA NGHIỆM THU' ||
+              result?.issue_status == 'ĐÃ HOÀN THÀNH') && (
+              <ComponentViewRow
+                title={'Chi tiết báo cáo : '}
+                titleButton={'Chi tiết >>'}
+                onPress={() =>
+                  navigation.navigate('ReportMaintenanceDetail', result?.id)
+                }
+              />
+            )}
+          </ScrollView>
+          {(result?.issue_status == 'CHƯA TIẾP NHẬN' ||
+            result?.issue_status == 'ĐANG THỰC HIỆN') &&
+            userInfor?.role != 'EMPLOYEE' && (
+              <ComponentTwoButton
+                accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
+                disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
+                disabledRight={
+                  result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
+                }
+                disableSecondRight={
+                  result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
+                }
+                onPressLeft={() => rejectMaintenanceIssue()}
+                onPressRight={() => receiveMaintenanceIssue()}
+                onPressSecondRight={() => reportRequest()}
+              />
+            )}
+          {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
+            userInfor?.role == 'EMPLOYEE' && (
+              <CustomTextButton
+                styleButton={styles.viewCustomTextButton}
+                label={'Tiếp nhận'}
+                textStyle={styles.textCustomTextButton}
+                onPress={() => receiveMaintenanceIssue()}
+              />
+            )}
+          {result?.issue_status == 'ĐANG THỰC HIỆN' &&
+            userInfor?.role == 'EMPLOYEE' && (
+              <CustomTextButton
+                styleButton={styles.viewCustomTextButton}
+                label={'Báo cáo'}
+                textStyle={styles.textCustomTextButton}
+                onPress={() => reportRequest()}
+              />
+            )}
+          {result?.issue_status == 'CHƯA NGHIỆM THU' &&
+            userInfor?.role != 'EMPLOYEE' && (
+              <View style={[styles.viewRow, {marginTop: 20}]}>
+                <CustomTextButton
+                  styleButton={styles.viewCustomTextButton}
+                  label={'Từ chối'}
+                  textStyle={styles.textCustomTextButton}
+                  onPress={() => rejectIssue()}
+                />
+                <CustomTextButton
+                  styleButton={styles.viewCustomTextButton}
+                  label={'Nghiệm thu'}
+                  textStyle={styles.textCustomTextButton}
+                  onPress={() => acceptance()}
+                />
+              </View>
+            )}
         </View>
-
-        <ComponentViewRow
-          title={'Thời gian tạo : '}
-          content={result?.created_time}
-        />
-        <ComponentViewRow
-          title={'Thời gian tiếp nhận : '}
-          content={result?.received_time}
-        />
-        <ComponentViewRow
-          title={'Thời gian hoàn thành : '}
-          content={result?.completion_time}
-        />
-        <ComponentViewRow
-          title={'Tổng thời gian hoàn thành : '}
-          content={
-            result?.total_processing_time == null
-              ? ''
-              : `${result?.total_processing_time} phút`
-          }
-        />
-        {(result?.issue_status == 'CHƯA NGHIỆM THU' ||
-          result?.issue_status == 'ĐÃ HOÀN THÀNH') && (
-          <ComponentViewRow
-            title={'Chi tiết báo cáo : '}
-            titleButton={'Chi tiết >>'}
-            onPress={() =>
-              navigation.navigate('ReportMaintenanceDetail', result?.id)
-            }
-          />
-        )}
-      </ScrollView>
-      {(result?.issue_status == 'CHƯA TIẾP NHẬN' ||
-        result?.issue_status == 'ĐANG THỰC HIỆN') &&
-        userInfor?.role != 'EMPLOYEE' && (
-          <ComponentTwoButton
-            accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
-            disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
-            disabledRight={
-              result?.issue_status == 'CHƯA TIẾP NHẬN' ? false : true
-            }
-            disableSecondRight={
-              result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
-            }
-            onPressLeft={() => rejectMaintenanceIssue()}
-            onPressRight={() => receiveMaintenanceIssue()}
-            onPressSecondRight={() => reportRequest()}
-          />
-        )}
-      {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
-        userInfor?.role == 'EMPLOYEE' && (
-          <CustomTextButton
-            styleButton={styles.viewCustomTextButton}
-            label={'Tiếp nhận'}
-            textStyle={styles.textCustomTextButton}
-            onPress={() => receiveMaintenanceIssue()}
-          />
-        )}
-      {result?.issue_status == 'ĐANG THỰC HIỆN' &&
-        userInfor?.role == 'EMPLOYEE' && (
-          <CustomTextButton
-            styleButton={styles.viewCustomTextButton}
-            label={'Báo cáo'}
-            textStyle={styles.textCustomTextButton}
-            onPress={() => reportRequest()}
-          />
-        )}
-      {result?.issue_status == 'CHƯA NGHIỆM THU' &&
-        userInfor?.role != 'EMPLOYEE' && (
-          <View style={[styles.viewRow, {marginTop: 20}]}>
-            <CustomTextButton
-              styleButton={styles.viewCustomTextButton}
-              label={'Từ chối'}
-              textStyle={styles.textCustomTextButton}
-              onPress={() => rejectIssue()}
-            />
-            <CustomTextButton
-              styleButton={styles.viewCustomTextButton}
-              label={'Nghiệm thu'}
-              textStyle={styles.textCustomTextButton}
-              onPress={() => acceptance()}
-            />
-          </View>
-        )}
+      )}
     </View>
   );
 };

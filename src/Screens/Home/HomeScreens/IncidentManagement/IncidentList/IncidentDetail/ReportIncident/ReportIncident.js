@@ -13,7 +13,7 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
-  PermissionsAndroid,
+  ActivityIndicator,
   Alert,
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
@@ -39,6 +39,7 @@ const ReportIncident = props => {
   const [reason, setReason] = useState('');
   const [solution, setSolution] = useState('');
   const [reportDocument, setReportDocument] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getRequest();
@@ -47,7 +48,10 @@ const ReportIncident = props => {
     let id = route.params;
     await IncidentManagementAPI.GetIncidentIssueByIdAPI(token, id)
       .then(res => {
-        setRequest(res?.data?.data);
+        if (res?.status == 200 && res?.data?.success == true) {
+          setRequest(res?.data?.data);
+          setLoading(false);
+        }
       })
       .catch(error => {
         console.log(error);
@@ -110,13 +114,13 @@ const ReportIncident = props => {
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Báo cáo','Gửi báo cáo thành công');
+          Alert.alert('Báo cáo', 'Gửi báo cáo thành công');
           navigation.navigate('IncidentList');
         }
       })
       .catch(function (error) {
         console.log(JSON.stringify(error?.status));
-        Alert.alert('Báo cáo','Gửi báo cáo thất bại');
+        Alert.alert('Báo cáo', 'Gửi báo cáo thất bại');
       });
   };
   const addResult = image => {
@@ -171,90 +175,107 @@ const ReportIncident = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <ScrollView style={styles.eachContainer}>
-        <Text style={styles.title}>Thông tin yêu cầu xử lý</Text>
-        <Text style={styles.content}>{`Mã CV : ${request?.code}`}</Text>
-        <Text
-          style={
-            styles.content
-          }>{`Nhân sự kỹ thuật : ${request?.user_assigned}`}</Text>
-        <View style={[styles.line, {marginVertical: 10}]} />
-        <View style={styles.viewRow}>
-          <Text style={styles.title}>Nhập thông tin vị trí</Text>
-          <CustomTextButton
-            textStyle={{
-              color: colors.mainColor,
-              fontWeight: 'bold',
-              fontSize: 18,
-            }}
-            styleButton={{height: 50}}
-            label={'Lấy vị trí >>'}
-            onPress={() => getLocation()}
-          />
-        </View>
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <View style={{flex: 1}}>
+          <ScrollView style={styles.eachContainer}>
+            <Text style={styles.title}>Thông tin yêu cầu xử lý</Text>
+            <Text style={styles.content}>{`Mã CV : ${request?.code}`}</Text>
+            <Text
+              style={
+                styles.content
+              }>{`Nhân sự kỹ thuật : ${request?.user_assigned}`}</Text>
+            <View style={[styles.line, {marginVertical: 10}]} />
+            <View style={styles.viewRow}>
+              <Text style={styles.title}>Nhập thông tin vị trí</Text>
+              <CustomTextButton
+                textStyle={{
+                  color: colors.mainColor,
+                  fontWeight: 'bold',
+                  fontSize: 18,
+                }}
+                styleButton={{height: 50}}
+                label={'Lấy vị trí >>'}
+                onPress={() => getLocation()}
+              />
+            </View>
 
-        <View style={styles.viewCustomTextInputChangeValue}>
-          <Text style={styles.styleTitle}>Longitude : </Text>
-          <Text>{locationLongitude}</Text>
-        </View>
-        <View style={styles.viewCustomTextInputChangeValue}>
-          <Text style={styles.styleTitle}>Latitude : </Text>
-          <Text>{locationLatitude}</Text>
-        </View>
+            <View style={styles.viewCustomTextInputChangeValue}>
+              <Text style={styles.styleTitle}>Longitude : </Text>
+              <Text>{locationLongitude}</Text>
+            </View>
+            <View style={styles.viewCustomTextInputChangeValue}>
+              <Text style={styles.styleTitle}>Latitude : </Text>
+              <Text>{locationLatitude}</Text>
+            </View>
 
-        <Text style={styles.title}>Lý do</Text>
-        <CustomTextInputChangeValue
-          styleViewInput={{height: 50, width: '100%', backgroundColor: 'white'}}
-          placeholder={'Nhập lý do'}
-          value={reason}
-          onChangeText={text => setReason(text)}
-        />
-        <Text style={styles.title}>Phương án đề xuất tối ưu</Text>
-        <CustomTextInputChangeValue
-          styleViewInput={{height: 50, width: '100%', backgroundColor: 'white'}}
-          placeholder={'Nhập phương án tối ưu'}
-          value={solution}
-          onChangeText={text => setSolution(text)}
-        />
-        <Text style={styles.title}>Hình ảnh báo cáo</Text>
-        <FlatList
-          horizontal
-          data={reportDocument}
-          keyExtractor={uuid}
-          renderItem={({item, index}) => renderImage(item, index)}
-        />
-        <TouchableOpacity
-          disabled={reportDocument.length < 5 ? false : true}
-          style={[styles.button, {marginTop: 10}]}
-          onPress={() => setModalCamera(true)}>
-          <Image
+            <Text style={styles.title}>Lý do</Text>
+            <CustomTextInputChangeValue
+              styleViewInput={{
+                height: 50,
+                width: '100%',
+                backgroundColor: 'white',
+              }}
+              placeholder={'Nhập lý do'}
+              value={reason}
+              onChangeText={text => setReason(text)}
+            />
+            <Text style={styles.title}>Phương án đề xuất tối ưu</Text>
+            <CustomTextInputChangeValue
+              styleViewInput={{
+                height: 50,
+                width: '100%',
+                backgroundColor: 'white',
+              }}
+              placeholder={'Nhập phương án tối ưu'}
+              value={solution}
+              onChangeText={text => setSolution(text)}
+            />
+            <Text style={styles.title}>Hình ảnh báo cáo</Text>
+            <FlatList
+              horizontal
+              data={reportDocument}
+              keyExtractor={uuid}
+              renderItem={({item, index}) => renderImage(item, index)}
+            />
+            <TouchableOpacity
+              disabled={reportDocument.length < 5 ? false : true}
+              style={[styles.button, {marginTop: 10}]}
+              onPress={() => setModalCamera(true)}>
+              <Image
+                style={[
+                  styles.imageUpload,
+                  {
+                    tintColor:
+                      reportDocument.length < 5 ? colors.mainColor : 'grey',
+                  },
+                ]}
+                source={icons.ic_upload}
+              />
+              <Text
+                style={[
+                  styles.textUpload,
+                  {
+                    color:
+                      reportDocument.length < 5 ? colors.mainColor : 'grey',
+                  },
+                ]}>
+                Up ảnh
+              </Text>
+            </TouchableOpacity>
+          </ScrollView>
+          <TouchableOpacity
+            disabled={isValueOK() ? false : true}
+            onPress={sendReport}
             style={[
-              styles.imageUpload,
-              {
-                tintColor:
-                  reportDocument.length < 5 ? colors.mainColor : 'grey',
-              },
-            ]}
-            source={icons.ic_upload}
-          />
-          <Text
-            style={[
-              styles.textUpload,
-              {color: reportDocument.length < 5 ? colors.mainColor : 'grey'},
+              styles.styleButton,
+              {backgroundColor: isValueOK() ? colors.mainColor : 'grey'},
             ]}>
-            Up ảnh
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
-      <TouchableOpacity
-        disabled={isValueOK() ? false : true}
-        onPress={sendReport}
-        style={[
-          styles.styleButton,
-          {backgroundColor: isValueOK() ? colors.mainColor : 'grey'},
-        ]}>
-        <Text style={styles.textSendReport}>Gửi báo cáo</Text>
-      </TouchableOpacity>
+            <Text style={styles.textSendReport}>Gửi báo cáo</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };

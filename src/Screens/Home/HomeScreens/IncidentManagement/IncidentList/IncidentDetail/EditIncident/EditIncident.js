@@ -10,7 +10,7 @@ import {
   Dimensions,
   FlatList,
   KeyboardAvoidingView,
-  Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
@@ -19,10 +19,6 @@ import CustomTextButton from '../../../../../../../Components/CustomTextButton';
 import CustomModalSelectOpticalCable from '../../../../../../../Components/CustomModalSelectOpticalCable';
 import {useSelector} from 'react-redux';
 import CustomModalSelectUserAssigned from '../../../../../../../Components/CustomModalSelectUserAssigned';
-import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
-import common from '../../../../../../../utils/common';
-import {uuid, isImage} from '../../../../../../../utils/uuid';
-import ImagePicker from 'react-native-image-crop-picker';
 import {
   ReadUsersAPI,
   ReadOpticalCablesAPI,
@@ -32,7 +28,6 @@ import {
 import UsersAPI from '../../../../../../../Api/Home/UsersAPI/UsersAPI';
 import OpticalCablesAPI from '../../../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
 import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
-import CustomButtonIcon from '../../../../../../../Components/CustomButtonIcon';
 const EditIncident = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -44,6 +39,7 @@ const EditIncident = props => {
   const token = useSelector(state => state?.token?.token);
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const [listOfEmployee, setListOfEmployee] = useState([]);
+  const [loading, setLoading] = useState(true);
   const isReady = () =>
     opticalCableId != null && userAssignedId != null && description.length > 0;
 
@@ -56,6 +52,7 @@ const EditIncident = props => {
       .then(res => {
         if (res?.status == 200) {
           setListOpticalCables(res?.data?.data);
+          setLoading(false);
         }
       })
       .catch(error => console.log(error));
@@ -180,50 +177,54 @@ const EditIncident = props => {
           iconsLeft={icons.ic_back}
           onPressIconsLeft={() => navigation.goBack()}
         />
-        <ScrollView style={styles.scrollView}>
-          <Text style={styles.title}>Tuyến cáp</Text>
-          <TouchableOpacity
-            onPress={() => setModalOpticalCable(true)}
-            style={styles.buttonPicker}>
-            <Text style={styles.textPicker}>
-              {opticalCableId ? opticalCableId?.name : 'Chọn tuyến cáp'}
-            </Text>
-            <Image source={icons.ic_downArrow} style={styles.imagePicker} />
-          </TouchableOpacity>
-          <Text style={styles.title}>Nhân viên kỹ thuật</Text>
-          <TouchableOpacity
-            onPress={() => setModalUserAssigned(true)}
-            style={styles.buttonPicker}>
-            <Text style={styles.textPicker}>
-              {userAssignedId
-                ? userAssignedId?.full_name
-                : 'Chọn nhân viên kỹ thuật'}
-            </Text>
-            <Image source={icons.ic_downArrow} style={styles.imagePicker} />
-          </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator size={'large'} color={colors.mainColor} />
+        ) : (
+          <ScrollView style={styles.scrollView}>
+            <Text style={styles.title}>Tuyến cáp</Text>
+            <TouchableOpacity
+              onPress={() => setModalOpticalCable(true)}
+              style={styles.buttonPicker}>
+              <Text style={styles.textPicker}>
+                {opticalCableId ? opticalCableId?.name : 'Chọn tuyến cáp'}
+              </Text>
+              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Nhân viên kỹ thuật</Text>
+            <TouchableOpacity
+              onPress={() => setModalUserAssigned(true)}
+              style={styles.buttonPicker}>
+              <Text style={styles.textPicker}>
+                {userAssignedId
+                  ? userAssignedId?.full_name
+                  : 'Chọn nhân viên kỹ thuật'}
+              </Text>
+              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+            </TouchableOpacity>
 
-          <Text style={styles.title}>Nội dung</Text>
-          <View style={styles.viewContent}>
-            <TextInput
-              multiline
-              style={{fontSize: 18}}
-              placeholder={'Nhập  nội dung'}
-              value={description}
-              onChangeText={text => setDescription(text)}
+            <Text style={styles.title}>Nội dung</Text>
+            <View style={styles.viewContent}>
+              <TextInput
+                multiline
+                style={{fontSize: 18}}
+                placeholder={'Nhập  nội dung'}
+                value={description}
+                onChangeText={text => setDescription(text)}
+              />
+            </View>
+
+            <CustomTextButton
+              disabled={isReady() ? false : true}
+              label={'Xác nhận'}
+              styleButton={[
+                styles.customButtonText,
+                {backgroundColor: isReady() ? colors.mainColor : colors.grey},
+              ]}
+              textStyle={{color: 'white', fontSize: 16, fontWeight: 'bold'}}
+              onPress={() => updateRequest()}
             />
-          </View>
-
-          <CustomTextButton
-            disabled={isReady() ? false : true}
-            label={'Xác nhận'}
-            styleButton={[
-              styles.customButtonText,
-              {backgroundColor: isReady() ? colors.mainColor : colors.grey},
-            ]}
-            textStyle={{color: 'white', fontSize: 16, fontWeight: 'bold'}}
-            onPress={() => updateRequest()}
-          />
-        </ScrollView>
+          </ScrollView>
+        )}
       </KeyboardAvoidingView>
     </View>
   );

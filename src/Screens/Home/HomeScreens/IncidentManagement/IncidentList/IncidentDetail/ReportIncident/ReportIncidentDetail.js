@@ -13,6 +13,7 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import {colors, icons} from '../../../../../../../Constants';
@@ -25,8 +26,8 @@ const ReportIncidentDetail = props => {
   const navigation = useNavigation();
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
-  const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getReportIncidentDetail();
   }, []);
@@ -34,10 +35,13 @@ const ReportIncidentDetail = props => {
     let id = route.params;
     await IncidentManagementAPI.DetailIssueReportAPI(token, id)
       .then(res => {
-        setResult(res?.data);
+        if (res?.status == 200) {
+          setResult(res?.data);
+          setLoading(false);
+        }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
   const renderDocumentFiles = (item, index) => {
@@ -86,31 +90,35 @@ const ReportIncidentDetail = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <ScrollView style={styles.container}>
-        <CustomViewRow title={'Mã sự cố : '} content={result?.issue_code} />
-        <CustomViewRow title={'ID sự cố : '} content={result?.id} />
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <ScrollView style={styles.container}>
+          <CustomViewRow title={'Mã sự cố : '} content={result?.issue_code} />
+          <CustomViewRow title={'ID sự cố : '} content={result?.id} />
 
-        <CustomViewRow
-          title={'Tọa độ longitude : '}
-          content={result?.location_longitude}
-        />
-        <CustomViewRow
-          title={'Tọa độ latitude  : '}
-          content={result?.location_latitude}
-        />
-        <CustomViewRow title={'Lý do  : '} content={result?.reason} />
-        <CustomViewRow title={'Giải pháp  : '} content={result?.solution} />
-        <View>
-          <Text style={styles.title}>File báo cáo </Text>
-          <FlatList
-            style={{height: 210, backgroundColor: 'white'}}
-            horizontal
-            data={result?.document_files}
-            keyExtractor={uuid}
-            renderItem={({item, index}) => renderDocumentFiles(item, index)}
+          <CustomViewRow
+            title={'Tọa độ longitude : '}
+            content={result?.location_longitude}
           />
-        </View>
-      </ScrollView>
+          <CustomViewRow
+            title={'Tọa độ latitude  : '}
+            content={result?.location_latitude}
+          />
+          <CustomViewRow title={'Lý do  : '} content={result?.reason} />
+          <CustomViewRow title={'Giải pháp  : '} content={result?.solution} />
+          <View>
+            <Text style={styles.title}>File báo cáo </Text>
+            <FlatList
+              style={{height: 210, backgroundColor: 'white'}}
+              horizontal
+              data={result?.document_files}
+              keyExtractor={uuid}
+              renderItem={({item, index}) => renderDocumentFiles(item, index)}
+            />
+          </View>
+        </ScrollView>
+      )}
     </View>
   );
 };

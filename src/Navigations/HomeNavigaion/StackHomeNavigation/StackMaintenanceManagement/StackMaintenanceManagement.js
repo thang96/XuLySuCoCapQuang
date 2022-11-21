@@ -3,12 +3,11 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {
   MaintenanceManagement,
   MaintenanceList,
-  FiberOpticCableDetail,
+  MaintenanceDetail,
   DetailUser,
   DetailOpticCable,
   CreateAMaintenanceRequest,
   AcceptMaintenanceRequests,
-  DetailMaintenanceRequests,
   ReportMaintenance,
   ReportMaintenanceDetail,
   MaintenanceCableRouteReport,
@@ -27,7 +26,6 @@ const StackMaintenanceManagement = props => {
           headerShown: false,
         }}
       />
-
       <Stack.Screen
         component={MaintenanceList}
         name={'MaintenanceList'}
@@ -36,8 +34,8 @@ const StackMaintenanceManagement = props => {
         }}
       />
       <Stack.Screen
-        component={FiberOpticCableDetail}
-        name={'FiberOpticCableDetail'}
+        component={MaintenanceDetail}
+        name={'MaintenanceDetail'}
         options={{
           headerShown: false,
         }}
@@ -77,13 +75,7 @@ const StackMaintenanceManagement = props => {
           headerShown: false,
         }}
       />
-      <Stack.Screen
-        component={DetailMaintenanceRequests}
-        name={'DetailMaintenanceRequests'}
-        options={{
-          headerShown: false,
-        }}
-      />
+
       <Stack.Screen
         component={ReportMaintenance}
         name={'ReportMaintenance'}

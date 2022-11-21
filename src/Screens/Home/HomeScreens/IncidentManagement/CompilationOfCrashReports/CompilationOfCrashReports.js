@@ -10,10 +10,11 @@ import {
   FlatList,
   Modal,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {colors, icons} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation, useRoute, useIsFocused} from '@react-navigation/native';
 import CustomInput from '../../../../../Components/CustomInput';
 import {uuid} from '../../../../../utils/uuid';
 import {useSelector} from 'react-redux';
@@ -24,20 +25,22 @@ const CompilationOfCrashReports = props => {
   const [listIncidentReport, setListIncidentReport] = useState([]);
   const token = useSelector(state => state?.token?.token);
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const route = useRoute();
+  const isFocused = useIsFocused();
   useEffect(() => {
     getListOpticalCablesAPI();
-  }, []);
+  }, [isFocused]);
   const getListOpticalCablesAPI = async () => {
     let id = route.params;
     await IncidentManagementAPI.GetListReportsIssuesAPI(token, id)
       .then(res => {
         setListIncidentReport(res?.data?.data);
+        setLoading(false);
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
 
@@ -53,7 +56,7 @@ const CompilationOfCrashReports = props => {
       getListOpticalCablesAPI();
       setRefreshing(false);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }, []);
   const renderItem = (item, index) => {
@@ -76,38 +79,47 @@ const CompilationOfCrashReports = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <View>
-        <View style={styles.eachContainer}>
-          <CustomInput
-            styleInput={{height: 50, marginVertical: 10}}
-            placeholder={'Tìm kiếm mã công việc'}
-            source={icons.ic_seach}
-            value={search}
-            onChangeText={text => setSearch(text)}
-          />
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <View style={{flex: 1}}>
+          <View>
+            <View style={styles.eachContainer}>
+              <CustomInput
+                styleInput={{height: 50, marginVertical: 10}}
+                placeholder={'Tìm kiếm mã công việc'}
+                source={icons.ic_seach}
+                value={search}
+                onChangeText={text => setSearch(text)}
+              />
 
-          <View style={styles.viewRowBetween}>
-            <Text style={[styles.title]}>Mã CV</Text>
-            <Text style={[styles.title]}>Mô tả</Text>
+              <View style={styles.viewRowBetween}>
+                <Text style={[styles.title]}>Mã CV</Text>
+                <Text style={[styles.title]}>Mô tả</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{flex: 1}}>
+            {filteredListReport().length > 0 ? (
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                data={filteredListReport()}
+                keyExtractor={uuid}
+                renderItem={({item, index}) => renderItem(item, index)}
+              />
+            ) : (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.textWarning}>Không tìm thấy báo cáo</Text>
+              </View>
+            )}
           </View>
         </View>
-      </View>
-      <View style={{flex: 1}}>
-        {filteredListReport().length > 0 ? (
-          <FlatList
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            data={filteredListReport()}
-            keyExtractor={uuid}
-            renderItem={({item, index}) => renderItem(item, index)}
-          />
-        ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không tìm thấy báo cáo</Text>
-          </View>
-        )}
-      </View>
+      )}
     </View>
   );
 };

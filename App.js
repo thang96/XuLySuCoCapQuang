@@ -19,19 +19,11 @@ import {
   requestUserPermission,
   NotificationServices,
 } from './src/utils/PushNotification';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 const App = () => {
-  const [token, SetToken] = useState('');
   useEffect(() => {
     requestUserPermission();
     NotificationServices();
-    logInfor();
   }, []);
-  const logInfor = async () => {
-    await AsyncStorage.getItem('fcmToken').then(token => SetToken(token));
-  };
-  console.log(token,"sasasa");
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar hidden />

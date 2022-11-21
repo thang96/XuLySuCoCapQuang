@@ -1,4 +1,4 @@
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
 import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
@@ -37,9 +37,11 @@ const EmployeeDetails = props => {
   const [modalRole, setModalRole] = useState(false);
   const [confirm, setConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
+  const isFocused = useIsFocused();
+
   useEffect(() => {
     getResult();
-  }, []);
+  }, [isFocused]);
   const getResult = async () => {
     await UsersAPI.GetUsersByIdAPI(token, route.params)
       .then(res => {
@@ -49,6 +51,7 @@ const EmployeeDetails = props => {
         console.log(error);
       });
   };
+
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [isActive, setisActive] = useState(null);

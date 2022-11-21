@@ -12,6 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
@@ -57,6 +58,7 @@ const CreateAMaintenanceRequest = props => {
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const [listOfEmployee, setListOfEmployee] = useState([]);
   const [isChoose, setIsChoose] = useState(false);
+  const [loading, setLoading] = useState(true);
   const isReady = () =>
     opticalCableId != null &&
     userAssignedId != null &&
@@ -72,6 +74,7 @@ const CreateAMaintenanceRequest = props => {
       .then(res => {
         if (res?.status == 200) {
           setListOpticalCables(res?.data?.data);
+          setLoading(false);
         }
       })
       .catch(error => console.log(error));
@@ -253,67 +256,71 @@ const CreateAMaintenanceRequest = props => {
           iconsLeft={icons.ic_back}
           onPressIconsLeft={() => navigation.goBack()}
         />
-        <ScrollView style={styles.scrollView}>
-          <Text style={styles.title}>Tuyến cáp</Text>
-          <TouchableOpacity
-            onPress={() => setModalOpticalCable(true)}
-            style={styles.buttonPicker}>
-            <Text style={styles.textPicker}>
-              {opticalCableId ? opticalCableId?.name : 'Chọn tuyến cáp'}
-            </Text>
-            <Image source={icons.ic_downArrow} style={styles.imagePicker} />
-          </TouchableOpacity>
-          <Text style={styles.title}>Nhân viên kỹ thuật</Text>
-          <TouchableOpacity
-            onPress={() => setModalUserAssigned(true)}
-            style={styles.buttonPicker}>
-            <Text style={styles.textPicker}>
-              {userAssignedId
-                ? userAssignedId?.full_name
-                : 'Chọn nhân viên kỹ thuật'}
-            </Text>
-            <Image source={icons.ic_downArrow} style={styles.imagePicker} />
-          </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator size={'large'} color={colors.mainColor} />
+        ) : (
+          <ScrollView style={styles.scrollView}>
+            <Text style={styles.title}>Tuyến cáp</Text>
+            <TouchableOpacity
+              onPress={() => setModalOpticalCable(true)}
+              style={styles.buttonPicker}>
+              <Text style={styles.textPicker}>
+                {opticalCableId ? opticalCableId?.name : 'Chọn tuyến cáp'}
+              </Text>
+              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Nhân viên kỹ thuật</Text>
+            <TouchableOpacity
+              onPress={() => setModalUserAssigned(true)}
+              style={styles.buttonPicker}>
+              <Text style={styles.textPicker}>
+                {userAssignedId
+                  ? userAssignedId?.full_name
+                  : 'Chọn nhân viên kỹ thuật'}
+              </Text>
+              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+            </TouchableOpacity>
 
-          <ButtonPicker
-            repeatBy={repeatBy?.key}
-            onPressPicker={() => setIsChoose(true)}
-          />
-
-          <Text style={styles.title}>Nội dung</Text>
-          <View style={styles.viewContent}>
-            <TextInput
-              multiline
-              style={{fontSize: 18}}
-              placeholder={'Nhập  nội dung'}
-              value={description}
-              onChangeText={text => setDescription(text)}
+            <ButtonPicker
+              repeatBy={repeatBy?.key}
+              onPressPicker={() => setIsChoose(true)}
             />
-          </View>
-          <Text style={styles.title}>File đính kèm</Text>
-          <FlatList
-            horizontal
-            data={albumImage}
-            keyExtractor={uuid}
-            renderItem={({item}) => renderImage(item)}
-          />
-          <TouchableOpacity
-            style={[styles.button, {marginTop: 10}]}
-            onPress={() => setModalCamera(true)}>
-            <Image style={styles.imageUpload} source={icons.ic_upload} />
-            <Text style={styles.textUpload}>Up ảnh</Text>
-          </TouchableOpacity>
-          <CustomTextButton
-            disabled={isReady() ? false : true}
-            label={'Xác nhận'}
-            styleButton={[
-              styles.customButtonText,
-              {backgroundColor: isReady() ? colors.mainColor : 'grey'},
-            ]}
-            textStyle={{color: 'white', fontSize: 16, fontWeight: 'bold'}}
-            onPress={() => createRequest()}
-          />
-        </ScrollView>
+
+            <Text style={styles.title}>Nội dung</Text>
+            <View style={styles.viewContent}>
+              <TextInput
+                multiline
+                style={{fontSize: 18}}
+                placeholder={'Nhập  nội dung'}
+                value={description}
+                onChangeText={text => setDescription(text)}
+              />
+            </View>
+            <Text style={styles.title}>File đính kèm</Text>
+            <FlatList
+              horizontal
+              data={albumImage}
+              keyExtractor={uuid}
+              renderItem={({item}) => renderImage(item)}
+            />
+            <TouchableOpacity
+              style={[styles.button, {marginTop: 10}]}
+              onPress={() => setModalCamera(true)}>
+              <Image style={styles.imageUpload} source={icons.ic_upload} />
+              <Text style={styles.textUpload}>Up ảnh</Text>
+            </TouchableOpacity>
+            <CustomTextButton
+              disabled={isReady() ? false : true}
+              label={'Xác nhận'}
+              styleButton={[
+                styles.customButtonText,
+                {backgroundColor: isReady() ? colors.mainColor : 'grey'},
+              ]}
+              textStyle={{color: 'white', fontSize: 16, fontWeight: 'bold'}}
+              onPress={() => createRequest()}
+            />
+          </ScrollView>
+        )}
       </KeyboardAvoidingView>
     </View>
   );

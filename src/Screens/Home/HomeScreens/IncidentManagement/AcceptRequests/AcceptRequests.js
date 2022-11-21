@@ -13,6 +13,7 @@ import {
   ScrollView,
   TextInput,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
@@ -26,18 +27,22 @@ const AcceptRequests = props => {
   const [workList, setWorkList] = useState(null);
   const route = useRoute();
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getResult();
   }, []);
   const getResult = async () => {
     await IncidentManagementAPI.GetListIssuesAPI(token)
       .then(res => {
-        let workList = res?.data?.data;
-        setWorkList(
-          workList.filter(
-            eachWork => eachWork?.issue_status == 'CHƯA TIẾP NHẬN',
-          ),
-        );
+        if (res?.status == 200 && res?.data?.success == true) {
+          let workList = res?.data?.data;
+          setWorkList(
+            workList.filter(
+              eachWork => eachWork?.issue_status == 'CHƯA TIẾP NHẬN',
+            ),
+          );
+          setLoading(false);
+        }
       })
       .catch(error => console.log(error));
   };
@@ -54,7 +59,7 @@ const AcceptRequests = props => {
     let id = item?.id;
     return (
       <TouchableOpacity
-        onPress={() => navigation.navigate('DetailRequest', id)}
+        onPress={() => navigation.navigate('IncidentDetail', id)}
         style={[styles.viewRow, {backgroundColor: 'white', height: 50}]}>
         <Text style={styles.titleRender}>{item?.id}</Text>
         <Text style={styles.titleRender}>{item?.optical_cable}</Text>
@@ -77,22 +82,25 @@ const AcceptRequests = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <View style={styles.eachContainer}>
-        <Text style={styles.title}>Danh sách yêu cầu</Text>
-        <View style={styles.viewRow}>
-          <Text style={styles.title}>ID</Text>
-          <Text style={styles.title}>Tuyến cáp</Text>
-          <Text style={styles.title}>Tình trạng</Text>
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <View style={styles.eachContainer}>
+          <View style={styles.viewRow}>
+            <Text style={styles.title}>ID</Text>
+            <Text style={styles.title}>Tuyến cáp</Text>
+            <Text style={styles.title}>Tình trạng</Text>
+          </View>
+          <FlatList
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            data={workList}
+            keyExtractor={key => key?.id}
+            renderItem={({item, index}) => renderItem(item, index)}
+          />
         </View>
-        <FlatList
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          data={workList}
-          keyExtractor={key => key?.id}
-          renderItem={({item, index}) => renderItem(item, index)}
-        />
-      </View>
+      )}
     </View>
   );
 };

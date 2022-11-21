@@ -1,15 +1,12 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {
-  ImageBackground,
   StyleSheet,
   View,
-  Image,
   Text,
   TouchableOpacity,
-  Dimensions,
   FlatList,
-  Modal,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {colors, icons} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
@@ -23,8 +20,9 @@ const CableRouteReport = props => {
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const token = useSelector(state => state?.token?.token);
   const [refreshing, setRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const userInfor = useSelector(state => state?.userInfor?.userInfor);
+
   useEffect(() => {
     getListOpticalCablesAPI();
   }, []);
@@ -32,9 +30,10 @@ const CableRouteReport = props => {
     await OpticalCablesAPI.GetOpticalCablesAPI(token)
       .then(res => {
         setListOpticalCables(res?.data?.data);
+        setLoading(false);
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
 
@@ -50,7 +49,7 @@ const CableRouteReport = props => {
       getListOpticalCablesAPI();
       setRefreshing(false);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }, []);
   const renderItem = (item, index) => {
@@ -79,38 +78,47 @@ const CableRouteReport = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <View>
-        <View style={styles.eachContainer}>
-          <CustomInput
-            styleInput={{height: 50, marginVertical: 10}}
-            placeholder={'Tìm kiếm tuyến cáp'}
-            source={icons.ic_seach}
-            value={search}
-            onChangeText={text => setSearch(text)}
-          />
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <View style={{flex: 1}}>
+          <View>
+            <View style={styles.eachContainer}>
+              <CustomInput
+                styleInput={{height: 50, marginVertical: 10}}
+                placeholder={'Tìm kiếm tuyến cáp'}
+                source={icons.ic_seach}
+                value={search}
+                onChangeText={text => setSearch(text)}
+              />
 
-          <View style={styles.viewRow}>
-            <Text style={[{width: '70%'}, styles.title]}>Tên tuyến</Text>
-            <Text style={[{width: '30%'}, styles.title]}>Trạng thái</Text>
+              <View style={styles.viewRow}>
+                <Text style={[{width: '70%'}, styles.title]}>Tên tuyến</Text>
+                <Text style={[{width: '30%'}, styles.title]}>Trạng thái</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{flex: 1}}>
+            {filteredOpticalCables().length > 0 ? (
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                data={filteredOpticalCables()}
+                keyExtractor={key => key.id}
+                renderItem={({item, index}) => renderItem(item, index)}
+              />
+            ) : (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.textWarning}>Không tìm thấy tuyến cáp</Text>
+              </View>
+            )}
           </View>
         </View>
-      </View>
-      <View style={{flex: 1}}>
-        {filteredOpticalCables().length > 0 ? (
-          <FlatList
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            data={filteredOpticalCables()}
-            keyExtractor={key => key.id}
-            renderItem={({item, index}) => renderItem(item, index)}
-          />
-        ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không tìm thấy tuyến cáp</Text>
-          </View>
-        )}
-      </View>
+      )}
     </View>
   );
 };

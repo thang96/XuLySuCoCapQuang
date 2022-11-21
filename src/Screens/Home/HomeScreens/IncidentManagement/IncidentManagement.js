@@ -2,33 +2,30 @@ import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
-  ImageBackground,
   Image,
   TouchableOpacity,
   View,
   Dimensions,
-  FlatList,
   KeyboardAvoidingView,
   PermissionsAndroid,
   Platform,
+  ScrollView,
 } from 'react-native';
 import CustomButtonFunction from '../../../../Components/CustomButtonFunction';
-import IncidentManagementAPI from '../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 import {colors, icons} from '../../../../Constants';
 import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
 const IncidentManagement = () => {
   const windowHeight = Dimensions.get('window').height;
-  const viewBottomHeight = windowHeight-350
+  const viewBottomHeight = windowHeight - 350;
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
-  const token = useSelector(state => state?.token?.token);
   useEffect(() => {
     checkPerLocation();
   }, []);
   const checkPerLocation = async () => {
-    if(Platform.OS==='android'){
+    if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -45,12 +42,12 @@ const IncidentManagement = () => {
         } else {
           // console.log('NO');
         }
-      } catch (err) {
-        console.warn(err);
+      } catch (error) {
+        // console.log(error);
       }
     }
   };
- 
+
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView style={styles.container}>
@@ -83,63 +80,57 @@ const IncidentManagement = () => {
           <Text style={styles.textQLKV}>Quản lý sự cố</Text>
         </View>
         <View style={[styles.viewBottom, {height: viewBottomHeight}]}>
-          <View style={styles.viewRow}>
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_documentManagement}
-              title={'Tổng hợp\nbáo cáo\nsự cố'}
-              titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('CableRouteReport')}
-            />
-          </View>
-          <View style={styles.viewRow}>
-            {userInfor?.role == 'EMPLOYEE' ? (
+          <ScrollView style={{flex: 1}}>
+            <View style={styles.viewRow}>
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
-                icon={icons.ic_receive_request}
-                title={'Tiếp nhận\nyêu cầu\nsự cố'}
+                icon={icons.ic_documentManagement}
+                title={'Tổng hợp\nbáo cáo\nsự cố'}
                 titleColor={colors.mainColor}
-                onPress={() => navigation.navigate('AcceptRequests')}
+                onPress={() => navigation.navigate('CableRouteReport')}
               />
-            ) : (
+            </View>
+            <View style={styles.viewRow}>
+              {userInfor?.role == 'EMPLOYEE' ? (
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={{tintColor: colors.mainColor}}
+                  icon={icons.ic_receive_request}
+                  title={'Tiếp nhận\nyêu cầu\nsự cố'}
+                  titleColor={colors.mainColor}
+                  onPress={() => navigation.navigate('AcceptRequests')}
+                />
+              ) : (
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={{tintColor: colors.mainColor}}
+                  icon={icons.ic_edit}
+                  title={'Tạo mới\nyêu cầu\nsự cố'}
+                  titleColor={colors.mainColor}
+                  onPress={() => navigation.navigate('CreateNewRequest')}
+                />
+              )}
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
-                icon={icons.ic_edit}
-                title={'Tạo mới\nyêu cầu\nsự cố'}
+                icon={icons.ic_checkList}
+                title={'Danh sách\nsự cố'}
                 titleColor={colors.mainColor}
-                onPress={() => navigation.navigate('CreateNewRequest')}
+                onPress={() => navigation.navigate('IncidentList')}
               />
-            )}
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_checkList}
-              title={'Danh sách\nsự cố'}
-              titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('IncidentList')}
-            />
-            {/* <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_report}
-              title={'Kết xuất\nbáo cáo'}
-              titleColor={colors.mainColor}
-              onPress={() => getListHistoryIncident()}
-            /> */}
-          </View>
-          <View style={styles.viewRow}>
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_gear}
-              title={'Quản trị'}
-              titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('ContinueScreen')}
-            />
-          </View>
+            </View>
+            <View style={styles.viewRow}>
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
+                icon={icons.ic_gear}
+                title={'Quản trị'}
+                titleColor={colors.mainColor}
+                onPress={() => navigation.navigate('ContinueScreen')}
+              />
+            </View>
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </View>
@@ -153,7 +144,7 @@ const styles = StyleSheet.create({
   viewTop: {
     backgroundColor: colors.mainColor,
     width: '100%',
-    height: 250,
+    height: '100%',
     paddingStart: 30,
   },
   viewUse: {

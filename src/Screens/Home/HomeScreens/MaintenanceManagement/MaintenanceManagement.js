@@ -2,12 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
-  ImageBackground,
+  ScrollView,
   Image,
   TouchableOpacity,
   View,
   Dimensions,
-  FlatList,
   KeyboardAvoidingView,
 } from 'react-native';
 import CustomButtonFunction from '../../../../Components/CustomButtonFunction';
@@ -17,7 +16,7 @@ import {useSelector} from 'react-redux';
 
 const MaintenanceManagement = () => {
   const windowHeight = Dimensions.get('window').height;
-  const viewBottomHeight = windowHeight-350
+  const viewBottomHeight = windowHeight - 350;
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
 
@@ -52,63 +51,63 @@ const MaintenanceManagement = () => {
           <Text style={styles.textQLKV}>Quản lý bảo trì</Text>
         </View>
         <View style={[styles.viewBottom, {height: viewBottomHeight}]}>
-          <View style={styles.viewRow}>
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_documentManagement}
-              title={'Tổng hợp\nbáo cáo\nbảo trì'}
-              titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('MaintenanceCableRouteReport')}
-            />
-          </View>
-          <View style={styles.viewRow}>
-            {userInfor?.role == 'EMPLOYEE' ? (
+          <ScrollView style={{flex: 1}}>
+            <View style={styles.viewRow}>
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
-                icon={icons.ic_receive_request}
-                title={'Tiếp nhận\nyêu cầu\nbảo trì'}
+                icon={icons.ic_documentManagement}
+                title={'Tổng hợp\nbáo cáo\nbảo trì'}
                 titleColor={colors.mainColor}
-                onPress={() => navigation.navigate('AcceptMaintenanceRequests')}
+                onPress={() =>
+                  navigation.navigate('MaintenanceCableRouteReport')
+                }
               />
-            ) : (
+            </View>
+            <View style={styles.viewRow}>
+              {userInfor?.role == 'EMPLOYEE' ? (
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={{tintColor: colors.mainColor}}
+                  icon={icons.ic_receive_request}
+                  title={'Tiếp nhận\nyêu cầu\nbảo trì'}
+                  titleColor={colors.mainColor}
+                  onPress={() =>
+                    navigation.navigate('AcceptMaintenanceRequests')
+                  }
+                />
+              ) : (
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={{tintColor: colors.mainColor}}
+                  icon={icons.ic_edit}
+                  title={'Tạo mới\nyêu cầu\nbảo trì'}
+                  titleColor={colors.mainColor}
+                  onPress={() =>
+                    navigation.navigate('CreateAMaintenanceRequest')
+                  }
+                />
+              )}
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
-                icon={icons.ic_edit}
-                title={'Tạo mới\nyêu cầu\nbảo trì'}
+                icon={icons.ic_checkList}
+                title={'Danh sách\nbảo trì'}
                 titleColor={colors.mainColor}
-                onPress={() => navigation.navigate('CreateAMaintenanceRequest')}
+                onPress={() => navigation.navigate('MaintenanceList')}
               />
-            )}
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_checkList}
-              title={'Danh sách\nbảo trì'}
-              titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('MaintenanceList')}
-            />
-            {/* <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_report}
-              title={'Kết xuất\nbáo cáo'}
-              titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('ContinueScreen')}
-            /> */}
-          </View>
-          <View style={styles.viewRow}>
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_gear}
-              title={'Quản trị'}
-              titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('ContinueScreen')}
-            />
-          </View>
+            </View>
+            <View style={styles.viewRow}>
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
+                icon={icons.ic_gear}
+                title={'Quản trị'}
+                titleColor={colors.mainColor}
+                onPress={() => navigation.navigate('ContinueScreen')}
+              />
+            </View>
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </View>

@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -10,6 +10,7 @@ import {
   Dimensions,
   FlatList,
   KeyboardAvoidingView,
+  RefreshControl,
 } from 'react-native';
 import CustomAppBar from '../../../../Components/CustomAppBar';
 import CustomInput from '../../../../Components/CustomInput';
@@ -21,6 +22,7 @@ const EmployeeManager = props => {
   const token = useSelector(state => state?.token?.token);
   const [searchEmployee, setSearchEmployee] = useState('');
   const [listOfEmployee, setListOfEmployee] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
     getListData();
   }, []);
@@ -33,6 +35,15 @@ const EmployeeManager = props => {
       })
       .catch(error => console.log(error));
   };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    try {
+      getListData();
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   const renderItem = (item, index) => {
     return (
       <TouchableOpacity
@@ -81,6 +92,9 @@ const EmployeeManager = props => {
         />
         <Text style={styles.title}>Danh sách nhân viên</Text>
         <FlatList
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           data={listOfEmployee}
           keyExtractor={key => key.id}
           renderItem={({item, index}) => renderItem(item, index)}

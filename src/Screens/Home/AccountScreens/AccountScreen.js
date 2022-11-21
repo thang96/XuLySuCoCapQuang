@@ -8,6 +8,8 @@ import {
   Text,
   TouchableOpacity,
   Dimensions,
+  Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import AccountAPI from '../../../Api/Account/AccountAPI';
@@ -20,77 +22,91 @@ const AccountScreen = props => {
   const navigation = useNavigation();
   const token = useSelector(state => state?.token?.token);
   const [userInfo, setUserInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const deviceInfo = Platform.OS === 'android' ? 'android' : 'ios';
   useEffect(() => {
     readUser(token);
   }, [token, isFocused]);
   const readUser = async token => {
     await AccountAPI.ReadUserAPI(token)
       .then(res => {
-        setUserInfo(res?.data?.data);
+        if (res?.status == 200) {
+          setUserInfo(res?.data?.data);
+          setLoading(false);
+        }
       })
       .catch(error => {
         console.log(error);
       });
   };
   const logOut = async () => {
-    let data = {
-      token: fcmToken,
-      device_info: deviceInfo,
-    };
-    await DeleteNotificationAPI(token, data)
-      .then(async res => {
-        if (res?.status == 200) {
-          await AsyncStorage.setItem('token', '1').then(async () => {
-            Alert.alert('Đăng xuất', 'Đăng xuất thành công');
-            navigation.navigate('LoginNavigation');
-          });
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    await AsyncStorage.getItem('fcmToken').then(async value => {
+      let data = {
+        token: value,
+        device_info: deviceInfo,
+      };
+      await DeleteNotificationAPI(token, data)
+        .then(async res => {
+          await AsyncStorage.setItem('token', '1')
+            .then(async () => {
+              Alert.alert('Đăng xuất', 'Đăng xuất thành công');
+              navigation.navigate('LoginNavigation');
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        })
+        .catch(function (error) {
+          // console.log(error);
+        });
+    });
   };
   return (
     <View style={styles.container}>
       <CustomAppBar title={'Tài khoản'} />
-
-      <View style={styles.eachContainer}>
-        <View style={styles.viewUse}>
-          <Image
-            source={
-              userInfo?.avatar_img
-                ? {uri: `${userInfo?.avatar_img}`}
-                : icons.user
-            }
-            style={styles.imageUser}
-          />
-          <View style={styles.viewRowUser}>
-            <Text style={styles.useName}>{userInfo?.full_name}</Text>
-            <Text style={styles.textMSNV}>{`ID : ${userInfo?.id}`}</Text>
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <View style={styles.eachContainer}>
+          <View style={styles.viewUse}>
+            <Image
+              source={
+                userInfo?.avatar_img
+                  ? {uri: `${userInfo?.avatar_img}`}
+                  : icons.user
+              }
+              style={styles.imageUser}
+            />
+            <View style={styles.viewRowUser}>
+              <Text style={styles.useName}>{userInfo?.full_name}</Text>
+              <Text style={styles.textMSNV}>{`ID : ${userInfo?.id}`}</Text>
+            </View>
           </View>
+          <TouchableOpacity
+            style={styles.buttonRow}
+            onPress={() => navigation.navigate('Personalinformation')}>
+            <View style={styles.viewRow}>
+              <Image source={icons.ic_information} style={styles.icon} />
+              <Text style={styles.title}>Thông tin cá nhân</Text>
+            </View>
+            <Image source={icons.next} style={styles.iconNext} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonRow}
+            onPress={() => navigation.navigate('ChangePassword')}>
+            <View style={styles.viewRow}>
+              <Image source={icons.ic_key} style={styles.icon} />
+              <Text style={styles.title}>Đổi mật khẩu</Text>
+            </View>
+            <Image source={icons.next} style={styles.iconNext} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.buttonLogOut}
+            onPress={() => logOut()}>
+            <Text style={styles.textLogOut}>Đăng xuất</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.buttonRow}
-          onPress={() => navigation.navigate('Personalinformation')}>
-          <View style={styles.viewRow}>
-            <Image source={icons.ic_information} style={styles.icon} />
-            <Text style={styles.title}>Thông tin cá nhân</Text>
-          </View>
-          <Image source={icons.next} style={styles.iconNext} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.buttonRow}
-          onPress={() => navigation.navigate('ChangePassword')}>
-          <View style={styles.viewRow}>
-            <Image source={icons.ic_key} style={styles.icon} />
-            <Text style={styles.title}>Đổi mật khẩu</Text>
-          </View>
-          <Image source={icons.next} style={styles.iconNext} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.buttonLogOut} onPress={() => logOut()}>
-          <Text style={styles.textLogOut}>Đăng xuất</Text>
-        </TouchableOpacity>
-      </View>
+      )}
     </View>
   );
 };

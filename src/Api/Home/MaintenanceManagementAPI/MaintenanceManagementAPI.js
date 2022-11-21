@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASEURL } from '../../BASEURL';
+import {BASEURL} from '../../BASEURL';
 
 const GetMaintenanceIssuesAPI = token => {
   return new Promise((resolve, reject) => {
@@ -95,7 +95,6 @@ const UpdateMaintenanceRequestAPI = (
     formDataMaintenance.append('description', descrip ?? '');
     formDataMaintenance.append('optical_cable_id', optical_cable_id ?? 0);
     formDataMaintenance.append('user_assigned_id', user_assigned_id ?? 0);
-    console.log(formDataMaintenance);
     axios
       .put(`${BASEURL}/api/v1/maintenance_issue/`, formDataMaintenance, {
         headers: {
@@ -275,7 +274,6 @@ const MaintenanceIssueReportAPI = (
         type: imageDoc?.type,
       });
     }
-    console.log(formDataReport);
     axios
       .post(
         `${BASEURL}/api/v1/maintenance_issue/${issueId}/maintenance-report`,

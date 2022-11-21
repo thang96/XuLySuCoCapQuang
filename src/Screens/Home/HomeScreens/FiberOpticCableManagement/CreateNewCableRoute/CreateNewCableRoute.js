@@ -49,13 +49,6 @@ const CreateNewCableRoute = props => {
     cableInfrastructure.length > 0 &&
     areaId.length > 0;
 
-  // "cable_type": "string",
-  // "cableInfrastructure": "string",
-  // "cable_connection_type": "string",
-  // "start_end_station_odf_type": "string",
-  // "area_id": 0,
-  // "is_active": true
-
   const [nameCable, setNameCable] = useState('');
   const [acceptanceTime, setAcceptanceTime] = useState('');
   const [cableLength, setCableLength] = useState('');
@@ -118,7 +111,7 @@ const CreateNewCableRoute = props => {
         }
       })
       .catch(function (error) {
-        console.log(JSON.stringify(error));
+        // console.log(JSON.stringify(error));
         Alert.alert('Tuyến cáp', 'Đã tạo tuyến cáp thất bại');
       });
   };

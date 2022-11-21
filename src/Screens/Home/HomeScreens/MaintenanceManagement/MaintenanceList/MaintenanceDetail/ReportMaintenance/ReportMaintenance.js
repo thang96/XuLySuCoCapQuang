@@ -42,7 +42,7 @@ const ReportMaintenance = props => {
         setRequest(res?.data?.data);
       })
       .catch(error => {
-        console.log(error);
+        // console.log(error);
       });
   };
 
@@ -72,6 +72,7 @@ const ReportMaintenance = props => {
     checkCableOdfAdapter != null &&
     solutionProvide.length > 0 &&
     documentFiles.length > 0;
+
   const [modalResultCamera, setModalResultCamera] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
   const openResultCamera = () => {
@@ -378,7 +379,6 @@ const ReportMaintenance = props => {
           <Text style={styles.title}>Hình ảnh báo cáo</Text>
           <FlatList
             horizontal
-            style={{height: 210, backgroundColor: 'white'}}
             data={documentFiles}
             keyExtractor={uuid}
             renderItem={({item, index}) => renderDocumentFiles(item, index)}
@@ -499,6 +499,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     padding: 5,
     borderColor: colors.mainColor,
+    backgroundColor: 'white',
   },
   styleButton: {
     width: 150,

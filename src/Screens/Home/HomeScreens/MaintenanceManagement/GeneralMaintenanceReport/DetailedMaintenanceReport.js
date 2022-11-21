@@ -13,6 +13,7 @@ import {
   Keyboard,
   ScrollView,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {colors, icons} from '../../../../../Constants';
@@ -24,6 +25,7 @@ const DetailedMaintenanceReport = props => {
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getReportIncidentDetail();
   }, []);
@@ -32,9 +34,10 @@ const DetailedMaintenanceReport = props => {
     await MaintenanceManagementAPI.MaintenanceIssueReportDetailAPI(token, id)
       .then(res => {
         setResult(res?.data);
+        setLoading(false);
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
   const renderResultDocumentFiles = (item, index) => {
@@ -70,77 +73,83 @@ const DetailedMaintenanceReport = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <ScrollView style={styles.container}>
-        <CustomViewRow
-          title={'Mã bảo trì : '}
-          content={result?.maintenance_issue_code}
-        />
-        <CustomViewRow title={'ID bảo trì : '} content={result?.id} />
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <ScrollView style={styles.container}>
+          <CustomViewRow
+            title={'Mã bảo trì : '}
+            content={result?.maintenance_issue_code}
+          />
+          <CustomViewRow title={'ID bảo trì : '} content={result?.id} />
 
-        <CustomViewRow
-          title={'Kết quả đo tuyến cáp  : '}
-          content={result?.measure_cable_result == true ? 'Đạt' : 'Không đạt'}
-        />
-        <View style={{backgroundColor: 'white', paddingHorizontal: 5}}>
-          <Text style={styles.title}>Kết quả đo</Text>
-          <FlatList
-            style={{height: 200}}
-            horizontal
-            data={result?.measure_cable_result_document_files}
-            keyExtractor={uuid}
-            renderItem={({item, index}) =>
-              renderResultDocumentFiles(item, index)
+          <CustomViewRow
+            title={'Kết quả đo tuyến cáp  : '}
+            content={result?.measure_cable_result == true ? 'Đạt' : 'Không đạt'}
+          />
+          <View style={{backgroundColor: 'white', paddingHorizontal: 5}}>
+            <Text style={styles.title}>Kết quả đo</Text>
+            <FlatList
+              style={{height: 200}}
+              horizontal
+              data={result?.measure_cable_result_document_files}
+              keyExtractor={uuid}
+              renderItem={({item, index}) =>
+                renderResultDocumentFiles(item, index)
+              }
+            />
+          </View>
+
+          <CustomViewRow
+            title={'Phát quang dọc tuyến cáp  : '}
+            content={result?.clean_cable_result == true ? 'Đạt' : 'Không đạt'}
+          />
+          <CustomViewRow
+            title={'Căng chỉnh các tuyến cáp quang treo : '}
+            content={result?.adjust_tension_cable == true ? 'Đạt' : 'Không đạt'}
+          />
+          <CustomViewRow
+            title={'Kiểm tra, chỉnh bị lại vật tư, phụ kiện treo cáp : '}
+            content={result?.check_supplies == true ? 'Đạt' : 'Không đạt'}
+          />
+          <CustomViewRow
+            title={'Vệ sinh công bể cáp ngầm : '}
+            content={
+              result?.clean_underground_cable == true ? 'Đạt' : 'Không đạt'
             }
           />
-        </View>
-
-        <CustomViewRow
-          title={'Phát quang dọc tuyến cáp  : '}
-          content={result?.clean_cable_result == true ? 'Đạt' : 'Không đạt'}
-        />
-        <CustomViewRow
-          title={'Căng chỉnh các tuyến cáp quang treo : '}
-          content={result?.adjust_tension_cable == true ? 'Đạt' : 'Không đạt'}
-        />
-        <CustomViewRow
-          title={'Kiểm tra, chỉnh bị lại vật tư, phụ kiện treo cáp : '}
-          content={result?.check_supplies == true ? 'Đạt' : 'Không đạt'}
-        />
-        <CustomViewRow
-          title={'Vệ sinh công bể cáp ngầm : '}
-          content={
-            result?.clean_underground_cable == true ? 'Đạt' : 'Không đạt'
-          }
-        />
-        <CustomViewRow
-          title={'Kiểm tra làm gọn cáp dự phòng : '}
-          content={result?.check_preventive_cable == true ? 'Đạt' : 'Không đạt'}
-        />
-        <CustomViewRow
-          title={'Kiểm tra, vệ sinh măng xông nối cáp : '}
-          content={result?.check_cable_socket == true ? 'Đạt' : 'Không đạt'}
-        />
-        <CustomViewRow
-          title={'Kiểm tra, vệ sinh ODF và các đầu Adapter quang : '}
-          content={
-            result?.check_cable_odf_adapter == true ? 'Đạt' : 'Không đạt'
-          }
-        />
-        <CustomViewRow
-          title={'Phương án đề xuất tối ưu : '}
-          content={result?.solution_provide}
-        />
-        <View style={{backgroundColor: 'white', paddingHorizontal: 5}}>
-          <Text style={styles.title}>Hình ảnh báo cáo</Text>
-          <FlatList
-            style={{height: 200}}
-            horizontal
-            data={result?.document_files}
-            keyExtractor={uuid}
-            renderItem={({item, index}) => renderDocumentFiles(item, index)}
+          <CustomViewRow
+            title={'Kiểm tra làm gọn cáp dự phòng : '}
+            content={
+              result?.check_preventive_cable == true ? 'Đạt' : 'Không đạt'
+            }
           />
-        </View>
-      </ScrollView>
+          <CustomViewRow
+            title={'Kiểm tra, vệ sinh măng xông nối cáp : '}
+            content={result?.check_cable_socket == true ? 'Đạt' : 'Không đạt'}
+          />
+          <CustomViewRow
+            title={'Kiểm tra, vệ sinh ODF và các đầu Adapter quang : '}
+            content={
+              result?.check_cable_odf_adapter == true ? 'Đạt' : 'Không đạt'
+            }
+          />
+          <CustomViewRow
+            title={'Phương án đề xuất tối ưu : '}
+            content={result?.solution_provide}
+          />
+          <View style={{backgroundColor: 'white', paddingHorizontal: 5}}>
+            <Text style={styles.title}>Hình ảnh báo cáo</Text>
+            <FlatList
+              style={{height: 200}}
+              horizontal
+              data={result?.document_files}
+              keyExtractor={uuid}
+              renderItem={({item, index}) => renderDocumentFiles(item, index)}
+            />
+          </View>
+        </ScrollView>
+      )}
     </View>
   );
 };

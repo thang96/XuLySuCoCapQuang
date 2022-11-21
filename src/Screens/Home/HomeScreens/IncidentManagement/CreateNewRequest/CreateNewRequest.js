@@ -11,6 +11,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
@@ -45,6 +46,7 @@ const CreateNewRequest = props => {
   const token = useSelector(state => state?.token?.token);
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const [listOfEmployee, setListOfEmployee] = useState([]);
+  const [loading, setLoading] = useState(true);
   const isReady = () =>
     opticalCableId != null &&
     userAssignedId != null &&
@@ -58,15 +60,23 @@ const CreateNewRequest = props => {
   const getListData = async () => {
     await ReadOpticalCablesAPI(token)
       .then(res => {
-        setListOpticalCables(res?.data?.data);
+        if (res?.status == 200) {
+          setListOpticalCables(res?.data?.data);
+          setLoading(false);
+        }
       })
-      .catch(error => console.log(error));
+      .catch(function (error) {
+        // console.log(error)
+      });
     await ReadUsersAPI(token)
       .then(res => {
-        let allUser = res?.data?.data;
-        setListOfEmployee(allUser);
+        if (res?.status == 200) {
+          setListOfEmployee(res?.data?.data);
+        }
       })
-      .catch(error => console.log(error));
+      .catch(function (error) {
+        // console.log(error)
+      });
   };
   const chooseOpticalCable = async item => {
     setModalOpticalCable(false);
@@ -74,10 +84,12 @@ const CreateNewRequest = props => {
     let id = item?.id;
     await ReadUserByOpticalCablesIdAPI(token, id)
       .then(res => {
-        setListOfEmployee(res?.data?.data);
+        if (res?.status == 200) {
+          setListOfEmployee(res?.data?.data);
+        }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
   const chooseEmployee = async item => {
@@ -86,10 +98,12 @@ const CreateNewRequest = props => {
     let id = item?.id;
     await ReadOpticalCablesByUserIdAPI(token, id)
       .then(res => {
-        setListOpticalCables(res?.data?.data);
+        if (res?.status == 200) {
+          setListOpticalCables(res?.data?.data);
+        }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
   const openCamera = () => {
@@ -206,81 +220,89 @@ const CreateNewRequest = props => {
           />
         </View>
       )}
+
       <KeyboardAvoidingView style={styles.container}>
         <CustomAppBar
           title={'Tạo việc sự cố'}
           iconsLeft={icons.ic_back}
           onPressIconsLeft={() => navigation.goBack()}
         />
-        <ScrollView style={styles.scrollView}>
-          <Text style={styles.title}>Tuyến cáp</Text>
-          <TouchableOpacity
-            onPress={() => setModalOpticalCable(true)}
-            style={styles.buttonPicker}>
-            <Text style={styles.textPicker}>
-              {opticalCableId ? opticalCableId?.name : 'Chọn tuyến cáp'}
-            </Text>
-            <Image source={icons.ic_downArrow} style={styles.imagePicker} />
-          </TouchableOpacity>
-          <Text style={styles.title}>Nhân viên kỹ thuật</Text>
-          <TouchableOpacity
-            onPress={() => setModalUserAssigned(true)}
-            style={styles.buttonPicker}>
-            <Text style={styles.textPicker}>
-              {userAssignedId
-                ? userAssignedId?.full_name
-                : 'Chọn nhân viên kỹ thuật'}
-            </Text>
-            <Image source={icons.ic_downArrow} style={styles.imagePicker} />
-          </TouchableOpacity>
+        {loading ? (
+          <ActivityIndicator size={'large'} color={colors.mainColor} />
+        ) : (
+          <ScrollView style={styles.scrollView}>
+            <Text style={styles.title}>Tuyến cáp</Text>
+            <TouchableOpacity
+              onPress={() => setModalOpticalCable(true)}
+              style={styles.buttonPicker}>
+              <Text style={styles.textPicker}>
+                {opticalCableId ? opticalCableId?.name : 'Chọn tuyến cáp'}
+              </Text>
+              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Nhân viên kỹ thuật</Text>
+            <TouchableOpacity
+              onPress={() => setModalUserAssigned(true)}
+              style={styles.buttonPicker}>
+              <Text style={styles.textPicker}>
+                {userAssignedId
+                  ? userAssignedId?.full_name
+                  : 'Chọn nhân viên kỹ thuật'}
+              </Text>
+              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+            </TouchableOpacity>
 
-          <Text style={styles.title}>Nội dung</Text>
-          <View style={styles.viewContent}>
-            <TextInput
-              multiline
-              style={{fontSize: 18}}
-              placeholder={'Nhập  nội dung'}
-              value={description}
-              onChangeText={text => setDescription(text)}
+            <Text style={styles.title}>Nội dung</Text>
+            <View style={styles.viewContent}>
+              <TextInput
+                multiline
+                style={{fontSize: 18}}
+                placeholder={'Nhập  nội dung'}
+                value={description}
+                onChangeText={text => setDescription(text)}
+              />
+            </View>
+            <Text style={styles.title}>File đính kèm</Text>
+            <FlatList
+              horizontal
+              data={albumImage}
+              keyExtractor={uuid}
+              renderItem={({item}) => renderImage(item)}
             />
-          </View>
-          <Text style={styles.title}>File đính kèm</Text>
-          <FlatList
-            horizontal
-            data={albumImage}
-            keyExtractor={uuid}
-            renderItem={({item}) => renderImage(item)}
-          />
-          <TouchableOpacity
-            disabled={albumImage.length < 5 ? false : true}
-            style={[styles.button, {marginTop: 10}]}
-            onPress={() => setModalCamera(true)}>
-            <Image
-              style={[
-                styles.imageUpload,
-                {tintColor: albumImage.length < 5 ? colors.mainColor : 'grey'},
+            <TouchableOpacity
+              disabled={albumImage.length < 5 ? false : true}
+              style={[styles.button, {marginTop: 10}]}
+              onPress={() => setModalCamera(true)}>
+              <Image
+                style={[
+                  styles.imageUpload,
+                  {
+                    tintColor:
+                      albumImage.length < 5 ? colors.mainColor : 'grey',
+                  },
+                ]}
+                source={icons.ic_upload}
+              />
+              <Text
+                style={[
+                  styles.textUpload,
+                  {color: albumImage.length < 5 ? colors.mainColor : 'grey'},
+                ]}>
+                Up ảnh
+              </Text>
+            </TouchableOpacity>
+            <CustomTextButton
+              disabled={isReady() ? false : true}
+              label={'Xác nhận'}
+              styleButton={[
+                styles.customButtonText,
+                {backgroundColor: isReady() ? colors.mainColor : colors.grey},
               ]}
-              source={icons.ic_upload}
+              textStyle={{color: 'white', fontSize: 16, fontWeight: 'bold'}}
+              onPress={() => createRequest()}
             />
-            <Text
-              style={[
-                styles.textUpload,
-                {color: albumImage.length < 5 ? colors.mainColor : 'grey'},
-              ]}>
-              Up ảnh
-            </Text>
-          </TouchableOpacity>
-          <CustomTextButton
-            disabled={isReady() ? false : true}
-            label={'Xác nhận'}
-            styleButton={[
-              styles.customButtonText,
-              {backgroundColor: isReady() ? colors.mainColor : colors.grey},
-            ]}
-            textStyle={{color: 'white', fontSize: 16, fontWeight: 'bold'}}
-            onPress={() => createRequest()}
-          />
-        </ScrollView>
+          </ScrollView>
+        )}
       </KeyboardAvoidingView>
     </View>
   );

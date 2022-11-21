@@ -12,7 +12,6 @@ import {
   Image,
 } from 'react-native';
 import {colors, icons, images} from '../Constants';
-import CustomButtonText from '../Components/CustomTextButton';
 const ShowImageScreen = props => {
   const route = useRoute();
   const navigation = useNavigation();

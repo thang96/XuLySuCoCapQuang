@@ -4,7 +4,6 @@ import {
   IncidentManagement,
   CreateNewRequest,
   AcceptRequests,
-  DetailRequest,
   IncidentList,
   IncidentDetail,
   EditIncident,
@@ -38,13 +37,6 @@ const StackIncidentManagement = props => {
       <Stack.Screen
         component={AcceptRequests}
         name={'AcceptRequests'}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        component={DetailRequest}
-        name={'DetailRequest'}
         options={{
           headerShown: false,
         }}

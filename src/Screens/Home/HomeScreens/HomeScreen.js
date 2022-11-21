@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
@@ -9,7 +9,7 @@ import {
   Dimensions,
   FlatList,
   KeyboardAvoidingView,
-  Keyboard,
+  BackHandler,
   Platform,
   PermissionsAndroid,
 } from 'react-native';
@@ -17,12 +17,16 @@ import {ScrollView} from 'react-native-gesture-handler';
 import CustomButtonFunction from '../../../Components/CustomButtonFunction';
 import {colors, icons} from '../../../Constants';
 import CustomInput from '../../../Components/CustomInput';
-import {useNavigation} from '@react-navigation/native';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector, useIsFocused} from 'react-redux';
 import AccountAPI from '../../../Api/Account/AccountAPI';
 import {updateUserInfor} from '../../../Store/slices/userInfoSlice';
 import {RegisterNotificationAPI} from '../../../Api/NotificationAPI/NotificationAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {
+  requestUserPermission,
+  NotificationServices,
+} from '../../../utils/PushNotification';
 const FAKE_DATA = [{id: 1}, {id: 2}, {id: 3}];
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -32,16 +36,18 @@ const HomeScreen = () => {
   const deviceId = Platform.OS === 'android' ? 'android' : 'ios';
   const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
-  const viewBottomHeight = windowHeight-350
+  const viewBottomHeight = windowHeight - 350;
   const dispatch = useDispatch();
   useEffect(() => {
+    requestUserPermission();
+    NotificationServices();
     readUser();
     sendNotification();
     checkPerWriteStore();
   }, []);
 
   const checkPerWriteStore = async () => {
-    if(Platform.OS==='android'){
+    if (Platform.OS === 'android') {
       try {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -54,12 +60,12 @@ const HomeScreen = () => {
           },
         );
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          console.log('Ok');
+          // console.log('Ok');
         } else {
-          console.log('No ok');
+          // console.log('No ok');
         }
-      } catch (err) {
-        console.warn(err);
+      } catch (error) {
+        // console.log(error);
       }
     }
   };
@@ -73,13 +79,15 @@ const HomeScreen = () => {
         };
         await RegisterNotificationAPI(token, data)
           .then(res => {
-            console.log(res?.status);
+            // console.log(res?.status);
           })
           .catch(function (error) {
-            console.log(error);
+            // console.log(error);
           });
       })
-      .catch(error => console.log(error));
+      .catch(function (error) {
+        // console.log(error);
+      });
   };
   useEffect(() => {
     readUser();
@@ -89,8 +97,8 @@ const HomeScreen = () => {
       .then(res => {
         dispatch(updateUserInfor(res?.data?.data));
       })
-      .catch(error => {
-        console.log(error);
+      .catch(function (error) {
+        // console.log(error);
       });
   };
   const renderItem = (item, index) => {
@@ -251,7 +259,7 @@ const styles = StyleSheet.create({
   viewTop: {
     backgroundColor: colors.mainColor,
     width: '100%',
-    height: 250,
+    height: '100%',
     paddingStart: 30,
   },
   viewUse: {

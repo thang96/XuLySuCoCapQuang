@@ -10,6 +10,7 @@ import {
   FlatList,
   Modal,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
 import {colors, icons} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
@@ -25,6 +26,7 @@ const MaintenanceList = props => {
   const token = useSelector(state => state?.token?.token);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getListOpticalCablesAPI();
@@ -33,6 +35,7 @@ const MaintenanceList = props => {
     await MaintenanceManagementAPI.GetMaintenanceIssuesAPI(token)
       .then(res => {
         setWorkList(res?.data?.data);
+        setLoading(false);
       })
       .catch(error => console.log(error));
   };
@@ -57,7 +60,7 @@ const MaintenanceList = props => {
     return (
       <TouchableOpacity
         style={styles.buttonRender}
-        onPress={() => navigation.navigate('FiberOpticCableDetail', id)}>
+        onPress={() => navigation.navigate('MaintenanceDetail', id)}>
         <Text style={styles.titleRender}>{item?.optical_cable}</Text>
         <Text
           style={[
@@ -76,50 +79,61 @@ const MaintenanceList = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <View>
-        <View style={styles.eachContainer}>
-          <CustomInput
-            styleInput={{height: 50, marginVertical: 10}}
-            placeholder={'Tìm kiếm bảo trì'}
-            source={icons.ic_seach}
-            value={search}
-            onChangeText={text => setSearch(text)}
-          />
-          <View style={[styles.viewRowBetween, {marginVertical: 5}]}>
-            <Text style={styles.title}>Lọc</Text>
-            <TouchableOpacity
-              onPress={() => setModalVisible(true)}
-              style={styles.stylePicker}>
-              <Text style={{color: 'black', fontSize: 16}}>Theo thời gian</Text>
-              <Image
-                source={icons.ic_downArrow}
-                style={{width: 20, height: 20}}
+      {loading ? (
+        <ActivityIndicator size={'large'} color={colors.mainColor} />
+      ) : (
+        <View style={{flex: 1}}>
+          <View>
+            <View style={styles.eachContainer}>
+              <CustomInput
+                styleInput={{height: 50, marginVertical: 10}}
+                placeholder={'Tìm kiếm bảo trì'}
+                source={icons.ic_seach}
+                value={search}
+                onChangeText={text => setSearch(text)}
               />
-            </TouchableOpacity>
-          </View>
+              <View style={[styles.viewRowBetween, {marginVertical: 5}]}>
+                <Text style={styles.title}>Lọc</Text>
+                <TouchableOpacity
+                  onPress={() => setModalVisible(true)}
+                  style={styles.stylePicker}>
+                  <Text style={{color: 'black', fontSize: 16}}>
+                    Theo thời gian
+                  </Text>
+                  <Image
+                    source={icons.ic_downArrow}
+                    style={{width: 20, height: 20}}
+                  />
+                </TouchableOpacity>
+              </View>
 
-          <View style={styles.viewRow}>
-            <Text style={[{width: '70%'}, styles.title]}>Tên tuyến</Text>
-            <Text style={[{width: '30%'}, styles.title]}>Trạng thái</Text>
+              <View style={styles.viewRow}>
+                <Text style={[{width: '70%'}, styles.title]}>Tên tuyến</Text>
+                <Text style={[{width: '30%'}, styles.title]}>Trạng thái</Text>
+              </View>
+            </View>
+          </View>
+          <View style={{flex: 1}}>
+            {filteredworkList().length > 0 ? (
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                data={filteredworkList()}
+                keyExtractor={key => key?.id}
+                renderItem={({item, index}) => renderItem(item, index)}
+              />
+            ) : (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.textWarning}>Không tìm thấy bảo trì</Text>
+              </View>
+            )}
           </View>
         </View>
-      </View>
-      <View style={{flex: 1}}>
-        {filteredworkList().length > 0 ? (
-          <FlatList
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            data={filteredworkList()}
-            keyExtractor={key => key?.id}
-            renderItem={({item, index}) => renderItem(item, index)}
-          />
-        ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không tìm thấy bảo trì</Text>
-          </View>
-        )}
-      </View>
+      )}
     </View>
   );
 };
