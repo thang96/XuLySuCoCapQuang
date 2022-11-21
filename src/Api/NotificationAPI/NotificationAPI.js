@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASEURL = 'https://api-capquang.iwannatechvn.com';
+import { BASEURL } from '../BASEURL';
 export const RegisterNotificationAPI = (token, data) => {
   return new Promise((resolve, reject) => {
     axios

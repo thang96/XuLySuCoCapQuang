@@ -25,14 +25,14 @@ import {RegisterNotificationAPI} from '../../../Api/NotificationAPI/Notification
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const FAKE_DATA = [{id: 1}, {id: 2}, {id: 3}];
 const HomeScreen = () => {
-  const windowWidth = Dimensions.get('window').width;
-  const windowHeight = Dimensions.get('window').height;
-  const viewBottomHeight = windowHeight - 350;
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
   const [seachText, setSeachText] = useState('');
   const deviceId = Platform.OS === 'android' ? 'android' : 'ios';
+  const windowWidth = Dimensions.get('window').width;
+  const windowHeight = Dimensions.get('window').height;
+  const viewBottomHeight = windowHeight-350
   const dispatch = useDispatch();
   useEffect(() => {
     readUser();
@@ -41,24 +41,26 @@ const HomeScreen = () => {
   }, []);
 
   const checkPerWriteStore = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Quyền truy cập bộ nhớ',
-          message: 'Cấp quyền truy cập để tải file về',
-          buttonNeutral: 'Hỏi sau',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Ok');
-      } else {
-        console.log('No ok');
+    if(Platform.OS==='android'){
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Quyền truy cập bộ nhớ',
+            message: 'Cấp quyền truy cập để tải file về',
+            buttonNeutral: 'Hỏi sau',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Ok');
+        } else {
+          console.log('No ok');
+        }
+      } catch (err) {
+        console.warn(err);
       }
-    } catch (err) {
-      console.warn(err);
     }
   };
 
@@ -249,7 +251,7 @@ const styles = StyleSheet.create({
   viewTop: {
     backgroundColor: colors.mainColor,
     width: '100%',
-    height: '100%',
+    height: 250,
     paddingStart: 30,
   },
   viewUse: {

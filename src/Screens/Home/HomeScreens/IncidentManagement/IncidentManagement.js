@@ -10,6 +10,7 @@ import {
   FlatList,
   KeyboardAvoidingView,
   PermissionsAndroid,
+  Platform,
 } from 'react-native';
 import CustomButtonFunction from '../../../../Components/CustomButtonFunction';
 import IncidentManagementAPI from '../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
@@ -18,8 +19,8 @@ import {useNavigation} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 
 const IncidentManagement = () => {
-  const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
+  const viewBottomHeight = windowHeight-350
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
@@ -27,35 +28,29 @@ const IncidentManagement = () => {
     checkPerLocation();
   }, []);
   const checkPerLocation = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Truy cập vị trí',
-          message: 'Cho phép ứng dụng truy cập vị trí để báo cáo',
-          buttonNeutral: 'Hỏi sau',
-          buttonNegative: 'Hủy',
-          buttonPositive: 'Chấp nhận',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        // console.log('OK');
-      } else {
-        // console.log('NO');
+    if(Platform.OS==='android'){
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Truy cập vị trí',
+            message: 'Cho phép ứng dụng truy cập vị trí để báo cáo',
+            buttonNeutral: 'Hỏi sau',
+            buttonNegative: 'Hủy',
+            buttonPositive: 'Chấp nhận',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          // console.log('OK');
+        } else {
+          // console.log('NO');
+        }
+      } catch (err) {
+        console.warn(err);
       }
-    } catch (err) {
-      console.warn(err);
     }
   };
-  // const getListHistoryIncident = async () => {
-  //   await IncidentManagementAPI.ExportIssueAPI(token)
-  //     .then(res => {
-  //       console.log(res?.data);
-  //     })
-  //     .catch(function (error) {
-  //       console.log(error);
-  //     });
-  // };
+ 
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView style={styles.container}>
@@ -87,7 +82,7 @@ const IncidentManagement = () => {
             style={styles.textQLKV}>{`SĐT : ${userInfor?.phone_number}`}</Text>
           <Text style={styles.textQLKV}>Quản lý sự cố</Text>
         </View>
-        <View style={[styles.viewBottom, {height: windowHeight - 270}]}>
+        <View style={[styles.viewBottom, {height: viewBottomHeight}]}>
           <View style={styles.viewRow}>
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
@@ -188,7 +183,7 @@ const styles = StyleSheet.create({
     height: 100,
     paddingHorizontal: 20,
     position: 'absolute',
-    top: 180,
+    top: '100',
     left: 0,
     flexDirection: 'row',
     justifyContent: 'center',

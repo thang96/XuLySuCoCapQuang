@@ -1,5 +1,5 @@
 import axios from 'axios';
-const BASEURL = 'https://api-capquang.iwannatechvn.com';
+import { BASEURL } from '../../BASEURL';
 
 const GetOpticalCablesAPI = token => {
   return new Promise((resolve, reject) => {

@@ -1,5 +1,5 @@
 import axios from 'axios';
-BASEURL = 'https://api-capquang.iwannatechvn.com';
+import { BASEURL } from '../../BASEURL';
 
 export const ReadUsersAPI = token => {
   return new Promise((resolve, reject) => {

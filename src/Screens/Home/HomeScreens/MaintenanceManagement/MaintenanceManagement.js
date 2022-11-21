@@ -17,6 +17,7 @@ import {useSelector} from 'react-redux';
 
 const MaintenanceManagement = () => {
   const windowHeight = Dimensions.get('window').height;
+  const viewBottomHeight = windowHeight-350
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
 
@@ -50,7 +51,7 @@ const MaintenanceManagement = () => {
             style={styles.textQLKV}>{`SĐT : ${userInfor?.phone_number}`}</Text>
           <Text style={styles.textQLKV}>Quản lý bảo trì</Text>
         </View>
-        <View style={[styles.viewBottom, {height: windowHeight - 270}]}>
+        <View style={[styles.viewBottom, {height: viewBottomHeight}]}>
           <View style={styles.viewRow}>
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   viewTop: {
     backgroundColor: colors.mainColor,
     width: '100%',
-    height: 250,
+    height: '100%',
     paddingStart: 30,
   },
   viewUse: {

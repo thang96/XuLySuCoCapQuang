@@ -14,6 +14,7 @@ import {
   ScrollView,
   TextInput,
   PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
@@ -109,13 +110,13 @@ const ReportIncident = props => {
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          alert('Gửi báo cáo thành công');
+          Alert.alert('Báo cáo','Gửi báo cáo thành công');
           navigation.navigate('IncidentList');
         }
       })
       .catch(function (error) {
         console.log(JSON.stringify(error?.status));
-        alert('Gửi báo cáo thất bại');
+        Alert.alert('Báo cáo','Gửi báo cáo thất bại');
       });
   };
   const addResult = image => {
