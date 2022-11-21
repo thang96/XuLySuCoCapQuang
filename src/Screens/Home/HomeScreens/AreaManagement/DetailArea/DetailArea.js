@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   ImageBackground,
   StyleSheet,
@@ -11,13 +11,14 @@ import {
   Modal,
   Keyboard,
   ScrollView,
-  TextInput,
+  RefreshControl,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../Constants';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import AreaManagementAPI from '../../../../../Api/Home/AreaManagementAPI/AreaManagementAPI';
+import CustomInput from '../../../../../Components/CustomInput';
 
 const DetailArea = props => {
   const navigation = useNavigation();
@@ -25,7 +26,9 @@ const DetailArea = props => {
   const token = useSelector(state => state?.token?.token);
   const route = useRoute();
   const [areaInfo, setAreaInfo] = useState(null);
-  const [listEmployee, setListEmployee] = useState(null);
+  const [listEmployee, setListEmployee] = useState([]);
+  const [search, setSearch] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   useEffect(() => {
     getAreaDetail();
     getListEmployee();
@@ -72,6 +75,22 @@ const DetailArea = props => {
       </TouchableOpacity>
     );
   };
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    try {
+      getAreaDetail();
+      getListEmployee();
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+  const filteredData = () =>
+    listEmployee.filter(eachListEmployee =>
+      eachListEmployee?.full_name
+        .toLocaleLowerCase()
+        .includes(search.toLocaleLowerCase()),
+    );
   return (
     <View style={styles.container}>
       <CustomAppBar
@@ -85,13 +104,29 @@ const DetailArea = props => {
           <Text style={styles.content}>{areaInfo?.area_name}</Text>
         </View>
         <Text style={styles.content}>Danh sách nhân viên trong khu vực</Text>
+        <CustomInput
+          styleInput={{height: 50, marginVertical: 10}}
+          placeholder={'Tìm kiếm nhân viên'}
+          source={icons.ic_seach}
+          value={search}
+          onChangeText={test => setSearch(test)}
+        />
 
         <View style={{flex: 1}}>
-          <FlatList
-            data={listEmployee}
-            keyExtractor={key => key?.id}
-            renderItem={({item, index}) => renderListEmployee(item, index)}
-          />
+          {filteredData().length > 0 ? (
+            <FlatList
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }
+              data={filteredData()}
+              keyExtractor={key => key.id}
+              renderItem={({item, index}) => renderListEmployee(item, index)}
+            />
+          ) : (
+            <View style={{justifyContent: 'center', alignItems: 'center'}}>
+              <Text style={styles.textWarning}>Không tìm thấy tuyến cáp</Text>
+            </View>
+          )}
         </View>
       </View>
     </View>

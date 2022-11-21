@@ -122,10 +122,6 @@ const IncidentList = props => {
             </View>
           )}
         </View>
-        <View
-          style={[styles.viewRowParents, {height: 30, alignItems: 'center'}]}>
-          <Text>{`Tổng số : ${workList?.length}`}</Text>
-        </View>
       </View>
     </View>
   );

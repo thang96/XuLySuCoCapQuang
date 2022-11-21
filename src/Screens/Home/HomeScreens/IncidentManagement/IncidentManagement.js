@@ -9,6 +9,7 @@ import {
   Dimensions,
   FlatList,
   KeyboardAvoidingView,
+  PermissionsAndroid,
 } from 'react-native';
 import CustomButtonFunction from '../../../../Components/CustomButtonFunction';
 import IncidentManagementAPI from '../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
@@ -22,6 +23,30 @@ const IncidentManagement = () => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
+  useEffect(() => {
+    checkPerLocation();
+  }, []);
+  const checkPerLocation = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Truy cập vị trí',
+          message: 'Cho phép ứng dụng truy cập vị trí để báo cáo',
+          buttonNeutral: 'Hỏi sau',
+          buttonNegative: 'Hủy',
+          buttonPositive: 'Chấp nhận',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        // console.log('OK');
+      } else {
+        // console.log('NO');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
   // const getListHistoryIncident = async () => {
   //   await IncidentManagementAPI.ExportIssueAPI(token)
   //     .then(res => {
@@ -64,16 +89,6 @@ const IncidentManagement = () => {
         </View>
         <View style={[styles.viewBottom, {height: windowHeight - 270}]}>
           <View style={styles.viewRow}>
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_optical}
-              title={'Quản lý\nthông tin\ntuyến'}
-              titleColor={colors.mainColor}
-              onPress={() =>
-                navigation.navigate('InformationListOfCableRoutes')
-              }
-            />
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
               styleIcon={{tintColor: colors.mainColor}}

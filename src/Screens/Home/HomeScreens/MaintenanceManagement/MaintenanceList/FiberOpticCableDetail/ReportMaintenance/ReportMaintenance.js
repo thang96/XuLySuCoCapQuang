@@ -131,26 +131,13 @@ const ReportMaintenance = props => {
     const eachResult = [...documentFiles, image];
     setDocumentFiles(eachResult);
   };
-  const rejectIssue = async () => {
-    let issueId = request?.id;
-    await MaintenanceManagementAPI.RejectMaintenanceIssueAPI(token, issueId)
-      .then(res => {
-        if (res?.data == 200) {
-          alert('Từ chối thành công');
-          navigation.goBack();
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
 
   const renderMeasureCableResultDocument = (item, index) => {
     return (
       <View style={styles.viewRender}>
         <CustomButtonIcon
           imageStyle={styles.imageClear}
-          source={icons.cancel}
+          source={icons.ic_cancel}
           styleButton={styles.buttonClear}
           onPress={() => removeMeasureCableResultDocument(index)}
         />
@@ -203,7 +190,7 @@ const ReportMaintenance = props => {
       <View style={styles.viewRender}>
         <CustomButtonIcon
           imageStyle={styles.imageClear}
-          source={icons.cancel}
+          source={icons.ic_cancel}
           styleButton={styles.buttonClear}
           onPress={() => removeDocumentFiles(index)}
         />
@@ -285,7 +272,6 @@ const ReportMaintenance = props => {
             />
             <FlatList
               horizontal
-              style={{height: 210, backgroundColor: 'white'}}
               data={measureCableResultDocument}
               keyExtractor={uuid}
               renderItem={({item, index}) =>
@@ -295,7 +281,7 @@ const ReportMaintenance = props => {
             <TouchableOpacity
               disabled={measureCableResultDocument.length < 5 ? false : true}
               onPress={() => setModalResultCamera(true)}
-              style={styles.buttonUpload}>
+              style={[styles.buttonUpload, {marginTop: 10}]}>
               <Image
                 source={icons.ic_report}
                 style={[

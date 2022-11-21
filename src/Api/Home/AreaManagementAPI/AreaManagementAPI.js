@@ -8,6 +8,9 @@ const GetAreaAPI = token => {
           Accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
+        params: {
+          limit: 1000,
+        },
       })
       .then(res => {
         resolve(res);

@@ -110,6 +110,7 @@ const Personalinformation = props => {
         if (res?.status == 200 && res?.data?.success == true) {
           setEditable(false);
           Alert.alert('Cập nhật thông tin', 'Cập nhật thông tin thành công');
+          readUser();
         }
       })
       .catch(function (error) {
@@ -215,15 +216,15 @@ const Personalinformation = props => {
         {editable == false ? (
           <CustomTextButton
             label={'Thay đổi thông tin'}
-            textStyle={styles.textButton}
-            styleButton={[styles.viewRowInfor]}
+            textStyle={[styles.textButton]}
+            styleButton={[styles.viewRowInfor, {marginTop: 50}]}
             onPress={() => setEditable(true)}
           />
         ) : (
           <CustomTextButton
             label={'Lưu thông tin'}
             textStyle={styles.textButton}
-            styleButton={[styles.viewRowInfor]}
+            styleButton={[styles.viewRowInfor, {marginTop: 50}]}
             onPress={() => updateUser()}
           />
         )}

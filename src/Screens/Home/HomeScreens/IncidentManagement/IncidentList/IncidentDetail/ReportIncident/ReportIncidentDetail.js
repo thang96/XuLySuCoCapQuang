@@ -16,15 +16,16 @@ import {
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import {colors, icons} from '../../../../../../../Constants';
-import {uuid} from '../../../../../../../utils/uuid';
+import {uuid, isImage} from '../../../../../../../utils/uuid';
+import {downloadFile} from '../../../../../../../utils/DownloadFile';
 import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
 import {useSelector} from 'react-redux';
+
 const ReportIncidentDetail = props => {
   const navigation = useNavigation();
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
-  console.log('---', userInfor, '-----');
   const [result, setResult] = useState(null);
   useEffect(() => {
     getReportIncidentDetail();
@@ -41,15 +42,41 @@ const ReportIncidentDetail = props => {
   };
   const renderDocumentFiles = (item, index) => {
     return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ShowImageScreen', item)}
-        style={{padding: 5, borderWidth: 0.5, borderColor: colors.mainColor}}>
-        <Image
-          resizeMode={'contain'}
-          source={{uri: item?.path}}
-          style={{width: 200, height: 200, marginRight: 5}}
-        />
-      </TouchableOpacity>
+      <View>
+        {isImage(`${item?.path}`) == true ? (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ShowImageScreen', item)}
+            style={{
+              padding: 5,
+              borderWidth: 0.5,
+              borderColor: colors.mainColor,
+            }}>
+            <Image
+              resizeMode={'contain'}
+              source={{uri: item?.path}}
+              style={{width: 200, height: 200, marginRight: 5}}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View
+            style={[
+              {width: 200, height: 200, marginRight: 5},
+              styles.renderDocumentFiles,
+            ]}>
+            <TouchableOpacity
+              onPress={() => downloadFile(item?.path)}
+              style={styles.styleCenter}>
+              <Text style={[styles.content, {color: colors.mainColor}]}>
+                Download file
+              </Text>
+              <Image
+                source={icons.ic_download}
+                style={{width: 50, height: 50, tintColor: colors.mainColor}}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     );
   };
   return (
@@ -97,6 +124,18 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     paddingHorizontal: 5,
     justifyContent: 'space-between',
+  },
+  renderDocumentFiles: {
+    borderWidth: 0.5,
+    borderColor: colors.mainColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  styleCenter: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 const CustomViewRow = props => {

@@ -3,9 +3,6 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {
   AccountScreen,
   Personalinformation,
-  ChangeNumberPhone,
-  ChangeEmail,
-  ChangeAddress,
   AppSetting,
   ChangePassword,
 } from '../../../Screens';
@@ -21,21 +18,6 @@ const StackAccountNavigation = props => {
       <Stack.Screen
         name="Personalinformation"
         component={Personalinformation}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="ChangeNumberPhone"
-        component={ChangeNumberPhone}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="ChangeEmail"
-        component={ChangeEmail}
-        options={{headerShown: false}}
-      />
-      <Stack.Screen
-        name="ChangeAddress"
-        component={ChangeAddress}
         options={{headerShown: false}}
       />
       <Stack.Screen

@@ -41,7 +41,6 @@ const ReportIncident = props => {
 
   useEffect(() => {
     getRequest();
-    checkPer();
   }, []);
   const getRequest = async () => {
     let id = route.params;
@@ -53,27 +52,7 @@ const ReportIncident = props => {
         console.log(error);
       });
   };
-  const checkPer = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Truy cập vị trí',
-          message: 'Cho phép ứng dụng truy cập vị trí để báo cáo',
-          buttonNeutral: 'Hỏi sau',
-          buttonNegative: 'Hủy',
-          buttonPositive: 'Chấp nhận',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('OK');
-      } else {
-        console.log('NO');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
+
   const isValueOK = () =>
     locationLongitude.length != '' &&
     locationLatitude.length != '' &&
@@ -148,7 +127,7 @@ const ReportIncident = props => {
       <View style={styles.viewRender}>
         <CustomButtonIcon
           imageStyle={styles.imageClear}
-          source={icons.cancel}
+          source={icons.ic_cancel}
           styleButton={styles.buttonClear}
           onPress={() => removeImage(index)}
         />
@@ -239,7 +218,6 @@ const ReportIncident = props => {
         <Text style={styles.title}>Hình ảnh báo cáo</Text>
         <FlatList
           horizontal
-          style={{height: 210}}
           data={reportDocument}
           keyExtractor={uuid}
           renderItem={({item, index}) => renderImage(item, index)}

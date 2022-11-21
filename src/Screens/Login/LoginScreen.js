@@ -15,7 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import {updateToken} from '../../Store/slices/tokenSlice';
 import {updateUser} from '../../Store/slices/userSlice';
-import LoginAccessToken from '../../Api/Login/LoginAccessToken';
+import {LoginAccessToken} from '../../Api/Login/LoginAPI';
 import CustomLoading from '../../Components/CustomLoading';
 import CustomTextButton from '../../Components/CustomTextButton';
 
@@ -43,6 +43,7 @@ const LoginScreen = () => {
       .catch(error => {
         Alert.alert('Đăng nhập', 'Sai tài khoản hoặc mật khẩu');
         setIsLoading(false);
+        console.log(error);
       });
   };
   if (isLoading) {

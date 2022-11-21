@@ -9,6 +9,9 @@ const GetMaintenanceIssuesAPI = token => {
           Accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
+        params: {
+          page_size: 1000,
+        },
       })
       .then(res => {
         resolve(res);
@@ -68,6 +71,40 @@ const CreateMaintenanceIssueAPI = (
           Accept: 'application/json',
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
+const UpdateMaintenanceRequestAPI = (
+  token,
+  idUpdate,
+  repeat_by,
+  descrip,
+  optical_cable_id,
+  user_assigned_id,
+) => {
+  return new Promise((resolve, reject) => {
+    const formDataMaintenance = new FormData();
+    formDataMaintenance.append('repeat_by', repeat_by ?? 'MONTHLY');
+    formDataMaintenance.append('description', descrip ?? '');
+    formDataMaintenance.append('optical_cable_id', optical_cable_id ?? 0);
+    formDataMaintenance.append('user_assigned_id', user_assigned_id ?? 0);
+    console.log(formDataMaintenance);
+    axios
+      .put(`${BASEURL}/api/v1/maintenance_issue/`, formDataMaintenance, {
+        headers: {
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
+        params: {
+          id: idUpdate,
         },
       })
       .then(res => {
@@ -264,6 +301,7 @@ const MaintenanceManagementAPI = {
   GetMaintenanceIssuesAPI,
   GetListMaintenanceIssuesReportAPI,
   CreateMaintenanceIssueAPI,
+  UpdateMaintenanceRequestAPI,
   ReceiveMaintenanceIssueAPI,
   RejectMaintenanceIssueAPI,
   AcceptanceMaintenanceRequestAPI,
@@ -273,18 +311,3 @@ const MaintenanceManagementAPI = {
   MaintenanceIssueReportAPI,
 };
 export default MaintenanceManagementAPI;
-
-const getFileName = file => {
-  if (file.name !== undefined) {
-    return file.name;
-  } else if (file.filename !== undefined && file.filename !== null) {
-    return file.filename;
-  } else {
-    const type = file?.mime || file?.type;
-    return (
-      Math.floor(Math.random() * Math.floor(999999999)) +
-      '.' +
-      type.split('/')[1]
-    );
-  }
-};

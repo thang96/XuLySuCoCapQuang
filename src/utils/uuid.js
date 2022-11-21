@@ -7,3 +7,7 @@ export const uuid = () => {
     })
     .replace(/-/g, '');
 };
+export const isImage = url => {
+  url = url.toLowerCase();
+  return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(url);
+};

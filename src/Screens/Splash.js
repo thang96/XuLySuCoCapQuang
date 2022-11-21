@@ -17,7 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateToken} from '../Store/slices/tokenSlice';
 import {updateUserInfor} from '../Store/slices/userInfoSlice';
-import LoginTestToken from '../Api/Login/LoginTestToken';
+import {LoginTestToken} from '../Api/Login/LoginAPI';
 
 const Splash = () => {
   const token = useSelector(state => state?.token?.token);

@@ -25,7 +25,14 @@ import CustomModalCamera from '../../../../../Components/CustomModalCamera';
 import common from '../../../../../utils/common';
 import {uuid} from '../../../../../utils/uuid';
 import ImagePicker from 'react-native-image-crop-picker';
+import {
+  ReadUsersAPI,
+  ReadOpticalCablesAPI,
+  ReadUserByOpticalCablesIdAPI,
+  ReadOpticalCablesByUserIdAPI,
+} from '../../../../../Api/Home/Master-Data/MasterData';
 import IncidentManagementAPI from '../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
+import CustomButtonIcon from '../../../../../Components/CustomButtonIcon';
 const CreateNewRequest = props => {
   const navigation = useNavigation();
   const [opticalCableId, setOpticalCableId] = useState(null);
@@ -49,26 +56,41 @@ const CreateNewRequest = props => {
   }, []);
 
   const getListData = async () => {
-    await OpticalCablesAPI.GetOpticalCablesAPI(token)
+    await ReadOpticalCablesAPI(token)
       .then(res => {
         setListOpticalCables(res?.data?.data);
       })
       .catch(error => console.log(error));
-    await UsersAPI.GetUsersAPI(token)
+    await ReadUsersAPI(token)
       .then(res => {
         let allUser = res?.data?.data;
-        let staff = allUser.filter(eachUsers => eachUsers?.role == 'EMPLOYEE');
-        setListOfEmployee(staff);
+        setListOfEmployee(allUser);
       })
       .catch(error => console.log(error));
   };
-  const chooseOpticalCable = item => {
+  const chooseOpticalCable = async item => {
     setModalOpticalCable(false);
     setOpticalCableId(item);
+    let id = item?.id;
+    await ReadUserByOpticalCablesIdAPI(token, id)
+      .then(res => {
+        setListOfEmployee(res?.data?.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
-  const chooseEmployee = item => {
+  const chooseEmployee = async item => {
     setModalUserAssigned(false);
     setUserAssignedId(item);
+    let id = item?.id;
+    await ReadOpticalCablesByUserIdAPI(token, id)
+      .then(res => {
+        setListOpticalCables(res?.data?.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
   const openCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
@@ -98,16 +120,32 @@ const CreateNewRequest = props => {
     const eachResult = [...albumImage, image];
     setAlbumImage(eachResult);
   };
-  const renderImage = image => {
+
+  const renderImage = (item, index) => {
     return (
-      <Image
-        source={{uri: image?.uri}}
-        style={{width: 200, height: 200, marginHorizontal: 5}}
-        resizeMode={'contain'}
-      />
+      <View>
+        <View style={styles.viewRender}>
+          <CustomButtonIcon
+            onPress={() => deleteItem(item, index)}
+            styleButton={styles.customButtonIcon}
+            imageStyle={styles.imageStyle}
+            source={icons.ic_cancel}
+          />
+          <Image
+            source={{uri: item?.uri}}
+            style={{width: 200, height: 200, marginHorizontal: 5}}
+            resizeMode={'contain'}
+          />
+        </View>
+      </View>
     );
   };
+  const deleteItem = (item, index) => {
+    let result = [...albumImage];
+    let newResult = result.filter(itemResult => itemResult !== item);
 
+    setAlbumImage(newResult);
+  };
   const createRequest = async () => {
     let descriptionS = description;
     let optical_cable_id = parseInt(opticalCableId?.id);
@@ -170,7 +208,7 @@ const CreateNewRequest = props => {
       )}
       <KeyboardAvoidingView style={styles.container}>
         <CustomAppBar
-          title={'Tạo việc'}
+          title={'Tạo việc sự cố'}
           iconsLeft={icons.ic_back}
           onPressIconsLeft={() => navigation.goBack()}
         />
@@ -209,7 +247,6 @@ const CreateNewRequest = props => {
           <Text style={styles.title}>File đính kèm</Text>
           <FlatList
             horizontal
-            style={{height: 200}}
             data={albumImage}
             keyExtractor={uuid}
             renderItem={({item}) => renderImage(item)}
@@ -335,5 +372,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  viewRender: {
+    height: 210,
+    width: 210,
+    borderWidth: 0.5,
+    borderColor: colors.mainColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  customButtonIcon: {position: 'absolute', right: 3, top: 3, zIndex: 1},
+  imageStyle: {width: 20, height: 20, tintColor: 'red'},
 });
 export default CreateNewRequest;

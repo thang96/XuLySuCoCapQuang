@@ -10,6 +10,7 @@ import StackIncidentManagement from './StackIncidentManagement/StackIncidentMana
 import StackEmployeeManager from './StackEmployeeManager/StackEmployeeManager';
 import StackMaintenanceManagement from './StackMaintenanceManagement/StackMaintenanceManagement';
 import StackAreaNavigation from './StackAreaNavigation/StackAreaNavigation';
+import StackFiberOpticCableManagement from './StackFiberOpticCableManagement/StackFiberOpticCableManagement';
 
 const Stack = createStackNavigator();
 const StackHomeNavigation = props => {
@@ -67,6 +68,13 @@ const StackHomeNavigation = props => {
       <Stack.Screen
         component={StackAreaNavigation}
         name={'StackAreaNavigation'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={StackFiberOpticCableManagement}
+        name={'StackFiberOpticCableManagement'}
         options={{
           headerShown: false,
         }}

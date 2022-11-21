@@ -10,24 +10,25 @@ import {
   FlatList,
   Modal,
   RefreshControl,
+  ActivityIndicator,
 } from 'react-native';
-import {colors, icons} from '../../../../../Constants';
-import CustomAppBar from '../../../../../Components/CustomAppBar';
+import {colors, icons} from '../../../../Constants';
+import CustomAppBar from '../../../../Components/CustomAppBar';
 import {useIsFocused, useNavigation, useRoute} from '@react-navigation/native';
-import CustomInput from '../../../../../Components/CustomInput';
-import CustomButtonIcon from '../../../../../Components/CustomButtonIcon';
+import CustomInput from '../../../../Components/CustomInput';
+import CustomButtonIcon from '../../../../Components/CustomButtonIcon';
 import {useSelector} from 'react-redux';
-import OpticalCablesAPI from '../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
-import {ScreenStackHeaderSearchBarView} from 'react-native-screens';
+import OpticalCablesAPI from '../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
 
 const FiberOpticCableManagement = props => {
   const navigation = useNavigation();
   const IsFocused = useIsFocused();
-  const route = useRoute();
+  const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const token = useSelector(state => state?.token?.token);
   const [refreshing, setRefreshing] = useState(false);
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     getListOpticalCablesAPI();
   }, [IsFocused]);
@@ -35,6 +36,7 @@ const FiberOpticCableManagement = props => {
     await OpticalCablesAPI.GetOpticalCablesAPI(token)
       .then(res => {
         setListOpticalCables(res?.data?.data);
+        setLoading(false);
       })
       .catch(error => console.log(error));
   };
@@ -79,60 +81,71 @@ const FiberOpticCableManagement = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      <View>
-        <View style={styles.eachContainer}>
-          <CustomInput
-            styleInput={{height: 50, marginVertical: 10}}
-            placeholder={'Tìm kiếm tuyến cáp'}
-            source={icons.ic_seach}
-            value={search}
-            onChangeText={test => setSearch(test)}
-          />
-          <View style={styles.viewRowBetween}>
-            <View style={{alignItems: 'flex-start'}}>
-              <Text style={styles.title}>Lọc</Text>
-              <TouchableOpacity style={styles.buttonPicker}>
-                <Text style={styles.textPicker}>Lọc theo trạng thái</Text>
-                <Image source={icons.ic_down} style={styles.imagePicker} />
-              </TouchableOpacity>
-            </View>
-            <View style={{alignItems: 'center'}}>
-              <Text style={{color: colors.mainColor}}>Tạo tuyến cáp</Text>
-              <CustomButtonIcon
-                styleButton={styles.styleCustomButtonIcon}
-                imageStyle={{
-                  width: 40,
-                  height: 40,
-                  tintColor: colors.mainColor,
-                }}
-                source={icons.ic_plusPurple}
-                onPress={() => navigation.navigate('CreateNewCableRoute')}
+      {loading == false ? (
+        <View style={{flex: 1}}>
+          <View>
+            <View style={styles.eachContainer}>
+              <CustomInput
+                styleInput={{height: 50, marginVertical: 10}}
+                placeholder={'Tìm kiếm tuyến cáp'}
+                source={icons.ic_seach}
+                value={search}
+                onChangeText={test => setSearch(test)}
               />
+              <View style={styles.viewRowBetween}>
+                <View style={{alignItems: 'flex-start'}}>
+                  <Text style={styles.title}>Lọc</Text>
+                  <TouchableOpacity style={styles.buttonPicker}>
+                    <Text style={styles.textPicker}>Lọc theo trạng thái</Text>
+                    <Image source={icons.ic_down} style={styles.imagePicker} />
+                  </TouchableOpacity>
+                </View>
+                {userInfor?.role != 'EMPLOYEE' && (
+                  <View style={{alignItems: 'center'}}>
+                    <Text style={{color: colors.mainColor}}>Tạo tuyến cáp</Text>
+                    <CustomButtonIcon
+                      styleButton={styles.styleCustomButtonIcon}
+                      imageStyle={{
+                        width: 40,
+                        height: 40,
+                        tintColor: colors.mainColor,
+                      }}
+                      source={icons.ic_plusPurple}
+                      onPress={() => navigation.navigate('CreateNewCableRoute')}
+                    />
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.viewRow}>
+                <Text style={[{width: '70%'}, styles.title]}>Tên tuyến</Text>
+                <Text style={[{width: '30%'}, styles.title]}>Trạng thái</Text>
+              </View>
             </View>
           </View>
-
-          <View style={styles.viewRow}>
-            <Text style={[{width: '70%'}, styles.title]}>Tên tuyến</Text>
-            <Text style={[{width: '30%'}, styles.title]}>Trạng thái</Text>
+          <View style={{flex: 1}}>
+            {filteredOpticalCables().length > 0 ? (
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                data={filteredOpticalCables()}
+                keyExtractor={key => key.id}
+                renderItem={({item, index}) => renderItem(item, index)}
+              />
+            ) : (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.textWarning}>Không tìm thấy tuyến cáp</Text>
+              </View>
+            )}
           </View>
         </View>
-      </View>
-      <View style={{flex: 1}}>
-        {filteredOpticalCables().length > 0 ? (
-          <FlatList
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-            data={filteredOpticalCables()}
-            keyExtractor={key => key.id}
-            renderItem={({item, index}) => renderItem(item, index)}
-          />
-        ) : (
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Text style={styles.textWarning}>Không tìm thấy tuyến cáp</Text>
-          </View>
-        )}
-      </View>
+      ) : (
+        <ActivityIndicator color={colors.mainColor} size={'large'} />
+      )}
     </View>
   );
 };

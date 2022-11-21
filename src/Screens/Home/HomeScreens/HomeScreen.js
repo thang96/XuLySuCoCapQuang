@@ -11,6 +11,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   Platform,
+  PermissionsAndroid,
 } from 'react-native';
 import {ScrollView} from 'react-native-gesture-handler';
 import CustomButtonFunction from '../../../Components/CustomButtonFunction';
@@ -20,7 +21,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector, useIsFocused} from 'react-redux';
 import AccountAPI from '../../../Api/Account/AccountAPI';
 import {updateUserInfor} from '../../../Store/slices/userInfoSlice';
-import RegisterNotificationAPI from '../../../Api/RegisterNotificationAPI';
+import {RegisterNotificationAPI} from '../../../Api/NotificationAPI/NotificationAPI';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const FAKE_DATA = [{id: 1}, {id: 2}, {id: 3}];
 const HomeScreen = () => {
@@ -30,29 +31,52 @@ const HomeScreen = () => {
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
   const [seachText, setSeachText] = useState('');
-  const [fcmToken, setFcmToken] = useState('');
+  const deviceId = Platform.OS === 'android' ? 'android' : 'ios';
   const dispatch = useDispatch();
   useEffect(() => {
     readUser();
     sendNotification();
-    AsyncStorage.getItem('fcmToken')
-      .then(data => setFcmToken(data))
-      .catch(error => console.log(error));
+    checkPerWriteStore();
   }, []);
 
-  const deviceId = Platform.OS == 'android' ? 'android' : 'ios';
+  const checkPerWriteStore = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+        {
+          title: 'Quyền truy cập bộ nhớ',
+          message: 'Cấp quyền truy cập để tải file về',
+          buttonNeutral: 'Hỏi sau',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log('Ok');
+      } else {
+        console.log('No ok');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   const sendNotification = async () => {
-    let data = {
-      token: fcmToken,
-      device_info: deviceId,
-    };
-    await RegisterNotificationAPI(token, data)
-      .then(res => {
-        // console.log(res);
+    await AsyncStorage.getItem('fcmToken')
+      .then(async fcmToken => {
+        let data = {
+          token: fcmToken,
+          device_info: deviceId,
+        };
+        await RegisterNotificationAPI(token, data)
+          .then(res => {
+            console.log(res?.status);
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       })
-      .catch(function (error) {
-        console.log(error);
-      });
+      .catch(error => console.log(error));
   };
   useEffect(() => {
     readUser();
@@ -109,55 +133,90 @@ const HomeScreen = () => {
         </View>
 
         <View style={[styles.viewBottom, {height: windowHeight - 270}]}>
-          <ScrollView horizontal style={styles.viewRowFunction}>
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_incidentManagement}
-              title={'Quản lý\nsự cố'}
-              onPress={() => navigation.navigate('StackIncidentManagement')}
-            />
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_maintenanceMaintenance}
-              title={'Bảo trì\nbảo dưỡng'}
-              onPress={() => navigation.navigate('StackMaintenanceManagement')}
-            />
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_warehouseManagement}
-              title={'Quản lý kho'}
-              onPress={() => navigation.navigate('ContinueScreen')}
-            />
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_documentManagement}
-              title={'Quản lý\nvăn bản'}
-              onPress={() => navigation.navigate('ContinueScreen')}
-            />
-            {userInfor?.role != 'EMPLOYEE' && (
-              <CustomButtonFunction
-                styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
-                icon={icons.ic_group}
-                title={'Quản lý\nnhân viên'}
-                onPress={() => navigation.navigate('StackEmployeeManager')}
-              />
-            )}
-            {userInfor?.role != 'EMPLOYEE' && (
-              <CustomButtonFunction
-                styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
-                icon={icons.ic_area_manage}
-                title={'Quản lý\nkhu vực'}
-                onPress={() => navigation.navigate('StackAreaNavigation')}
-              />
-            )}
-          </ScrollView>
           <ScrollView>
+            <View
+              style={{
+                height: 120,
+                marginTop: 30,
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}>
+              <ScrollView horizontal>
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={{tintColor: colors.mainColor}}
+                  icon={icons.ic_incidentManagement}
+                  titleColor={colors.mainColor}
+                  title={'Quản lý\nsự cố'}
+                  onPress={() => navigation.navigate('StackIncidentManagement')}
+                />
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={{tintColor: colors.mainColor}}
+                  icon={icons.ic_maintenanceMaintenance}
+                  titleColor={colors.mainColor}
+                  title={'Bảo trì\nbảo dưỡng'}
+                  onPress={() =>
+                    navigation.navigate('StackMaintenanceManagement')
+                  }
+                />
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={{tintColor: colors.mainColor}}
+                  icon={icons.ic_warehouseManagement}
+                  titleColor={colors.mainColor}
+                  title={'Quản lý kho'}
+                  onPress={() => navigation.navigate('ContinueScreen')}
+                />
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={{tintColor: colors.mainColor}}
+                  icon={icons.ic_documentManagement}
+                  titleColor={colors.mainColor}
+                  title={'Quản lý\nvăn bản'}
+                  onPress={() => navigation.navigate('ContinueScreen')}
+                />
+              </ScrollView>
+            </View>
+            <View
+              style={{
+                height: 120,
+                alignItems: 'center',
+                flexDirection: 'row',
+              }}>
+              <ScrollView horizontal>
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={{tintColor: colors.mainColor}}
+                  icon={icons.ic_optical}
+                  title={'Quản lý\nthông tin\ntuyến'}
+                  titleColor={colors.mainColor}
+                  onPress={() =>
+                    navigation.navigate('StackFiberOpticCableManagement')
+                  }
+                />
+                {userInfor?.role != 'EMPLOYEE' && (
+                  <CustomButtonFunction
+                    styleView={styles.customButtonFunction}
+                    styleIcon={{tintColor: colors.mainColor}}
+                    icon={icons.ic_group}
+                    titleColor={colors.mainColor}
+                    title={'Quản lý\nnhân viên'}
+                    onPress={() => navigation.navigate('StackEmployeeManager')}
+                  />
+                )}
+                {userInfor?.role != 'EMPLOYEE' && (
+                  <CustomButtonFunction
+                    styleView={styles.customButtonFunction}
+                    styleIcon={{tintColor: colors.mainColor}}
+                    icon={icons.ic_area_manage}
+                    titleColor={colors.mainColor}
+                    title={'Quản lý\nkhu vực'}
+                    onPress={() => navigation.navigate('StackAreaNavigation')}
+                  />
+                )}
+              </ScrollView>
+            </View>
             <CustomInput
               styleTextInput={styles.styleTextInput}
               styleInput={styles.customInput}
@@ -234,11 +293,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
-  viewRowFunction: {
-    marginTop: 30,
-    width: '100%',
-    height: 100,
-  },
+
   customInput: {
     width: '100%',
     height: 50,
@@ -261,6 +316,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
-  customButtonFunction: {height: 70, width: 70, marginRight: 10},
+  customButtonFunction: {
+    height: 120,
+    width: 70,
+    marginRight: 10,
+  },
 });
 export default HomeScreen;

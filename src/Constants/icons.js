@@ -41,6 +41,8 @@ export default {
   ic_receive_request: require('../Assets/Icons/ic_receive_request.png'),
   ic_area_manage: require('../Assets/Icons/ic_area_manage.png'),
   ic_delete: require('../Assets/Icons/ic_delete.png'),
+  ic_cancel: require('../Assets/Icons/ic_cancel.png'),
+  ic_download: require('../Assets/Icons/ic_download.png'),
 
   vectorOk: require('../Assets/Icons/vectorOk.png'),
   next: require('../Assets/Icons/next.png'),
@@ -54,5 +56,4 @@ export default {
   listReport: require('../Assets/Icons/listReport.png'),
   level: require('../Assets/Icons/level.png'),
   contract: require('../Assets/Icons/contract.png'),
-  cancel: require('../Assets/Icons/cancel.png'),
 };

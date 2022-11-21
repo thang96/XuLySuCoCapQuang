@@ -15,12 +15,12 @@ import {
   TextInput,
 } from 'react-native';
 import {useSelector} from 'react-redux';
-import OpticalCablesAPI from '../../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
-import CustomAppBar from '../../../../../../Components/CustomAppBar';
-import CustomTextButton from '../../../../../../Components/CustomTextButton';
-import CustomTextInputChangeValue from '../../../../../../Components/CustomTextInputChangeValue';
-import {icons, colors} from '../../../../../../Constants';
-const CreateCableRoute = props => {
+import OpticalCablesAPI from '../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
+import CustomAppBar from '../../../../../Components/CustomAppBar';
+import CustomTextButton from '../../../../../Components/CustomTextButton';
+import CustomTextInputChangeValue from '../../../../../Components/CustomTextInputChangeValue';
+import {icons, colors} from '../../../../../Constants';
+const CreateNewCableRoute = props => {
   const navigation = useNavigation();
   const token = useSelector(state => state?.token?.token);
   const isValidate = () =>
@@ -76,9 +76,9 @@ const CreateCableRoute = props => {
   const [endStationLat, setEndStationLat] = useState('');
   const [endStationAddress, setEndStationAddress] = useState('');
   const [cableType, setCableType] = useState('');
+  const [cableInfrastructure, setCableInfrastructure] = useState('');
   const [cableConnectionType, setCableConnectionType] = useState('');
   const [startEndStationOdfType, setStartEndStationOdfType] = useState('');
-  const [cableInfrastructure, setCableInfrastructure] = useState('');
   const [areaId, setAreaId] = useState('');
   const [isActive, setIsActive] = useState(true);
   const createCableRoute = async () => {
@@ -103,9 +103,9 @@ const CreateCableRoute = props => {
       end_station_lat: startStationLat,
       end_station_address: endStationAddress,
       cable_type: cableType,
+      cable_infrastructure: cableInfrastructure,
       cable_connection_type: cableConnectionType,
       start_end_station_odf_type: startEndStationOdfType,
-      cable_infrastructure: cableInfrastructure,
       area_id: parseInt(areaId),
       is_active: isActive,
     };
@@ -114,7 +114,7 @@ const CreateCableRoute = props => {
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
           Alert.alert('Tuyến cáp', 'Đã tạo tuyến cáp thành công');
-          navigation.navigate('InformationListOfCableRoutes');
+          navigation.navigate('FiberOpticCableManagement');
         }
       })
       .catch(function (error) {
@@ -436,4 +436,4 @@ const styles = StyleSheet.create({
   },
   styleTextCustomTextButton: {fontSize: 18, fontWeight: 'bold', color: 'white'},
 });
-export default CreateCableRoute;
+export default CreateNewCableRoute;

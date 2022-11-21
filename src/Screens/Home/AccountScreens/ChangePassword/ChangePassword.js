@@ -23,6 +23,9 @@ const ChangePassword = props => {
   const [oldPassword, setOldPassword] = useState('');
   const [newdPassword, setNewPassword] = useState('');
   const [reNewdPassword, setReNewPassword] = useState('');
+  const [isOldPassword, setIsOldPassword] = useState(false);
+  const [isNewdPassword, setIsNewdPassword] = useState(false);
+  const [isReNewdPassword, setIsReNewdPassword] = useState(false);
   const isValueOk = () =>
     oldPassword.length > 0 &&
     newdPassword.length > 0 &&
@@ -68,35 +71,41 @@ const ChangePassword = props => {
 
         <View style={styles.viewRow}>
           <CustomInput
-            secureTextEntry={true}
-            disabled={true}
+            source={isOldPassword == false ? icons.ic_hidden : icons.ic_show}
+            secureTextEntry={!isOldPassword}
             styleInput={{flex: 1}}
             placeholder={'Nhập mật khẩu cũ'}
-            source={icons.key}
             value={oldPassword}
+            onPress={() =>
+              setIsOldPassword(prev => (prev == false ? true : false))
+            }
             onChangeText={text => setOldPassword(text)}
           />
         </View>
         <Text style={styles.title}>Mật khẩu mới</Text>
         <View style={styles.viewRow}>
           <CustomInput
-            secureTextEntry={true}
-            disabled={true}
+            source={isNewdPassword == false ? icons.ic_hidden : icons.ic_show}
+            secureTextEntry={!isNewdPassword}
             styleInput={{flex: 1}}
             placeholder={'Nhập mật khẩu mới'}
-            source={icons.key}
+            onPress={() =>
+              setIsNewdPassword(prev => (prev == false ? true : false))
+            }
             value={newdPassword}
             onChangeText={text => setNewPassword(text)}
           />
         </View>
         <View style={styles.viewRow}>
           <CustomInput
-            secureTextEntry={true}
-            disabled={true}
+            source={isReNewdPassword == false ? icons.ic_hidden : icons.ic_show}
+            secureTextEntry={!isReNewdPassword}
             styleInput={{flex: 1}}
             placeholder={'Nhập lại mật khẩu mới'}
-            source={icons.key}
             value={reNewdPassword}
+            onPress={() =>
+              setIsReNewdPassword(prev => (prev == false ? true : false))
+            }
             onChangeText={text => setReNewPassword(text)}
           />
         </View>

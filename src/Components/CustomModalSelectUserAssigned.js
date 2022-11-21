@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -8,10 +8,14 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  RefreshControl,
 } from 'react-native';
 import {icons} from '../Constants';
+import CustomInput from './CustomInput';
 const CustomModalSelectUserAssigned = props => {
   const {modalVisible, onRequestClose, data, onPress} = props;
+  const [search, setSearch] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const renderItem = (item, index) => {
     return (
       <TouchableOpacity style={styles.button} onPress={() => onPress(item)}>
@@ -29,6 +33,20 @@ const CustomModalSelectUserAssigned = props => {
       </TouchableOpacity>
     );
   };
+  const filteredData = () =>
+    data.filter(eachData =>
+      eachData?.full_name
+        .toLocaleLowerCase()
+        .includes(search.toLocaleLowerCase()),
+    );
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    try {
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   return (
     <View style={styles.container}>
       <Modal
@@ -38,11 +56,36 @@ const CustomModalSelectUserAssigned = props => {
         onRequestClose={onRequestClose}>
         <View style={styles.container}>
           <View style={styles.eachContainer}>
-            <FlatList
+            {/* <FlatList
               data={data}
               key={key => key?.id}
               renderItem={({item, index}) => renderItem(item, index)}
+            /> */}
+            <CustomInput
+              styleInput={{height: 50, marginVertical: 10, width: 300}}
+              placeholder={'Tìm kiếm nhân viên'}
+              source={icons.ic_seach}
+              value={search}
+              onChangeText={test => setSearch(test)}
             />
+
+            {filteredData().length > 0 ? (
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                data={filteredData()}
+                keyExtractor={key => key.id}
+                renderItem={({item, index}) => renderItem(item, index)}
+              />
+            ) : (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.textWarning}>Không tìm thấy nhân viên</Text>
+              </View>
+            )}
           </View>
         </View>
       </Modal>
@@ -81,5 +124,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   image: {width: 50, height: 50, borderRadius: 50, marginRight: 5},
+  textWarning: {fontSize: 16, fontWeight: '500', color: 'grey'},
 });
 export default CustomModalSelectUserAssigned;

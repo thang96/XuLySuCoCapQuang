@@ -55,14 +55,6 @@ const MaintenanceManagement = () => {
             <CustomButtonFunction
               styleView={styles.customButtonFunction}
               styleIcon={{tintColor: colors.mainColor}}
-              icon={icons.ic_optical}
-              title={'Quản lý\nthông tin\ntuyến'}
-              titleColor={colors.mainColor}
-              onPress={() => navigation.navigate('FiberOpticCableManagement')}
-            />
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              styleIcon={{tintColor: colors.mainColor}}
               icon={icons.ic_documentManagement}
               title={'Tổng hợp\nbáo cáo\nbảo trì'}
               titleColor={colors.mainColor}

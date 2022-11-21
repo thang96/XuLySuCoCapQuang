@@ -14,71 +14,92 @@ import {
   Alert,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
-import CustomAppBar from '../../../../../Components/CustomAppBar';
-import {colors, icons} from '../../../../../Constants';
-import CustomTextButton from '../../../../../Components/CustomTextButton';
-import CustomModalSelectOpticalCable from '../../../../../Components/CustomModalSelectOpticalCable';
-import OpticalCablesAPI from '../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
+import CustomAppBar from '../../../../../../../Components/CustomAppBar';
+import {colors, icons} from '../../../../../../../Constants';
+import CustomTextButton from '../../../../../../../Components/CustomTextButton';
+import CustomModalSelectOpticalCable from '../../../../../../../Components/CustomModalSelectOpticalCable';
+import OpticalCablesAPI from '../../../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
 import {useSelector} from 'react-redux';
-import CustomModalSelectUserAssigned from '../../../../../Components/CustomModalSelectUserAssigned';
-import UsersAPI from '../../../../../Api/Home/UsersAPI/UsersAPI';
-import CustomModalCamera from '../../../../../Components/CustomModalCamera';
-import common from '../../../../../utils/common';
+import CustomModalSelectUserAssigned from '../../../../../../../Components/CustomModalSelectUserAssigned';
+import UsersAPI from '../../../../../../../Api/Home/UsersAPI/UsersAPI';
+import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
+import common from '../../../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
-import MaintenanceManagementAPI from '../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
-import {uuid} from '../../../../../utils/uuid';
-import CustomModalPicker from '../../../../../Components/CustomModalPicker';
+import MaintenanceManagementAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
+import {uuid} from '../../../../../../../utils/uuid';
+import CustomModalPicker from '../../../../../../../Components/CustomModalPicker';
 import {
   ReadUsersAPI,
   ReadOpticalCablesAPI,
   ReadUserByOpticalCablesIdAPI,
   ReadOpticalCablesByUserIdAPI,
-} from '../../../../../Api/Home/Master-Data/MasterData';
-import CustomButtonIcon from '../../../../../Components/CustomButtonIcon';
+} from '../../../../../../../Api/Home/Master-Data/MasterData';
+import CustomButtonIcon from '../../../../../../../Components/CustomButtonIcon';
 const DATA_PICKER = [
   {key: 'Theo tháng', value: 'MONTHLY'},
   {key: 'Theo quý', value: 'QUARTERLY'},
   {key: 'Theo năm', value: 'YEARLY'},
 ];
-const CreateAMaintenanceRequest = props => {
+const EditMaintenance = props => {
   const navigation = useNavigation();
-  const [repeatBy, setRepeatBy] = useState({
-    key: 'Theo tháng',
-    value: 'MONTHLY',
-  });
+  const route = useRoute();
+  const [repeatBy, setRepeatBy] = useState(null);
   const [opticalCableId, setOpticalCableId] = useState(null);
   const [userAssignedId, setUserAssignedId] = useState(null);
   const [description, setDescription] = useState('');
-  const [albumImage, setAlbumImage] = useState([]);
   const [modalOpticalCable, setModalOpticalCable] = useState(false);
   const [modaUserAssigned, setModalUserAssigned] = useState(false);
-  const [modalCamera, setModalCamera] = useState(false);
   const token = useSelector(state => state?.token?.token);
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const [listOfEmployee, setListOfEmployee] = useState([]);
   const [isChoose, setIsChoose] = useState(false);
+
   const isReady = () =>
-    opticalCableId != null &&
-    userAssignedId != null &&
-    description.length > 0 &&
-    albumImage.length > 0;
+    opticalCableId != null && userAssignedId != null && description.length > 0;
 
   useEffect(() => {
     getListData();
   }, []);
-
   const getListData = async () => {
-    await OpticalCablesAPI.GetOpticalCablesAPI(token)
+    await ReadOpticalCablesAPI(token)
       .then(res => {
         if (res?.status == 200) {
           setListOpticalCables(res?.data?.data);
         }
       })
       .catch(error => console.log(error));
-    await UsersAPI.GetUsersAPI(token)
+    await ReadUsersAPI(token)
       .then(res => {
         if (res?.status == 200) {
           setListOfEmployee(res?.data?.data);
+        }
+      })
+      .catch(error => console.log(error));
+    let userId = route.params?.user_assigned_id;
+    await UsersAPI.GetUsersByIdAPI(token, userId)
+      .then(res => {
+        if (res?.status == 200) {
+          setUserAssignedId(res?.data?.data);
+        }
+      })
+      .catch(error => console.log(error));
+    let opticalId = route.params?.optical_cable_id;
+    await OpticalCablesAPI.GetOpticalCablesByIdAPI(token, opticalId)
+      .then(res => {
+        if (res?.status == 200) {
+          setOpticalCableId(res?.data?.data);
+        }
+      })
+      .catch(error => console.log(error));
+    let maintenanceId = route.params?.id;
+    await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(
+      token,
+      maintenanceId,
+    )
+      .then(res => {
+        if (res?.status == 200) {
+          setDescription(res?.data?.data?.description);
+          setRepeatBy({value: res?.data?.data?.repeat_by});
         }
       })
       .catch(error => console.log(error));
@@ -111,101 +132,42 @@ const CreateAMaintenanceRequest = props => {
         console.log(error);
       });
   };
-  const openCamera = () => {
-    ImagePicker.openCamera({width: 300, height: 400})
-      .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
-        setModalCamera(false);
-      })
-      .catch(e => {
-        ImagePicker.clean();
-        setModalCamera(false);
-      });
-  };
-  const openGallery = () => {
-    ImagePicker.openPicker({})
-      .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
-        setModalCamera(false);
-      })
-      .catch(e => {
-        ImagePicker.clean();
-        setModalCamera(false);
-      });
-  };
-  const addResult = image => {
-    const eachResult = [...albumImage, image];
-    setAlbumImage(eachResult);
-  };
-  const renderImage = (item, index) => {
-    return (
-      <View>
-        <View style={styles.viewRender}>
-          <CustomButtonIcon
-            onPress={() => deleteItem(item, index)}
-            styleButton={styles.customButtonIcon}
-            imageStyle={styles.imageStyle}
-            source={icons.ic_cancel}
-          />
-          <Image
-            source={{uri: item?.uri}}
-            style={{width: 200, height: 200}}
-            resizeMode={'contain'}
-          />
-        </View>
-      </View>
-    );
-  };
-  const deleteItem = (item, index) => {
-    let result = [...albumImage];
-    let newResult = result.filter(itemResult => itemResult !== item);
 
-    setAlbumImage(newResult);
-  };
-  const createRequest = async () => {
-    const repeat_by = repeatBy?.value;
-    const optical_cable_id = parseInt(opticalCableId?.id);
-    const user_assigned_id = parseInt(userAssignedId?.id);
-    const descrip = description;
-    await MaintenanceManagementAPI.CreateMaintenanceIssueAPI(
+  const updateRequest = async () => {
+    let idUpdate = route?.params?.id;
+    console.log(idUpdate);
+    let repeat_by = repeatBy?.value;
+    let optical_cable_id = parseInt(opticalCableId?.id);
+    let user_assigned_id = parseInt(userAssignedId?.id);
+    let descrip = description;
+    await MaintenanceManagementAPI.UpdateMaintenanceRequestAPI(
       token,
+      idUpdate,
       repeat_by,
       descrip,
       optical_cable_id,
       user_assigned_id,
-      albumImage,
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Tạo yêu cầu bảo trì', 'Tạo yêu cầu thành công');
-          navigation.goBack();
+          Alert.alert(
+            'Sửa yêu cầu xử lý bảo trì',
+            'Sửa yêu cầu xử lý bảo trì thành công',
+          );
+          navigation.navigate('MaintenanceManagement');
         }
       })
       .catch(function (error) {
         console.log(error);
-        Alert.alert('Tạo yêu cầu bảo trì', 'Tạo yêu cầu thất bại');
+        Alert.alert(
+          'Sửa yêu cầu xử lý bảo trì',
+          'Sửa yêu cầu xử lý bảo trì thất bại',
+        );
       });
   };
 
   return (
     <View style={styles.container}>
-      {modalCamera && (
-        <View style={styles.styleModal}>
-          <CustomModalCamera
-            openCamera={() => openCamera()}
-            openGallery={() => openGallery()}
-            modalVisible={modalCamera}
-            onRequestClose={() => {
-              setModalCamera(false);
-            }}
-            cancel={() =>
-              setModalCamera(prev => (prev == false ? true : false))
-            }
-          />
-        </View>
-      )}
       {modalOpticalCable && (
         <View style={styles.styleModal}>
           <CustomModalSelectOpticalCable
@@ -249,7 +211,7 @@ const CreateAMaintenanceRequest = props => {
 
       <KeyboardAvoidingView style={styles.container}>
         <CustomAppBar
-          title={'Tạo yêu cầu bảo trì'}
+          title={'Sửa cầu bảo trì'}
           iconsLeft={icons.ic_back}
           onPressIconsLeft={() => navigation.goBack()}
         />
@@ -276,7 +238,15 @@ const CreateAMaintenanceRequest = props => {
           </TouchableOpacity>
 
           <ButtonPicker
-            repeatBy={repeatBy?.key}
+            repeatBy={
+              repeatBy?.value == 'MONTHLY'
+                ? 'Theo tháng'
+                : repeatBy?.value == 'QUARTERLY'
+                ? 'Theo quý'
+                : repeatBy?.value == 'YEARLY'
+                ? 'Theo năm'
+                : null
+            }
             onPressPicker={() => setIsChoose(true)}
           />
 
@@ -290,19 +260,7 @@ const CreateAMaintenanceRequest = props => {
               onChangeText={text => setDescription(text)}
             />
           </View>
-          <Text style={styles.title}>File đính kèm</Text>
-          <FlatList
-            horizontal
-            data={albumImage}
-            keyExtractor={uuid}
-            renderItem={({item}) => renderImage(item)}
-          />
-          <TouchableOpacity
-            style={[styles.button, {marginTop: 10}]}
-            onPress={() => setModalCamera(true)}>
-            <Image style={styles.imageUpload} source={icons.ic_upload} />
-            <Text style={styles.textUpload}>Up ảnh</Text>
-          </TouchableOpacity>
+
           <CustomTextButton
             disabled={isReady() ? false : true}
             label={'Xác nhận'}
@@ -311,7 +269,7 @@ const CreateAMaintenanceRequest = props => {
               {backgroundColor: isReady() ? colors.mainColor : 'grey'},
             ]}
             textStyle={{color: 'white', fontSize: 16, fontWeight: 'bold'}}
-            onPress={() => createRequest()}
+            onPress={() => updateRequest()}
           />
         </ScrollView>
       </KeyboardAvoidingView>
@@ -426,4 +384,4 @@ const ButtonPicker = props => {
   );
 };
 
-export default CreateAMaintenanceRequest;
+export default EditMaintenance;

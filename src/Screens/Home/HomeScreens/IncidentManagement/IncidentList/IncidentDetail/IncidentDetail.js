@@ -20,7 +20,8 @@ import {useNavigation, useRoute} from '@react-navigation/native';
 import {useSelector} from 'react-redux';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
 import IncidentManagementAPI from '../../../../../../Api/Home/IncidentManagementAPI/IncidentManagementAPI';
-import {uuid} from '../../../../../../utils/uuid';
+import {uuid, isImage} from '../../../../../../utils/uuid';
+import {downloadFile} from '../../../../../../utils/DownloadFile';
 import CustomConfirm from '../../../../../../Components/CustomConfirm';
 const IncidentDetail = props => {
   const navigation = useNavigation();
@@ -46,13 +47,16 @@ const IncidentDetail = props => {
   const rejectIssue = async () => {
     await IncidentManagementAPI.RejectIssueAPI(token, result?.id)
       .then(res => {
-        if (res?.status == 200) {
-          alert('Từ chối thành công');
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Sự cố', 'Từ chối thành công');
           navigation.navigate('IncidentManagement');
+        } else if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Sự cố', 'Từ chối thất bại');
         }
       })
       .catch(error => {
         console.log(error);
+        Alert.alert('Sự cố', 'Từ chối thất bại');
       });
   };
   const receiveIssue = async () => {
@@ -63,8 +67,8 @@ const IncidentDetail = props => {
         if (res?.status == 200 && res?.data?.success == true) {
           Alert.alert('Sự cố', 'Tiếp nhận sự cố thành công');
           navigation.navigate('IncidentList');
-        } else {
-          Alert.alert('Sự cố', 'Tiếp nhận sự cố thất bại');
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Sự cố', 'Bạn không thể tiếp nhận sự cố này');
         }
       })
       .catch(error => {
@@ -80,26 +84,49 @@ const IncidentDetail = props => {
     let id = result?.id;
     await IncidentManagementAPI.AcceptIssueRequestAPI(token, id)
       .then(res => {
-        if (res?.status == 200) {
-          alert('Nghiệm thu thành công');
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Nghiệm thu', 'Nghiệm thu thành công');
           navigation.navigate('IncidentManagement');
         }
       })
       .catch(function (error) {
+        Alert.alert('Nghiệm thu', 'Nghiệm thu thất bại');
         console.log(error);
       });
   };
   const renderDocumentFiles = item => {
     return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ShowImageScreen', item)}
-        style={styles.renderDocumentFiles}>
-        <Image
-          source={{uri: item?.path}}
-          style={{width: 200, height: 200, marginRight: 5}}
-          resizeMode={'contain'}
-        />
-      </TouchableOpacity>
+      <View>
+        {isImage(`${item?.path}`) == true ? (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ShowImageScreen', item)}
+            style={styles.renderDocumentFiles}>
+            <Image
+              source={{uri: item?.path}}
+              style={{width: 200, height: 200, marginRight: 5}}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View
+            style={[
+              {width: 200, height: 200, marginRight: 5},
+              styles.renderDocumentFiles,
+            ]}>
+            <TouchableOpacity
+              onPress={() => downloadFile(item?.path)}
+              style={styles.styleCenter}>
+              <Text style={[styles.content, {color: colors.mainColor}]}>
+                Download file
+              </Text>
+              <Image
+                source={icons.ic_download}
+                style={{width: 50, height: 50, tintColor: colors.mainColor}}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     );
   };
   const [confirm, setConfirm] = useState(false);
@@ -118,16 +145,18 @@ const IncidentDetail = props => {
         Alert.alert('Sự cố', 'Xóa sự cố thất bại');
       });
   };
+  const [edit, setEdit] = useState(false);
+
   return (
     <View style={styles.container}>
       <CustomAppBar
         title={'Chi tiết công việc'}
         iconsLeft={icons.ic_back}
-        iconRight={
-          userInfor?.role == 'GENERAL_MANAGER' ? icons.ic_delete : null
-        }
+        iconRight={userInfor?.role != 'EMPLOYEE' ? icons.ic_delete : null}
+        iconFirtRight={userInfor?.role != 'EMPLOYEE' ? icons.ic_edit : null}
         onPressIconsLeft={() => navigation.navigate('IncidentList')}
         onPressIconsRight={() => setConfirm(true)}
+        onPressFirtIconsRight={() => setEdit(true)}
       />
       {confirm && (
         <View style={styles.viewModal}>
@@ -138,6 +167,21 @@ const IncidentDetail = props => {
             rightLabel={'Xóa'}
             leftPress={() => setConfirm(false)}
             rightPress={() => deleteIncident()}
+          />
+        </View>
+      )}
+      {edit && (
+        <View style={styles.viewModal}>
+          <CustomConfirm
+            title={'Sửa yêu cầu sự cố'}
+            content={'Bạn có muốn sửa yêu cầu sự cố ?'}
+            leftLabel={'Trở lại'}
+            rightLabel={'Sửa'}
+            leftPress={() => setEdit(false)}
+            rightPress={() => {
+              navigation.navigate('EditIncident', result);
+              setEdit(false);
+            }}
           />
         </View>
       )}
@@ -238,9 +282,9 @@ const IncidentDetail = props => {
               />
             )}
           </ScrollView>
-          {userInfor?.role == 'EMPLOYEE' &&
-            (result?.issue_status == 'CHƯA TIẾP NHẬN' ||
-              result?.issue_status == 'ĐANG THỰC HIỆN') && (
+          {(result?.issue_status == 'CHƯA TIẾP NHẬN' ||
+            result?.issue_status == 'ĐANG THỰC HIỆN') &&
+            userInfor?.role != 'EMPLOYEE' && (
               <ComponentTwoButton
                 accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
                 disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
@@ -250,9 +294,27 @@ const IncidentDetail = props => {
                 disableSecondRight={
                   result?.issue_status == 'ĐANG THỰC HIỆN' ? false : true
                 }
-                onPressLeft={() => navigation.goBack()}
+                onPressLeft={() => rejectIssue()}
                 onPressRight={() => receiveIssue()}
                 onPressSecondRight={() => reportRequest()}
+              />
+            )}
+          {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
+            userInfor?.role == 'EMPLOYEE' && (
+              <CustomTextButton
+                styleButton={styles.viewCustomTextButton}
+                label={'Tiếp nhận'}
+                textStyle={styles.textCustomTextButton}
+                onPress={() => receiveIssue()}
+              />
+            )}
+          {result?.issue_status == 'ĐANG THỰC HIỆN' &&
+            userInfor?.role == 'EMPLOYEE' && (
+              <CustomTextButton
+                styleButton={styles.viewCustomTextButton}
+                label={'Báo cáo'}
+                textStyle={styles.textCustomTextButton}
+                onPress={() => reportRequest()}
               />
             )}
           {result?.issue_status == 'CHƯA NGHIỆM THU' &&
@@ -271,15 +333,6 @@ const IncidentDetail = props => {
                   onPress={() => acceptance()}
                 />
               </View>
-            )}
-          {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
-            userInfor?.role != 'EMPLOYEE' && (
-              <CustomTextButton
-                styleButton={styles.viewCustomTextButton}
-                label={'Hủy yêu cầu'}
-                textStyle={styles.textCustomTextButton}
-                onPress={() => rejectIssue()}
-              />
             )}
         </View>
       )}
@@ -344,6 +397,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 9999,
   },
+  styleCenter: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default IncidentDetail;
@@ -401,10 +460,10 @@ const ComponentTwoButton = props => {
         onPress={onPressLeft}
         style={styles.buttonComponentTwoButton}>
         <Image
-          source={icons.ic_back}
+          source={icons.ic_cancel}
           style={[styles.imageComponentTwoButton, {tintColor: 'grey'}]}
         />
-        <Text>Quay lại</Text>
+        <Text>Từ chối</Text>
       </TouchableOpacity>
       {accept ? (
         <TouchableOpacity

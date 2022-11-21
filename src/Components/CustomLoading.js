@@ -24,7 +24,7 @@ const CustomLoading = props => {
           alignItems: 'center',
         }}>
         <Text style={{fontWeight: '900', fontSize: 24}}>Loading...</Text>
-        <ActivityIndicator size="large" color={colors.purple} />
+        <ActivityIndicator size="large" color={colors.mainColor} />
       </View>
     </View>
   );

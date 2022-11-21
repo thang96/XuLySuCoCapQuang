@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import {colors, icons} from '../../../../../../../Constants';
-import {uuid} from '../../../../../../../utils/uuid';
+import {uuid, isImage} from '../../../../../../../utils/uuid';
 import MaintenanceManagementAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import {useSelector} from 'react-redux';
 const ReportMaintenanceDetail = props => {
@@ -39,28 +39,80 @@ const ReportMaintenanceDetail = props => {
   };
   const renderResultDocumentFiles = (item, index) => {
     return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ShowImageScreen', item)}
-        style={{padding: 5, borderWidth: 0.5, borderColor: colors.mainColor}}>
-        <Image
-          resizeMode={'contain'}
-          source={{uri: item?.path}}
-          style={{width: 200, height: 200, marginRight: 5}}
-        />
-      </TouchableOpacity>
+      <View>
+        {isImage(`${item?.path}`) == true ? (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ShowImageScreen', item)}
+            style={{
+              padding: 5,
+              borderWidth: 0.5,
+              borderColor: colors.mainColor,
+            }}>
+            <Image
+              resizeMode={'contain'}
+              source={{uri: item?.path}}
+              style={{width: 200, height: 200, marginRight: 5}}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View
+            style={[
+              {width: 200, height: 200, marginRight: 5},
+              styles.renderDocumentFiles,
+            ]}>
+            <TouchableOpacity
+              onPress={() => downloadFile(item?.path)}
+              style={styles.styleCenter}>
+              <Text style={[styles.content, {color: colors.mainColor}]}>
+                Download file
+              </Text>
+              <Image
+                source={icons.ic_download}
+                style={{width: 50, height: 50, tintColor: colors.mainColor}}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     );
   };
   const renderDocumentFiles = (item, index) => {
     return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ShowImageScreen', item)}
-        style={{padding: 5, borderWidth: 0.5, borderColor: colors.mainColor}}>
-        <Image
-          resizeMode={'contain'}
-          source={{uri: item?.path}}
-          style={{width: 200, height: 200, marginRight: 5}}
-        />
-      </TouchableOpacity>
+      <View>
+        {isImage(`${item?.path}`) == true ? (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ShowImageScreen', item)}
+            style={{
+              padding: 5,
+              borderWidth: 0.5,
+              borderColor: colors.mainColor,
+            }}>
+            <Image
+              resizeMode={'contain'}
+              source={{uri: item?.path}}
+              style={{width: 200, height: 200, marginRight: 5}}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View
+            style={[
+              {width: 200, height: 200, marginRight: 5},
+              styles.renderDocumentFiles,
+            ]}>
+            <TouchableOpacity
+              onPress={() => downloadFile(item?.path)}
+              style={styles.styleCenter}>
+              <Text style={[styles.content, {color: colors.mainColor}]}>
+                Download file
+              </Text>
+              <Image
+                source={icons.ic_download}
+                style={{width: 50, height: 50, tintColor: colors.mainColor}}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     );
   };
   return (
@@ -84,7 +136,6 @@ const ReportMaintenanceDetail = props => {
         <View style={{backgroundColor: 'white', paddingHorizontal: 5}}>
           <Text style={styles.title}>Kết quả đo</Text>
           <FlatList
-            style={{height: 200}}
             horizontal
             data={result?.measure_cable_result_document_files}
             keyExtractor={uuid}
@@ -133,7 +184,6 @@ const ReportMaintenanceDetail = props => {
         <View style={{backgroundColor: 'white', paddingHorizontal: 5}}>
           <Text style={styles.title}>Hình ảnh báo cáo</Text>
           <FlatList
-            style={{height: 200}}
             horizontal
             data={result?.document_files}
             keyExtractor={uuid}
@@ -154,6 +204,18 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     paddingHorizontal: 5,
     justifyContent: 'space-between',
+  },
+  renderDocumentFiles: {
+    borderWidth: 0.5,
+    borderColor: colors.mainColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  styleCenter: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 const CustomViewRow = props => {

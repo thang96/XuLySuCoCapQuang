@@ -2,7 +2,6 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   MaintenanceManagement,
-  FiberOpticCableManagement,
   MaintenanceList,
   FiberOpticCableDetail,
   DetailUser,
@@ -11,12 +10,11 @@ import {
   AcceptMaintenanceRequests,
   DetailMaintenanceRequests,
   ReportMaintenance,
-  CreateNewCableRoute,
-  FibelOpticCableDetail,
   ReportMaintenanceDetail,
   MaintenanceCableRouteReport,
   GeneralMaintenanceReport,
   DetailedMaintenanceReport,
+  EditMaintenance,
 } from '../../../../Screens';
 const Stack = createStackNavigator();
 const StackMaintenanceManagement = props => {
@@ -29,13 +27,7 @@ const StackMaintenanceManagement = props => {
           headerShown: false,
         }}
       />
-      <Stack.Screen
-        component={FiberOpticCableManagement}
-        name={'FiberOpticCableManagement'}
-        options={{
-          headerShown: false,
-        }}
-      />
+
       <Stack.Screen
         component={MaintenanceList}
         name={'MaintenanceList'}
@@ -72,6 +64,13 @@ const StackMaintenanceManagement = props => {
         }}
       />
       <Stack.Screen
+        component={EditMaintenance}
+        name={'EditMaintenance'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         component={AcceptMaintenanceRequests}
         name={'AcceptMaintenanceRequests'}
         options={{
@@ -92,20 +91,7 @@ const StackMaintenanceManagement = props => {
           headerShown: false,
         }}
       />
-      <Stack.Screen
-        component={CreateNewCableRoute}
-        name={'CreateNewCableRoute'}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        component={FibelOpticCableDetail}
-        name={'FibelOpticCableDetail'}
-        options={{
-          headerShown: false,
-        }}
-      />
+
       <Stack.Screen
         component={ReportMaintenanceDetail}
         name={'ReportMaintenanceDetail'}

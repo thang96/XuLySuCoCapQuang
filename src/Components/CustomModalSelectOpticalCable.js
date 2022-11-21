@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,14 @@ import {
   Modal,
   FlatList,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
+import {icons} from '../Constants';
+import CustomInput from './CustomInput';
 const CustomModalSelectOpticalCable = props => {
   const {modalVisible, onRequestClose, data, onPress} = props;
+  const [search, setSearch] = useState('');
+  const [refreshing, setRefreshing] = useState(false);
   const renderItem = (item, index) => {
     return (
       <TouchableOpacity style={styles.button} onPress={() => onPress(item)}>
@@ -17,6 +22,18 @@ const CustomModalSelectOpticalCable = props => {
       </TouchableOpacity>
     );
   };
+  const filteredData = () =>
+    data.filter(eachData =>
+      eachData?.name.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
+    );
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    try {
+      setRefreshing(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   return (
     <View style={styles.container}>
       <Modal
@@ -26,11 +43,31 @@ const CustomModalSelectOpticalCable = props => {
         onRequestClose={onRequestClose}>
         <View style={styles.container}>
           <View style={styles.eachContainer}>
-            <FlatList
-              data={data}
-              key={key => key?.id}
-              renderItem={({item, index}) => renderItem(item, index)}
+            <CustomInput
+              styleInput={{height: 50, marginVertical: 10, width: 300}}
+              placeholder={'Tìm kiếm tuyến cáp'}
+              source={icons.ic_seach}
+              value={search}
+              onChangeText={test => setSearch(test)}
             />
+
+            {filteredData().length > 0 ? (
+              <FlatList
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                data={filteredData()}
+                keyExtractor={key => key.id}
+                renderItem={({item, index}) => renderItem(item, index)}
+              />
+            ) : (
+              <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                <Text style={styles.textWarning}>Không tìm thấy tuyến cáp</Text>
+              </View>
+            )}
           </View>
         </View>
       </Modal>
@@ -68,5 +105,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderColor: 'rgba(119,119,119,0.5)',
   },
+  textWarning: {fontSize: 16, fontWeight: '500', color: 'grey'},
 });
 export default CustomModalSelectOpticalCable;

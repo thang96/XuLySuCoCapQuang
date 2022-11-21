@@ -14,6 +14,7 @@ import AccountAPI from '../../../Api/Account/AccountAPI';
 import CustomAppBar from '../../../Components/CustomAppBar';
 import {icons, colors, images} from '../../../Constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {DeleteNotificationAPI} from '../../../Api/NotificationAPI/NotificationAPI';
 const AccountScreen = props => {
   const isFocused = useIsFocused();
   const navigation = useNavigation();
@@ -32,12 +33,22 @@ const AccountScreen = props => {
       });
   };
   const logOut = async () => {
-    await AsyncStorage.setItem('token', '1')
-      .then(() => {
-        Alert.alert('Đăng xuất', 'Đăng xuất thành công');
-        navigation.navigate('LoginNavigation');
+    let data = {
+      token: fcmToken,
+      device_info: deviceInfo,
+    };
+    await DeleteNotificationAPI(token, data)
+      .then(async res => {
+        if (res?.status == 200) {
+          await AsyncStorage.setItem('token', '1').then(async () => {
+            Alert.alert('Đăng xuất', 'Đăng xuất thành công');
+            navigation.navigate('LoginNavigation');
+          });
+        }
       })
-      .catch(error => console.log(error));
+      .catch(function (error) {
+        console.log(error);
+      });
   };
   return (
     <View style={styles.container}>
@@ -67,27 +78,6 @@ const AccountScreen = props => {
           </View>
           <Image source={icons.next} style={styles.iconNext} />
         </TouchableOpacity>
-        {/* <TouchableOpacity style={styles.buttonRow} onPress={() => {}}>
-          <View style={styles.viewRow}>
-            <Image source={icons.ic_gear} style={styles.icon} />
-            <Text style={styles.title}>Cài đặt ứng dụng</Text>
-          </View>
-          <Image source={icons.next} style={styles.iconNext} />
-        </TouchableOpacity> */}
-        {/* <TouchableOpacity style={styles.buttonRow} onPress={() => {}}>
-          <View style={styles.viewRow}>
-            <Image source={icons.ic_star} style={styles.icon} />
-            <Text style={styles.title}>Việc đã lưu</Text>
-          </View>
-          <Image source={icons.next} style={styles.iconNext} />
-        </TouchableOpacity> */}
-        {/* <TouchableOpacity style={styles.buttonRow} onPress={() => {}}>
-          <View style={styles.viewRow}>
-            <Image source={icons.ic_chats} style={styles.icon} />
-            <Text style={styles.title}>Hướng dẫn</Text>
-          </View>
-          <Image source={icons.next} style={styles.iconNext} />
-        </TouchableOpacity> */}
         <TouchableOpacity
           style={styles.buttonRow}
           onPress={() => navigation.navigate('ChangePassword')}>

@@ -13,8 +13,15 @@ import {
 import {colors, icons} from '../Constants';
 import CustomButtonIcon from './CustomButtonIcon';
 const CustomAppBar = props => {
-  const {title, iconsLeft, iconRight, onPressIconsLeft, onPressIconsRight} =
-    props;
+  const {
+    title,
+    iconsLeft,
+    iconRight,
+    onPressIconsLeft,
+    onPressIconsRight,
+    iconFirtRight,
+    onPressFirtIconsRight,
+  } = props;
   return (
     <View style={styles.viewAppBar}>
       {iconsLeft ? (
@@ -26,10 +33,18 @@ const CustomAppBar = props => {
         />
       ) : null}
       <Text style={styles.title}>{title}</Text>
+      {iconFirtRight ? (
+        <CustomButtonIcon
+          imageStyle={styles.icon}
+          styleButton={[styles.buttonRight, {right: 45}]}
+          source={iconFirtRight}
+          onPress={onPressFirtIconsRight}
+        />
+      ) : null}
       {iconRight ? (
         <CustomButtonIcon
           imageStyle={styles.icon}
-          styleButton={styles.buttonRight}
+          styleButton={[styles.buttonRight, {right: 0}]}
           source={iconRight}
           onPress={onPressIconsRight}
         />
@@ -64,7 +79,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     position: 'absolute',
-    right: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },

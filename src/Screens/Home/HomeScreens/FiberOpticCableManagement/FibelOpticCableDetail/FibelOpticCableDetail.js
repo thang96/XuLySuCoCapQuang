@@ -14,15 +14,15 @@ import {
   TextInput,
   ActivityIndicator,
 } from 'react-native';
-import {colors, icons, images} from '../../../../../../Constants';
-import CustomAppBar from '../../../../../../Components/CustomAppBar';
+import {colors, icons, images} from '../../../../../Constants';
+import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import CustomTextButton from '../../../../../../Components/CustomTextButton';
-import CustomTextInputChangeValue from '../../../../../../Components/CustomTextInputChangeValue';
-import CusttomTwoButtonBottom from '../../../../../../Components/CusttomTwoButtonBottom';
+import CustomTextButton from '../../../../../Components/CustomTextButton';
+import CustomTextInputChangeValue from '../../../../../Components/CustomTextInputChangeValue';
+import CusttomTwoButtonBottom from '../../../../../Components/CusttomTwoButtonBottom';
 import {useSelector} from 'react-redux';
-import OpticalCablesAPI from '../../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
-import CustomConfirm from '../../../../../../Components/CustomConfirm';
+import OpticalCablesAPI from '../../../../../Api/Home/OpticalCablesAPI/OpticalCablesAPI';
+import CustomConfirm from '../../../../../Components/CustomConfirm';
 const FibelOpticCableDetail = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -170,9 +170,7 @@ const FibelOpticCableDetail = props => {
       <CustomAppBar
         title={'Chi tiết tuyến cáp'}
         iconsLeft={icons.ic_back}
-        iconRight={
-          userInfor?.role == 'GENERAL_MANAGER' ? icons.ic_delete : null
-        }
+        iconRight={userInfor?.role != 'EMPLOYEE' ? icons.ic_delete : null}
         onPressIconsLeft={() => navigation.goBack()}
         onPressIconsRight={() => setConfirm(true)}
       />

@@ -17,7 +17,8 @@ import {
 import {colors, icons, images} from '../../../../../../Constants';
 import CustomAppBar from '../../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import {uuid} from '../../../../../../utils/uuid';
+import {uuid, isImage} from '../../../../../../utils/uuid';
+import {downloadFile} from '../../../../../../utils/DownloadFile';
 import {useSelector} from 'react-redux';
 import MaintenanceManagementAPI from '../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
@@ -46,27 +47,28 @@ const FiberOpticCableDetail = props => {
     await MaintenanceManagementAPI.RejectMaintenanceIssueAPI(token, id)
       .then(res => {
         if (res?.status == 200) {
-          alert('Từ chối thành công');
+          Alert.alert('Bảo trì', 'Từ chối thành công');
           navigation.goBack();
         }
       })
       .catch(error => {
         console.log(error);
-        alert('Từ chối thất bại');
+        Alert.alert('Bảo trì', 'Từ chối thất bại');
       });
   };
   const receiveMaintenanceIssue = async () => {
     let id = result?.id;
     await MaintenanceManagementAPI.ReceiveMaintenanceIssueAPI(token, id)
       .then(res => {
+        console.log(res);
         if (res?.status == 200) {
-          alert('Tiếp nhận thành công');
-          navigation.navigate('ReportMaintenance', id);
+          Alert.alert('Bảo trì', 'Tiếp nhận thành công');
+          navigation.navigate('MaintenanceManagement', id);
         }
       })
       .catch(error => {
         console.log(error);
-        alert('Tiếp nhận thất bại');
+        Alert.alert('Bảo trì', 'Tiếp nhận thất bại');
       });
   };
   const reportRequest = () => {
@@ -88,15 +90,37 @@ const FiberOpticCableDetail = props => {
   };
   const renderDocumentFiles = item => {
     return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ShowImageScreen', item)}
-        style={{borderWidth: 1}}>
-        <Image
-          source={{uri: item?.path}}
-          style={{width: 200, height: 200, marginRight: 5}}
-          resizeMode={'contain'}
-        />
-      </TouchableOpacity>
+      <View>
+        {isImage(`${item?.path}`) == true ? (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ShowImageScreen', item)}
+            style={{borderWidth: 1}}>
+            <Image
+              source={{uri: item?.path}}
+              style={{width: 200, height: 200, marginRight: 5}}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View
+            style={[
+              {width: 200, height: 200, marginRight: 5},
+              styles.renderDocumentFiles,
+            ]}>
+            <TouchableOpacity
+              onPress={() => downloadFile(item?.path)}
+              style={styles.styleCenter}>
+              <Text style={[styles.content, {color: colors.mainColor}]}>
+                Download file
+              </Text>
+              <Image
+                source={icons.ic_download}
+                style={{width: 50, height: 50, tintColor: colors.mainColor}}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
     );
   };
   const [confirm, setConfirm] = useState(false);
@@ -105,39 +129,52 @@ const FiberOpticCableDetail = props => {
     await MaintenanceManagementAPI.DeleteMaintenanceIssueByIdAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Bảo trì-bảo dưỡng', 'Xóa sự bảo trì-bảo dưỡng công');
+          Alert.alert('Yêu cầu bảo trì', 'Xóa Yêu cầu bảo trì thành công');
           navigation.goBack();
-          setConfirm(false);
-        } else {
-          Alert.alert('Bảo trì-bảo dưỡng', 'Xóa sự bảo trì-bảo dưỡng công');
           setConfirm(false);
         }
       })
       .catch(function (error) {
         console.log(error);
-        Alert.alert('Bảo trì-bảo dưỡng', 'Xóa bảo trì-bảo dưỡng thất bại');
+        Alert.alert('Yêu cầu bảo trì', 'Xóa Yêu cầu bảo trì thất bại');
       });
   };
+  const [edit, setEdit] = useState(false);
   return (
     <View style={styles.container}>
       <CustomAppBar
-        title={'Chi tiết công việc'}
+        title={'Chi tiết bảo trì'}
         iconsLeft={icons.ic_back}
-        iconRight={
-          userInfor?.role == 'GENERAL_MANAGER' ? icons.ic_delete : null
-        }
-        onPressIconsLeft={() => navigation.navigate('MaintenanceList')}
+        iconRight={userInfor?.role != 'EMPLOYEE' ? icons.ic_delete : null}
+        iconFirtRight={userInfor?.role != 'EMPLOYEE' ? icons.ic_edit : null}
+        onPressIconsLeft={() => navigation.navigate('MaintenanceList', result)}
         onPressIconsRight={() => setConfirm(true)}
+        onPressFirtIconsRight={() => setEdit(true)}
       />
       {confirm && (
         <View style={styles.viewModal}>
           <CustomConfirm
-            title={'Xóa bảo trì-bảo dưỡng'}
-            content={'Bạn có muốn xóa bảo trì-bảo dưỡng ?'}
+            title={'Yêu cầu bảo trì'}
+            content={'Bạn có muốn xóa yêu cầu bảo trì ?'}
             leftLabel={'Trở lại'}
             rightLabel={'Xóa'}
             leftPress={() => setConfirm(false)}
             rightPress={() => deleteMaintenance()}
+          />
+        </View>
+      )}
+      {edit && (
+        <View style={styles.viewModal}>
+          <CustomConfirm
+            title={'Sửa yêu cầu bảo trì'}
+            content={'Bạn có muốn sửa yêu cầu bảo trì ?'}
+            leftLabel={'Trở lại'}
+            rightLabel={'Sửa'}
+            leftPress={() => setEdit(false)}
+            rightPress={() => {
+              navigation.navigate('EditMaintenance', result);
+              setEdit(false);
+            }}
           />
         </View>
       )}
@@ -177,13 +214,22 @@ const FiberOpticCableDetail = props => {
           content={result?.optical_cable}
         />
         <ComponentViewRow
-          title={'Mô tả sự cố : '}
+          title={'Mô tả bảo trì : '}
           content={result?.description}
         />
         <ComponentViewRow
           title={'Lặp lại : '}
-          content={result?.repeat_by == 'MONTHLY' ? 'Hàng tháng' : ''}
+          content={
+            result?.repeat_by == 'MONTHLY'
+              ? 'Hằng tháng'
+              : result?.repeat_by == 'QUARTERLY'
+              ? 'Hằng quý'
+              : result?.repeat_by == 'YEARLY'
+              ? 'Hằng năm'
+              : null
+          }
         />
+
         <ComponentViewRow
           title={'Tình trạng : '}
           styleContent={{
@@ -233,8 +279,9 @@ const FiberOpticCableDetail = props => {
           />
         )}
       </ScrollView>
-      {userInfor?.role == 'EMPLOYEE' &&
-        result?.issue_status != 'CHƯA NGHIỆM THU' && (
+      {(result?.issue_status == 'CHƯA TIẾP NHẬN' ||
+        result?.issue_status == 'ĐANG THỰC HIỆN') &&
+        userInfor?.role != 'EMPLOYEE' && (
           <ComponentTwoButton
             accept={result?.issue_status == 'ĐANG THỰC HIỆN'}
             disabledLeft={result?.issue_status == 'TỪ CHỐI' ? true : false}
@@ -249,14 +296,32 @@ const FiberOpticCableDetail = props => {
             onPressSecondRight={() => reportRequest()}
           />
         )}
+      {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
+        userInfor?.role == 'EMPLOYEE' && (
+          <CustomTextButton
+            styleButton={styles.viewCustomTextButton}
+            label={'Tiếp nhận'}
+            textStyle={styles.textCustomTextButton}
+            onPress={() => receiveMaintenanceIssue()}
+          />
+        )}
+      {result?.issue_status == 'ĐANG THỰC HIỆN' &&
+        userInfor?.role == 'EMPLOYEE' && (
+          <CustomTextButton
+            styleButton={styles.viewCustomTextButton}
+            label={'Báo cáo'}
+            textStyle={styles.textCustomTextButton}
+            onPress={() => reportRequest()}
+          />
+        )}
       {result?.issue_status == 'CHƯA NGHIỆM THU' &&
         userInfor?.role != 'EMPLOYEE' && (
-          <View style={styles.viewRow}>
+          <View style={[styles.viewRow, {marginTop: 20}]}>
             <CustomTextButton
               styleButton={styles.viewCustomTextButton}
               label={'Từ chối'}
               textStyle={styles.textCustomTextButton}
-              onPress={() => rejectMaintenanceIssue()}
+              onPress={() => rejectIssue()}
             />
             <CustomTextButton
               styleButton={styles.viewCustomTextButton}
@@ -265,16 +330,6 @@ const FiberOpticCableDetail = props => {
               onPress={() => acceptance()}
             />
           </View>
-        )}
-
-      {result?.issue_status == 'CHƯA TIẾP NHẬN' &&
-        userInfor?.role != 'EMPLOYEE' && (
-          <CustomTextButton
-            styleButton={styles.viewCustomTextButton}
-            label={'Hủy yêu cầu'}
-            textStyle={styles.textCustomTextButton}
-            onPress={() => rejectMaintenanceIssue()}
-          />
         )}
     </View>
   );
@@ -330,6 +385,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(119,119,119,0.5)',
     position: 'absolute',
     zIndex: 9999,
+  },
+  renderDocumentFiles: {
+    borderWidth: 0.5,
+    borderColor: colors.mainColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  styleCenter: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
@@ -388,10 +455,10 @@ const ComponentTwoButton = props => {
         onPress={onPressLeft}
         style={styles.buttonComponentTwoButton}>
         <Image
-          source={icons.ic_back}
+          source={icons.ic_cancel}
           style={[styles.imageComponentTwoButton, {tintColor: 'grey'}]}
         />
-        <Text style={{color: 'grey'}}>Quay lại</Text>
+        <Text style={{color: 'grey'}}>Từ chối</Text>
       </TouchableOpacity>
       {accept ? (
         <TouchableOpacity

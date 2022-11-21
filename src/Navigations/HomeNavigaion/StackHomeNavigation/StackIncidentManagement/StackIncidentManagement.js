@@ -2,14 +2,12 @@ import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
   IncidentManagement,
-  InformationListOfCableRoutes,
-  CableRouteDetails,
-  CreateCableRoute,
   CreateNewRequest,
   AcceptRequests,
   DetailRequest,
   IncidentList,
   IncidentDetail,
+  EditIncident,
   DetailUserIncident,
   DetailOpticCableIncident,
   ReportIncident,
@@ -25,27 +23,6 @@ const StackIncidentManagement = props => {
       <Stack.Screen
         component={IncidentManagement}
         name={'IncidentManagement'}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        component={InformationListOfCableRoutes}
-        name={'InformationListOfCableRoutes'}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        component={CableRouteDetails}
-        name={'CableRouteDetails'}
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        component={CreateCableRoute}
-        name={'CreateCableRoute'}
         options={{
           headerShown: false,
         }}
@@ -82,6 +59,13 @@ const StackIncidentManagement = props => {
       <Stack.Screen
         component={IncidentDetail}
         name={'IncidentDetail'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={EditIncident}
+        name={'EditIncident'}
         options={{
           headerShown: false,
         }}

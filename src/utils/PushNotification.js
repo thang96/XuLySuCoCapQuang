@@ -33,7 +33,7 @@ export const NotificationServices = () => {
   //App on foreground state
   messaging().onMessage(async remoteMessage => {
     Alert.alert(
-      'Bạn có thông báo mới',
+      JSON.stringify(remoteMessage?.notification?.title),
       JSON.stringify(remoteMessage?.notification?.body),
     );
   });
@@ -44,7 +44,7 @@ export const NotificationServices = () => {
       if (remoteMessage) {
         console.log(
           'Notification caused app to open from quit state:',
-          remoteMessage.notification,
+          remoteMessage.notification.body,
         );
       }
     });
