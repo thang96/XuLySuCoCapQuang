@@ -59,7 +59,7 @@ const HomeNavigation = props => {
             renderTabBar(focused, icons.ic_home, 'trang chủ'),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         component={StackChatNavigation}
         name={'StackChatNavigation'}
         options={{
@@ -69,7 +69,7 @@ const HomeNavigation = props => {
           tabBarIcon: ({color, focused, size}) =>
             renderTabBar(focused, icons.ic_chats, 'Trò chuyện'),
         }}
-      />
+      /> */}
       <Tab.Screen
         component={StackWordListNavigation}
         name={'StackWordListNavigation'}

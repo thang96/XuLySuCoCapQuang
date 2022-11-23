@@ -68,7 +68,7 @@ import WorkScreen from './Home/HomeScreens/IncidentManagement/RequirementAccepte
 import ChatScreen from './Home/ChatScreens/ChatScreen';
 import DetailChat from './Home/ChatScreens/DetailChat';
 //Notification screen
-import Notification from './Home/NotificationScreens/Notification';
+import NotificationScreens from './Home/NotificationScreens/NotificationScreens';
 import SettingNotification from './Home/NotificationScreens/SettingNotification';
 //Account screen
 import AccountScreen from './Home/AccountScreens/AccountScreen';
@@ -149,7 +149,7 @@ export {
   ChatScreen,
   DetailChat,
   //Notification screen
-  Notification,
+  NotificationScreens,
   SettingNotification,
   //Account screen
   AccountScreen,

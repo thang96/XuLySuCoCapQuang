@@ -1,17 +1,13 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {
-  Notification,
-  SettingNotification,
-  ContinueScreen,
-} from '../../../Screens';
+import {NotificationScreens} from '../../../Screens';
 const Stack = createStackNavigator();
 const StackNotificationNavigation = props => {
   return (
-    <Stack.Navigator initialRouteName="ContinueScreen">
+    <Stack.Navigator initialRouteName="NotificationScreens">
       <Stack.Screen
-        component={ContinueScreen}
-        name={'ContinueScreen'}
+        component={NotificationScreens}
+        name={'NotificationScreens'}
         options={{
           headerShown: false,
         }}

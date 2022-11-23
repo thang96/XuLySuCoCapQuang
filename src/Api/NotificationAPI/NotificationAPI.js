@@ -1,5 +1,26 @@
 import axios from 'axios';
-import { BASEURL } from '../BASEURL';
+import {BASEURL} from '../BASEURL';
+export const ReadNotificationAPI = token => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${BASEURL}/api/v1/notification/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          page_size: 1000,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
 export const RegisterNotificationAPI = (token, data) => {
   return new Promise((resolve, reject) => {
     axios

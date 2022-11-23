@@ -73,6 +73,7 @@ const HomeScreen = () => {
   const sendNotification = async () => {
     await AsyncStorage.getItem('fcmToken')
       .then(async fcmToken => {
+        // console.log(fcmToken);
         let data = {
           token: fcmToken,
           device_info: deviceId,
