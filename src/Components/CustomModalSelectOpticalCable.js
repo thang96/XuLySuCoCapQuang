@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   eachContainer: {
-    height: 300,
+    height: 400,
     backgroundColor: 'white',
     position: 'absolute',
     bottom: 0,
