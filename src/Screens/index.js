@@ -51,13 +51,26 @@ import ReportMaintenanceDetail from './Home/HomeScreens/MaintenanceManagement/Ma
 import MaintenanceCableRouteReport from './Home/HomeScreens/MaintenanceManagement/GeneralMaintenanceReport/MaintenanceCableRouteReport';
 import GeneralMaintenanceReport from './Home/HomeScreens/MaintenanceManagement/GeneralMaintenanceReport/GeneralMaintenanceReport';
 import DetailedMaintenanceReport from './Home/HomeScreens/MaintenanceManagement/GeneralMaintenanceReport/DetailedMaintenanceReport';
-//
+//--WarehouseManagement
 import WarehouseManagement from './Home/HomeScreens/WarehouseManagement/WarehouseManagement';
-import ListOfSupplies from './Home/HomeScreens/WarehouseManagement/ProjectManagement/ListOfSupplies';
-import ProjectManagement from './Home/HomeScreens/WarehouseManagement/ProjectManagement/ProjectManagement';
-import SuppliesInformation from './Home/HomeScreens/WarehouseManagement/ProjectManagement/SuppliesInformation';
-import ImportAndExportManagementList from './Home/HomeScreens/WarehouseManagement/InventoryManagement/ImportAndExportManagementList';
-import InventoryManagement from './Home/HomeScreens/WarehouseManagement/InventoryManagement/InventoryManagement';
+import StableWarehouse from './Home/HomeScreens/WarehouseManagement/StableWarehouse/StableWarehouse';
+import DetailStableWarehouse from './Home/HomeScreens/WarehouseManagement/StableWarehouse/DetailStableWarehouse/DetailStableWarehouse';
+import ListSupplies from './Home/HomeScreens/WarehouseManagement/ListSupplies/ListSupplies';
+import DetailSupplies from './Home/HomeScreens/WarehouseManagement/ListSupplies/DetailSupplies/DetailSupplies';
+import CreateSupplies from './Home/HomeScreens/WarehouseManagement/ListSupplies/CreateSupplies/CreateSupplies';
+import ListInventoryReceivingVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryReceivingVoucher/ListInventoryReceivingVoucher';
+import CreateAInventoryReceivingVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryReceivingVoucher/CreateAInventoryReceivingVoucher/CreateAInventoryReceivingVoucher';
+import DetailInventoryReceivingVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryReceivingVoucher/DetailInventoryReceivingVoucher/DetailInventoryReceivingVoucher';
+import UpdateInventoryReceivingVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryReceivingVoucher/DetailInventoryReceivingVoucher/UpdateInventoryReceivingVoucher';
+import ListInventoryDeliveryVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryDeliveryVoucher/ListInventoryDeliveryVoucher.js';
+import CreateAInventoryDeliveryVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryDeliveryVoucher/CreateAInventoryDeliveryVoucher/CreateAInventoryDeliveryVoucher';
+import DetalInventoryDeliveryVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryDeliveryVoucher/DetalInventoryDeliveryVoucher/DetalInventoryDeliveryVoucher';
+import UpdateInventoryDeliveryVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryDeliveryVoucher/DetalInventoryDeliveryVoucher/UpdateInventoryDeliveryVoucher';
+import ListInventoryControlVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryControlVoucher/ListInventoryControlVoucher';
+import CreateInventoryControlVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryControlVoucher/CreateInventoryControlVoucher/CreateInventoryControlVoucher';
+import DetailInventoryControlVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryControlVoucher/DetailInventoryControlVoucher/DetailInventoryControlVoucher';
+import UpdateInventoryControlVoucher from './Home/HomeScreens/WarehouseManagement/ListInventoryControlVoucher/DetailInventoryControlVoucher/UpdateInventoryControlVoucher';
+//
 import DocumentManagement from './Home/HomeScreens/DocumentManagement/DocumentManagement';
 import News from './Home/HomeScreens/News/News';
 import ListNews from './Home/HomeScreens/News/ListNews';
@@ -132,13 +145,26 @@ export {
   GeneralMaintenanceReport,
   MaintenanceCableRouteReport,
   DetailedMaintenanceReport,
-  //-
+  //-WarehouseManagement
   WarehouseManagement,
-  ListOfSupplies,
-  ProjectManagement,
-  SuppliesInformation,
-  ImportAndExportManagementList,
-  InventoryManagement,
+  StableWarehouse,
+  DetailStableWarehouse,
+  ListSupplies,
+  DetailSupplies,
+  CreateSupplies,
+  ListInventoryReceivingVoucher,
+  CreateAInventoryReceivingVoucher,
+  DetailInventoryReceivingVoucher,
+  UpdateInventoryReceivingVoucher,
+  ListInventoryDeliveryVoucher,
+  CreateAInventoryDeliveryVoucher,
+  DetalInventoryDeliveryVoucher,
+  UpdateInventoryDeliveryVoucher,
+  ListInventoryControlVoucher,
+  CreateInventoryControlVoucher,
+  DetailInventoryControlVoucher,
+  UpdateInventoryControlVoucher,
+  //
   DocumentManagement,
   News,
   ListNews,

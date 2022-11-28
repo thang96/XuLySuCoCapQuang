@@ -43,6 +43,11 @@ export default {
   ic_delete: require('../Assets/Icons/ic_delete.png'),
   ic_cancel: require('../Assets/Icons/ic_cancel.png'),
   ic_download: require('../Assets/Icons/ic_download.png'),
+  ic_listWarehouse: require('../Assets/Icons/ic_listWarehouse.png'),
+  ic_listSupplies: require('../Assets/Icons/ic_listSupplies.png'),
+  ic_receivingVoucher: require('../Assets/Icons/ic_receivingVoucher.png'),
+  ic_deliveryVoucher: require('../Assets/Icons/ic_deliveryVoucher.png'),
+  ic_controlVoucher: require('../Assets/Icons/ic_controlVoucher.png'),
 
   vectorOk: require('../Assets/Icons/vectorOk.png'),
   next: require('../Assets/Icons/next.png'),

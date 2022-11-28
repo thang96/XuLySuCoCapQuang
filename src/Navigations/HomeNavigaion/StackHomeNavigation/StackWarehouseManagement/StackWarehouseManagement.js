@@ -1,13 +1,24 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
-  InventoryManagement,
   WarehouseManagement,
-  ImportAndExportManagementList,
-  ProjectManagement,
-  ProjectList,
-  ListOfSupplies,
-  SuppliesInformation,
+  StableWarehouse,
+  DetailStableWarehouse,
+  ListSupplies,
+  DetailSupplies,
+  CreateSupplies,
+  ListInventoryReceivingVoucher,
+  CreateAInventoryReceivingVoucher,
+  DetailInventoryReceivingVoucher,
+  UpdateInventoryReceivingVoucher,
+  ListInventoryDeliveryVoucher,
+  CreateAInventoryDeliveryVoucher,
+  DetalInventoryDeliveryVoucher,
+  UpdateInventoryDeliveryVoucher,
+  ListInventoryControlVoucher,
+  CreateInventoryControlVoucher,
+  DetailInventoryControlVoucher,
+  UpdateInventoryControlVoucher,
 } from '../../../../Screens';
 const Stack = createStackNavigator();
 const StackWarehouseManagement = props => {
@@ -21,43 +32,120 @@ const StackWarehouseManagement = props => {
         }}
       />
       <Stack.Screen
-        component={InventoryManagement}
-        name={'InventoryManagement'}
+        component={StableWarehouse}
+        name={'StableWarehouse'}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
-        component={ImportAndExportManagementList}
-        name={'ImportAndExportManagementList'}
+        component={DetailStableWarehouse}
+        name={'DetailStableWarehouse'}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
-        component={ProjectManagement}
-        name={'ProjectManagement'}
+        component={ListSupplies}
+        name={'ListSupplies'}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
-        component={ProjectList}
-        name={'ProjectList'}
+        component={DetailSupplies}
+        name={'DetailSupplies'}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
-        component={ListOfSupplies}
-        name={'ListOfSupplies'}
+        component={CreateSupplies}
+        name={'CreateSupplies'}
         options={{
           headerShown: false,
         }}
       />
       <Stack.Screen
-        component={SuppliesInformation}
-        name={'SuppliesInformation'}
+        component={ListInventoryReceivingVoucher}
+        name={'ListInventoryReceivingVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={CreateAInventoryReceivingVoucher}
+        name={'CreateAInventoryReceivingVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={DetailInventoryReceivingVoucher}
+        name={'DetailInventoryReceivingVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={UpdateInventoryReceivingVoucher}
+        name={'UpdateInventoryReceivingVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={ListInventoryDeliveryVoucher}
+        name={'ListInventoryDeliveryVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={CreateAInventoryDeliveryVoucher}
+        name={'CreateAInventoryDeliveryVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={DetalInventoryDeliveryVoucher}
+        name={'DetalInventoryDeliveryVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={UpdateInventoryDeliveryVoucher}
+        name={'UpdateInventoryDeliveryVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={ListInventoryControlVoucher}
+        name={'ListInventoryControlVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={CreateInventoryControlVoucher}
+        name={'CreateInventoryControlVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={DetailInventoryControlVoucher}
+        name={'DetailInventoryControlVoucher'}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        component={UpdateInventoryControlVoucher}
+        name={'UpdateInventoryControlVoucher'}
         options={{
           headerShown: false,
         }}

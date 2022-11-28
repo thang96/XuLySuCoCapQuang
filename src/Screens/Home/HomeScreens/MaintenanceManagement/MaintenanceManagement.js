@@ -97,16 +97,6 @@ const MaintenanceManagement = () => {
                 onPress={() => navigation.navigate('MaintenanceList')}
               />
             </View>
-            <View style={styles.viewRow}>
-              <CustomButtonFunction
-                styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
-                icon={icons.ic_gear}
-                title={'Quản trị'}
-                titleColor={colors.mainColor}
-                onPress={() => navigation.navigate('ContinueScreen')}
-              />
-            </View>
           </ScrollView>
         </View>
       </KeyboardAvoidingView>

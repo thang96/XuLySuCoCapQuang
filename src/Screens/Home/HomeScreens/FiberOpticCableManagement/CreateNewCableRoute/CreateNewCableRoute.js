@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
     marginVertical: 15,
 
     alignSelf: 'center',
-    borderRadius: 10,
+    borderRadius: 15,
   },
   styleTextCustomTextButton: {fontSize: 18, fontWeight: 'bold', color: 'white'},
 });

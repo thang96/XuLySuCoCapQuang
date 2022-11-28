@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASEURL } from '../../BASEURL';
+import {BASEURL} from '../../BASEURL';
 
 const GetUsersAPI = token => {
   return new Promise((resolve, reject) => {

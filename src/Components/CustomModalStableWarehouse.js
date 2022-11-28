@@ -7,36 +7,25 @@ import {
   Modal,
   FlatList,
   TouchableOpacity,
-  Image,
   RefreshControl,
 } from 'react-native';
 import {icons} from '../Constants';
 import CustomInput from './CustomInput';
-const CustomModalSelectUserAssigned = props => {
+const CustomModalStableWarehouse = props => {
   const {modalVisible, onRequestClose, data, onPress} = props;
   const [search, setSearch] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const renderItem = (item, index) => {
     return (
       <TouchableOpacity style={styles.button} onPress={() => onPress(item)}>
-        <Image
-          style={styles.image}
-          source={
-            item?.avatar_img
-              ? {
-                  uri: `${item?.avatar_img}`,
-                }
-              : icons.ic_user
-          }
-        />
-        <Text style={styles.title}>{item?.full_name}</Text>
+        <Text style={styles.title}>{item?.name}</Text>
       </TouchableOpacity>
     );
   };
   const filteredData = () =>
     data.filter(eachData =>
-      eachData?.full_name
-        ? eachData?.full_name
+      eachData?.name
+        ? eachData?.name
             .toLocaleLowerCase()
             .includes(search.toLocaleLowerCase())
         : null,
@@ -60,7 +49,7 @@ const CustomModalSelectUserAssigned = props => {
           <View style={styles.eachContainer}>
             <CustomInput
               styleInput={{height: 50, marginVertical: 10, width: 300}}
-              placeholder={'Tìm kiếm theo tên'}
+              placeholder={'Tìm kiếm kho'}
               source={icons.ic_seach}
               value={search}
               onChangeText={test => setSearch(test)}
@@ -116,11 +105,10 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(119,119,119,0.5)',
     alignItems: 'center',
-    flexDirection: 'row',
+    justifyContent: 'center',
+    borderColor: 'rgba(119,119,119,0.5)',
   },
-  image: {width: 50, height: 50, borderRadius: 50, marginRight: 5},
   textWarning: {fontSize: 16, fontWeight: '500', color: 'grey'},
 });
-export default CustomModalSelectUserAssigned;
+export default CustomModalStableWarehouse;

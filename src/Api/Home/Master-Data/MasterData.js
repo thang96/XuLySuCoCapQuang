@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASEURL } from '../../BASEURL';
+import {BASEURL} from '../../BASEURL';
 
 export const ReadUsersAPI = token => {
   return new Promise((resolve, reject) => {
@@ -62,6 +62,24 @@ export const ReadOpticalCablesByUserIdAPI = (token, id) => {
   return new Promise((resolve, reject) => {
     axios
       .get(`${BASEURL}/api/v1/master-data/users/${id}/optical-cables`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
+export const GetListSuppliesAPI = token => {
+  return new Promise((resolve, reject) => {
+    axios
+      .get(`${BASEURL}/api/v1/master-data/supplies`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',

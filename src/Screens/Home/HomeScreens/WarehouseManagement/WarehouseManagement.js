@@ -2,88 +2,108 @@ import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
   Text,
-  ImageBackground,
+  ScrollView,
   Image,
   TouchableOpacity,
   View,
   Dimensions,
-  FlatList,
   KeyboardAvoidingView,
 } from 'react-native';
-import {ScrollView} from 'react-native-gesture-handler';
 import CustomButtonFunction from '../../../../Components/CustomButtonFunction';
-import CustomViewRowFunction from '../../../../Components/CustomViewRowFunction';
 import {colors, icons} from '../../../../Constants';
-import CustomInput from '../../../../Components/CustomInput';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 const WarehouseManagement = () => {
-  const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
+  const viewBottomHeight = windowHeight - 350;
   const navigation = useNavigation();
+  const userInfor = useSelector(state => state?.userInfor?.userInfor);
 
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView style={styles.container}>
         <View style={styles.viewTop}>
-          <TouchableOpacity style={styles.viewUse}>
-            <Image source={icons.user} style={styles.imageUser} />
+          <TouchableOpacity
+            style={styles.viewUse}
+            onPress={() => navigation.navigate('StackAccountNavigation')}>
+            <Image
+              source={
+                userInfor?.avatar_img
+                  ? {uri: `${userInfor?.avatar_img}`}
+                  : icons.user
+              }
+              style={styles.imageUser}
+            />
             <View style={styles.viewRowUser}>
-              <Text style={styles.useName}>Phạm thọ quang</Text>
-              <Text style={styles.textMSNV}>MSNV : 123456</Text>
+              <Text style={styles.useName}>{userInfor?.full_name}</Text>
+              <Text
+                style={
+                  styles.textMSNV
+                }>{`Area ID : ${userInfor?.area_id}`}</Text>
             </View>
+            {userInfor?.role == 'GENERAL_MANAGER' ? (
+              <Image source={icons.ic_medal} style={{width: 25, height: 30}} />
+            ) : null}
           </TouchableOpacity>
-          <Text style={styles.textQLKV}>Quản lý vật tư</Text>
+          <Text
+            style={styles.textQLKV}>{`SĐT : ${userInfor?.phone_number}`}</Text>
+          <Text style={styles.textQLKV}>Quản lý Kho</Text>
         </View>
-        <View style={[styles.viewBottom, {height: windowHeight - 270}]}>
-          <View style={styles.viewRow}>
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              icon={icons.warehouse}
-              title={'Quản lý\nkho vận hành'}
-              titleColor={colors.purple}
-              onPress={() => navigation.navigate('InventoryManagement')}
-            />
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              icon={icons.inventory}
-              title={'Quản lý\nkho dự án'}
-              titleColor={colors.purple}
-              onPress={() => navigation.navigate('ProjectManagement')}
-            />
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              icon={icons.report}
-              title={'Kết xuất\ntổng hợp'}
-              titleColor={colors.purple}
-              onPress={() => navigation.navigate('ContinueScreen')}
-            />
-          </View>
-          <View style={styles.viewRow}>
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              icon={icons.report}
-              title={'Kết xuất\ntổng hợp'}
-              titleColor={colors.purple}
-              onPress={() => navigation.navigate('ContinueScreen')}
-            />
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              icon={icons.list}
-              title={'Danh sách\ncông việc'}
-              titleColor={colors.purple}
-              onPress={() => navigation.navigate('WordList')}
-            />
-          </View>
-          <View style={styles.viewRow}>
-            <CustomButtonFunction
-              styleView={styles.customButtonFunction}
-              icon={icons.gear}
-              title={'Quản trị'}
-              titleColor={colors.purple}
-              onPress={() => navigation.navigate('ContinueScreen')}
-            />
-          </View>
+        <View style={[styles.viewBottom, {height: viewBottomHeight}]}>
+          <ScrollView style={{flex: 1}}>
+            <View style={styles.viewRow}>
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
+                icon={icons.ic_listWarehouse}
+                title={'Danh sách\ntổng kho'}
+                titleColor={colors.mainColor}
+                onPress={() => navigation.navigate('StableWarehouse')}
+              />
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
+                icon={icons.ic_listSupplies}
+                title={'Danh sách\nvật tư'}
+                titleColor={colors.mainColor}
+                onPress={() => navigation.navigate('ListSupplies')}
+              />
+            </View>
+            <View style={styles.viewRow}>
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
+                icon={icons.ic_receivingVoucher}
+                title={'Phiếu\nnhập kho'}
+                titleColor={colors.mainColor}
+                onPress={() =>
+                  navigation.navigate('ListInventoryReceivingVoucher')
+                }
+              />
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
+                icon={icons.ic_deliveryVoucher}
+                title={'Phiếu\nxuất kho'}
+                titleColor={colors.mainColor}
+                onPress={() =>
+                  navigation.navigate('ListInventoryDeliveryVoucher')
+                }
+              />
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={{tintColor: colors.mainColor}}
+                icon={icons.ic_controlVoucher}
+                title={'Phiếu\ntồn kho'}
+                titleColor={colors.mainColor}
+                onPress={() =>
+                  navigation.navigate('ListInventoryControlVoucher')
+                }
+              />
+            </View>
+            <View style={styles.viewRow}></View>
+          </ScrollView>
         </View>
       </KeyboardAvoidingView>
     </View>
@@ -95,9 +115,9 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   viewTop: {
-    backgroundColor: colors.purple,
+    backgroundColor: colors.mainColor,
     width: '100%',
-    height: 250,
+    height: '100%',
     paddingStart: 30,
   },
   viewUse: {
@@ -118,7 +138,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 25,
     fontWeight: 'bold',
-    marginTop: 10,
+    marginTop: 5,
   },
   imageUser: {width: 60, height: 60, borderRadius: 60, marginRight: 5},
   viewRowUser: {flexDirection: 'column', justifyContent: 'center'},

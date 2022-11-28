@@ -27,14 +27,11 @@ import {
   requestUserPermission,
   NotificationServices,
 } from '../../../utils/PushNotification';
-const FAKE_DATA = [{id: 1}, {id: 2}, {id: 3}];
 const HomeScreen = () => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const token = useSelector(state => state?.token?.token);
-  const [seachText, setSeachText] = useState('');
   const deviceId = Platform.OS === 'android' ? 'android' : 'ios';
-  const windowWidth = Dimensions.get('window').width;
   const windowHeight = Dimensions.get('window').height;
   const viewBottomHeight = windowHeight - 350;
   const dispatch = useDispatch();
@@ -101,15 +98,6 @@ const HomeScreen = () => {
       .catch(function (error) {
         // console.log(error);
       });
-  };
-  const renderItem = (item, index) => {
-    return (
-      <TouchableOpacity
-        onPress={() => navigation.navigate('ContinueScreen', {item})}
-        style={[styles.buttonNews, {width: windowWidth - 40}]}>
-        <Text style={{fontSize: 25}}>{item.id}</Text>
-      </TouchableOpacity>
-    );
   };
 
   return (
@@ -178,16 +166,18 @@ const HomeScreen = () => {
                   icon={icons.ic_warehouseManagement}
                   titleColor={colors.mainColor}
                   title={'Quản lý kho'}
-                  onPress={() => navigation.navigate('ContinueScreen')}
+                  onPress={() =>
+                    navigation.navigate('StackWarehouseManagement')
+                  }
                 />
-                <CustomButtonFunction
+                {/* <CustomButtonFunction
                   styleView={styles.customButtonFunction}
                   styleIcon={{tintColor: colors.mainColor}}
                   icon={icons.ic_documentManagement}
                   titleColor={colors.mainColor}
                   title={'Quản lý\nvăn bản'}
                   onPress={() => navigation.navigate('ContinueScreen')}
-                />
+                /> */}
               </ScrollView>
             </View>
             <View
@@ -229,23 +219,6 @@ const HomeScreen = () => {
                 )}
               </ScrollView>
             </View>
-            <CustomInput
-              styleTextInput={styles.styleTextInput}
-              styleInput={styles.customInput}
-              placeholder={'Tìm kiếm thông tin'}
-              value={seachText}
-              onChangeText={text => setSeachText(text)}
-            />
-            <TouchableOpacity
-              onPress={() => navigation.navigate('ContinueScreen')}>
-              <Text style={styles.textNews}>Thông tin - tin tức</Text>
-            </TouchableOpacity>
-            <FlatList
-              horizontal
-              data={FAKE_DATA}
-              keyExtractor={key => key.id}
-              renderItem={({item, index}) => renderItem(item, index)}
-            />
           </ScrollView>
         </View>
       </KeyboardAvoidingView>
@@ -306,19 +279,6 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
 
-  customInput: {
-    width: '100%',
-    height: 50,
-    paddingHorizontal: 10,
-    marginTop: 20,
-  },
-  textNews: {
-    color: 'black',
-    marginLeft: 15,
-    marginTop: 20,
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
   buttonNews: {
     height: 200,
     backgroundColor: colors.background,
