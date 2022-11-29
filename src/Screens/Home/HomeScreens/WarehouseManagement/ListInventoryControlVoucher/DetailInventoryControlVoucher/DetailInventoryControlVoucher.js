@@ -5,20 +5,31 @@ import {
   View,
   Image,
   Text,
+  TouchableOpacity,
+  Dimensions,
+  FlatList,
+  Modal,
+  Keyboard,
   ScrollView,
+  TextInput,
   ActivityIndicator,
 } from 'react-native';
 import {colors, icons, images} from '../../../../../../Constants';
 import CustomAppBar from '../../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
+import CustomTextInputChangeValue from '../../../../../../Components/CustomTextInputChangeValue';
+import CusttomTwoButtonBottom from '../../../../../../Components/CusttomTwoButtonBottom';
 import {useSelector} from 'react-redux';
 import CustomConfirm from '../../../../../../Components/CustomConfirm';
 import {
   GetInventoryControlVoucherByIDAPI,
+  RejectInventoryDeliveryVoucher,
+  ApproveInventoryDeliveryVoucher,
   ApproveInventoryControlVoucher,
   RejectInventoryControlVoucher,
 } from '../../../../../../Api/Home/StableWarehouseAPI/StableWarehouseAPI';
+import UsersAPI from '../../../../../../Api/Home/UsersAPI/UsersAPI';
 const DetailInventoryControlVoucher = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -50,14 +61,14 @@ const DetailInventoryControlVoucher = props => {
     await ApproveInventoryControlVoucher(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Đối soát', 'Chấp thuận phiếu đối soát thành công');
+          Alert.alert('Lưu kho', 'Chấp thuận phiếu lưu kho thành công');
           navigation.navigate('ListInventoryControlVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
-          Alert.alert('Đối soát', 'Không thể chấp thuận phiếu đối soát');
+          Alert.alert('Lưu kho', 'Không thể chấp thuận phiếu lưu kho');
         }
       })
       .catch(function (error) {
-        Alert.alert('Đối soát', 'Chấp thuận phiếu đối soát thất bại');
+        Alert.alert('Lưu kho', 'Chấp thuận phiếu lưu kho thất bại');
         console.log(error);
       });
   };
@@ -66,14 +77,14 @@ const DetailInventoryControlVoucher = props => {
     await RejectInventoryControlVoucher(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Đối soát', 'Từ chối phiếu đối soát thành công');
+          Alert.alert('Lưu kho', 'Từ chối phiếu lưu kho thành công');
           navigation.navigate('ListInventoryControlVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
-          Alert.alert('Đối soát', 'Không thể từ chối phiếu đối soát');
+          Alert.alert('Lưu kho', 'Không thể từ chối phiếu lưu kho');
         }
       })
       .catch(function (error) {
-        Alert.alert('Đối soát', 'Từ chối phiếu đối soát thất bại');
+        Alert.alert('Lưu kho', 'Từ chối phiếu lưu kho thất bại');
         console.log(error);
       });
   };
@@ -82,8 +93,8 @@ const DetailInventoryControlVoucher = props => {
       {edit && (
         <View style={styles.viewModal}>
           <CustomConfirm
-            title={'Sửa phiếu đối soát'}
-            content={'Bạn có muốn sửa phiếu đối soát ?'}
+            title={'Sửa phiếu lưu kho'}
+            content={'Bạn có muốn sửa phiếu lưu kho ?'}
             leftLabel={'Trở lại'}
             rightLabel={'Sửa'}
             leftPress={() => setEdit(false)}
@@ -108,7 +119,7 @@ const DetailInventoryControlVoucher = props => {
       ) : (
         <ScrollView style={styles.eachContainer}>
           <View style={styles.viewRow}>
-            <Text style={styles.styleContent}>Chi tiết phiếu đối soát :</Text>
+            <Text style={styles.styleContent}>Chi tiết phiếu lưu kho :</Text>
             <CustomViewRow
               title={'Thời gian tạo : '}
               content={result?.created_time}

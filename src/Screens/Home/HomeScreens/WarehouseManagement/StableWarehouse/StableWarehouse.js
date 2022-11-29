@@ -1,11 +1,15 @@
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 import React, {useEffect, useState, useCallback} from 'react';
 import {
+  ImageBackground,
   StyleSheet,
   View,
+  Image,
   Text,
   TouchableOpacity,
+  Dimensions,
   FlatList,
+  Modal,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
@@ -13,6 +17,7 @@ import {useSelector} from 'react-redux';
 import CustomAppBar from '../../../../../Components/CustomAppBar';
 import {colors, icons} from '../../../../../Constants';
 import {GetStableWarehouseAPI} from '../../../../../Api/Home/StableWarehouseAPI/StableWarehouseAPI';
+import CustomButtonIcon from '../../../../../Components/CustomButtonIcon';
 import CustomInput from '../../../../../Components/CustomInput';
 const StableWarehouse = () => {
   const token = useSelector(state => state?.token?.token);

@@ -7,7 +7,10 @@ import {
   Image,
   TouchableOpacity,
   View,
+  Dimensions,
+  FlatList,
   KeyboardAvoidingView,
+  Platform,
   ActivityIndicator,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
@@ -15,6 +18,10 @@ import CustomAppBar from '../../../../../../Components/CustomAppBar';
 import {colors, icons} from '../../../../../../Constants';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
 import {useSelector} from 'react-redux';
+import CustomModalCamera from '../../../../../../Components/CustomModalCamera';
+import common from '../../../../../../utils/common';
+import {uuid} from '../../../../../../utils/uuid';
+import ImagePicker from 'react-native-image-crop-picker';
 import {
   GetStableWarehouseAPI,
   CreateAInventoryReceivingVoucherAPI,
@@ -28,8 +35,10 @@ import {GetListSuppliesAPI} from '../../../../../../Api/Home/Master-Data/MasterD
 const CreateAInventoryReceivingVoucher = props => {
   const navigation = useNavigation();
 
+  const [modalCamera, setModalCamera] = useState(false);
   const [modalStableWarehouse, setModalStableWarehouse] = useState(false);
   const [modalDate, setModalDate] = useState(false);
+  const [modalTime, setModalTime] = useState(false);
   const [modalApproveUser, setModalApproveUser] = useState(false);
   const [modalSupplies, setModalSupplies] = useState(false);
   const [loading, setLoading] = useState(false);

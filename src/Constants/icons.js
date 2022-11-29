@@ -48,17 +48,4 @@ export default {
   ic_receivingVoucher: require('../Assets/Icons/ic_receivingVoucher.png'),
   ic_deliveryVoucher: require('../Assets/Icons/ic_deliveryVoucher.png'),
   ic_controlVoucher: require('../Assets/Icons/ic_controlVoucher.png'),
-
-  vectorOk: require('../Assets/Icons/vectorOk.png'),
-  next: require('../Assets/Icons/next.png'),
-  location: require('../Assets/Icons/location.png'),
-  plus: require('../Assets/Icons/plus.png'),
-  warehouse: require('../Assets/Icons/warehouse.png'),
-  inventory: require('../Assets/Icons/inventory.png'),
-  listOfSupplies: require('../Assets/Icons/listOfSupplies.png'),
-  chart: require('../Assets/Icons/chart.png'),
-  receipt: require('../Assets/Icons/receipt.png'),
-  listReport: require('../Assets/Icons/listReport.png'),
-  level: require('../Assets/Icons/level.png'),
-  contract: require('../Assets/Icons/contract.png'),
 };

@@ -7,7 +7,10 @@ import {
   Image,
   TouchableOpacity,
   View,
+  Dimensions,
+  FlatList,
   KeyboardAvoidingView,
+  Platform,
   ActivityIndicator,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';

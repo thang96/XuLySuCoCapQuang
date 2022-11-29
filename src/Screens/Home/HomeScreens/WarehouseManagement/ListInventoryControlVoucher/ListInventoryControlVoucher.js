@@ -1,11 +1,14 @@
 import React, {useEffect, useState, useCallback} from 'react';
 import {
+  ImageBackground,
   StyleSheet,
   View,
   Image,
   Text,
   TouchableOpacity,
+  Dimensions,
   FlatList,
+  Modal,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
@@ -94,7 +97,7 @@ const ListInventoryControlVoucher = props => {
   return (
     <View style={styles.container}>
       <CustomAppBar
-        title={'Danh sách phiếu đối soát'}
+        title={'Danh sách phiếu lưu kho'}
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />

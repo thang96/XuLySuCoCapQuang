@@ -7,7 +7,10 @@ import {
   Image,
   TouchableOpacity,
   View,
+  Dimensions,
+  FlatList,
   KeyboardAvoidingView,
+  Platform,
   ActivityIndicator,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
@@ -15,7 +18,10 @@ import CustomAppBar from '../../../../../../Components/CustomAppBar';
 import {colors, icons} from '../../../../../../Constants';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
 import {useSelector} from 'react-redux';
-
+import CustomModalCamera from '../../../../../../Components/CustomModalCamera';
+import common from '../../../../../../utils/common';
+import {uuid} from '../../../../../../utils/uuid';
+import ImagePicker from 'react-native-image-crop-picker';
 import {
   GetStableWarehouseAPI,
   CreateAInventoryControlVoucherAPI,
@@ -29,8 +35,10 @@ import {GetListSuppliesAPI} from '../../../../../../Api/Home/Master-Data/MasterD
 const CreateInventoryControlVoucher = props => {
   const navigation = useNavigation();
 
+  const [modalCamera, setModalCamera] = useState(false);
   const [modalStableWarehouse, setModalStableWarehouse] = useState(false);
   const [modalDate, setModalDate] = useState(false);
+  const [modalTime, setModalTime] = useState(false);
   const [modalApproveUser, setModalApproveUser] = useState(false);
   const [modalSupplies, setModalSupplies] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -123,15 +131,15 @@ const CreateInventoryControlVoucher = props => {
       .then(res => {
         console.log(res);
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Tạo phiếu đối soát', 'Tạo phiếu đối soát thành công');
+          Alert.alert('Tạo phiếu lưu kho', 'Tạo phiếu lưu kho thành công');
           navigation.navigate('ListInventoryControlVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
-          Alert.alert('Tạo phiếu đối soát', 'Không thể tạo phiếu đối soát');
+          Alert.alert('Tạo phiếu lưu kho', 'Không thể tạo phiếu lưu kho');
         }
       })
       .catch(function (error) {
         console.log(error, error?.response?.data);
-        Alert.alert('Tạo phiếu đối soát', 'Tạo phiếu đối soát thất bại');
+        Alert.alert('Tạo phiếu tồn lưu', 'Tạo phiếu lưu kho thất bại');
       });
   };
   const addSupplies = item => {
@@ -195,7 +203,7 @@ const CreateInventoryControlVoucher = props => {
       ) : (
         <KeyboardAvoidingView style={styles.container}>
           <CustomAppBar
-            title={'Tạo phiếu đối soát'}
+            title={'Tạo phiếu tồn kho'}
             iconsLeft={icons.ic_back}
             onPressIconsLeft={() => navigation.goBack()}
           />
