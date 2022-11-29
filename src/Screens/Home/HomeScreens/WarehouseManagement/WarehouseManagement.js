@@ -95,7 +95,7 @@ const WarehouseManagement = () => {
                 styleView={styles.customButtonFunction}
                 styleIcon={{tintColor: colors.mainColor}}
                 icon={icons.ic_controlVoucher}
-                title={'Phiếu\ntồn kho'}
+                title={'Phiếu\nđối soát'}
                 titleColor={colors.mainColor}
                 onPress={() =>
                   navigation.navigate('ListInventoryControlVoucher')

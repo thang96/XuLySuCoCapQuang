@@ -7,10 +7,7 @@ import {
   Image,
   TouchableOpacity,
   View,
-  Dimensions,
-  FlatList,
   KeyboardAvoidingView,
-  Platform,
   ActivityIndicator,
 } from 'react-native';
 import {ScrollView, TextInput} from 'react-native-gesture-handler';
@@ -18,14 +15,9 @@ import CustomAppBar from '../../../../../../Components/CustomAppBar';
 import {colors, icons} from '../../../../../../Constants';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
 import {useSelector} from 'react-redux';
-import CustomModalCamera from '../../../../../../Components/CustomModalCamera';
-import common from '../../../../../../utils/common';
-import {uuid} from '../../../../../../utils/uuid';
-import ImagePicker from 'react-native-image-crop-picker';
 import {
   GetStableWarehouseAPI,
   UpdateAInventoryControlVoucherAPI,
-  UpdateAInventoryDeliveryVoucherAPI,
 } from '../../../../../../Api/Home/StableWarehouseAPI/StableWarehouseAPI';
 import UsersAPI from '../../../../../../Api/Home/UsersAPI/UsersAPI';
 import CustomButtonIcon from '../../../../../../Components/CustomButtonIcon';
@@ -162,15 +154,15 @@ const UpdateInventoryControlVoucher = props => {
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Sửa phiếu lưu kho', 'Sửa phiếu lưu kho thành công');
+          Alert.alert('Sửa phiếu đối soát', 'Sửa phiếu đối soát thành công');
           navigation.navigate('ListInventoryControlVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
-          Alert.alert('Sửa phiếu lưu kho', 'Không thể sửa phiếu lưu kho');
+          Alert.alert('Sửa phiếu đối soát', 'Không thể sửa phiếu đối soát');
         }
       })
       .catch(function (error) {
         console.log(error);
-        Alert.alert('Sửa phiếu lưu kho', 'Sửa phiếu xuất lưu thất bại');
+        Alert.alert('Sửa phiếu đối soát', 'Sửa phiếu đối soát thất bại');
       });
   };
 
@@ -234,7 +226,7 @@ const UpdateInventoryControlVoucher = props => {
       ) : (
         <KeyboardAvoidingView style={styles.container}>
           <CustomAppBar
-            title={'Sửa phiếu lưu kho'}
+            title={'Sửa phiếu đối soát'}
             iconsLeft={icons.ic_back}
             onPressIconsLeft={() => navigation.goBack()}
           />

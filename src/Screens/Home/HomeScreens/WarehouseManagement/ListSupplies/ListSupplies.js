@@ -1,15 +1,12 @@
 import {useNavigation, useIsFocused} from '@react-navigation/native';
 import React, {useEffect, useState, useCallback} from 'react';
 import {
-  ImageBackground,
   StyleSheet,
   View,
   Image,
   Text,
   TouchableOpacity,
-  Dimensions,
   FlatList,
-  Modal,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
