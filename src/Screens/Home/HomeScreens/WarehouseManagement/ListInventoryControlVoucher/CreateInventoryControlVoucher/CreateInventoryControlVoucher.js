@@ -48,6 +48,7 @@ const CreateInventoryControlVoucher = props => {
   const [forControlTime, setForControlTime] = useState('');
   const [reason, setReason] = useState('');
   const [content, setContent] = useState('');
+  const [albumImage, setAlbumImage] = useState([]);
   const [approveUserId, setApproveUserId] = useState('');
   const [supplies, setSupplies] = useState([]);
   const [suppliesName, setSuppliesName] = useState([]);
@@ -57,8 +58,9 @@ const CreateInventoryControlVoucher = props => {
     forControlTime !== '' &&
     reason !== '' &&
     content !== '' &&
+    albumImage.length > 0 &&
     approveUserId !== '' &&
-    supplies !== '';
+    supplies.length > 0;
 
   const [listStableWarehouse, setListStableWarehouse] = useState([]);
   const [listManage, setListManage] = useState([]);
@@ -90,7 +92,7 @@ const CreateInventoryControlVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
     await UsersAPI.GetUsersAPI(token)
       .then(res => {
@@ -102,7 +104,7 @@ const CreateInventoryControlVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
     await GetListSuppliesAPI(token)
       .then(res => {
@@ -111,25 +113,25 @@ const CreateInventoryControlVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
 
   const createVoucher = async () => {
     let stable_warehouse_id = parseFloat(stableWarehouseId?.id);
     let approve_user_id = parseFloat(approveUserId?.id);
-
+    let document_files = albumImage;
     await CreateAInventoryControlVoucherAPI(
       token,
       stable_warehouse_id,
       forControlTime,
       reason,
       content,
+      document_files,
       approve_user_id,
       supplies,
     )
       .then(res => {
-        console.log(res);
         if (res?.status == 200 && res?.data?.success == true) {
           Alert.alert('Tạo phiếu lưu kho', 'Tạo phiếu lưu kho thành công');
           navigation.navigate('ListInventoryControlVoucher');
@@ -138,7 +140,7 @@ const CreateInventoryControlVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error, error?.response?.data);
+        // console.log(error, error?.response?.data);
         Alert.alert('Tạo phiếu tồn lưu', 'Tạo phiếu lưu kho thất bại');
       });
   };
@@ -152,8 +154,72 @@ const CreateInventoryControlVoucher = props => {
     setSuppliesName(eachNewSupplies);
     setModalSupplies(false);
   };
+  const openCamera = () => {
+    ImagePicker.openCamera({width: 300, height: 400})
+      .then(async image => {
+        const imageConverted = await common.resizeImageNotVideo(image);
+        addResult(imageConverted);
+        setModalCamera(false);
+      })
+      .catch(e => {
+        ImagePicker.clean();
+        setModalCamera(false);
+      });
+  };
+  const openGallery = () => {
+    ImagePicker.openPicker({})
+      .then(async image => {
+        const imageConverted = await common.resizeImageNotVideo(image);
+        addResult(imageConverted);
+        setModalCamera(false);
+      })
+      .catch(e => {
+        ImagePicker.clean();
+        setModalCamera(false);
+      });
+  };
+  const addResult = image => {
+    const eachResult = [...albumImage, image];
+    setAlbumImage(eachResult);
+  };
+  const renderImage = (item, index) => {
+    return (
+      <View>
+        <View style={styles.viewRender}>
+          <CustomButtonIcon
+            onPress={() => deleteItem(item, index)}
+            styleButton={styles.customButtonIcon}
+            imageStyle={styles.imageStyle}
+            source={icons.ic_cancel}
+          />
+          <Image
+            source={{uri: item?.uri}}
+            style={{width: 200, height: 200, marginHorizontal: 5}}
+            resizeMode={'contain'}
+          />
+        </View>
+      </View>
+    );
+  };
+  const deleteItem = (item, index) => {
+    let result = [...albumImage];
+    let newResult = result.filter(itemResult => itemResult !== item);
+
+    setAlbumImage(newResult);
+  };
   return (
     <View style={styles.container}>
+      {modalCamera && (
+        <View style={styles.styleModal}>
+          <CustomModalCamera
+            openCamera={() => openCamera()}
+            openGallery={() => openGallery()}
+            modalVisible={modalCamera}
+            onRequestClose={() => setModalCamera(false)}
+            cancel={() => setModalCamera(false)}
+          />
+        </View>
+      )}
       {modalSupplies && (
         <View style={styles.styleModal}>
           <CustomModalStableWarehouse
@@ -203,7 +269,7 @@ const CreateInventoryControlVoucher = props => {
       ) : (
         <KeyboardAvoidingView style={styles.container}>
           <CustomAppBar
-            title={'Tạo phiếu tồn kho'}
+            title={'Tạo phiếu đối soát'}
             iconsLeft={icons.ic_back}
             onPressIconsLeft={() => navigation.goBack()}
           />
@@ -258,6 +324,35 @@ const CreateInventoryControlVoucher = props => {
               </Text>
               <Image source={icons.ic_downArrow} style={styles.imagePicker} />
             </TouchableOpacity>
+            <Text style={styles.title}>File đính kèm</Text>
+            <FlatList
+              horizontal
+              data={albumImage}
+              keyExtractor={uuid}
+              renderItem={({item}) => renderImage(item)}
+            />
+            <TouchableOpacity
+              disabled={albumImage.length < 5 ? false : true}
+              style={[styles.button, {marginTop: 10}]}
+              onPress={() => setModalCamera(true)}>
+              <Image
+                style={[
+                  styles.imageUpload,
+                  {
+                    tintColor:
+                      albumImage.length < 5 ? colors.mainColor : 'grey',
+                  },
+                ]}
+                source={icons.ic_upload}
+              />
+              <Text
+                style={[
+                  styles.textUpload,
+                  {color: albumImage.length < 5 ? colors.mainColor : 'grey'},
+                ]}>
+                Up ảnh
+              </Text>
+            </TouchableOpacity>
             <Text style={styles.title}>Vật tư</Text>
             <View
               style={{
@@ -297,6 +392,7 @@ const CreateInventoryControlVoucher = props => {
                 );
               })}
             </View>
+
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <CustomButtonIcon
                 styleButton={styles.styleCustomButtonIcon}

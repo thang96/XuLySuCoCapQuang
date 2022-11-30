@@ -165,6 +165,7 @@ export const CreateAInventoryReceivingVoucherAPI = (
   receiveTime,
   reason,
   content,
+  document_files,
   approve_user_id,
   supplies,
 ) => {
@@ -174,6 +175,14 @@ export const CreateAInventoryReceivingVoucherAPI = (
     formDataCreate.append('receive_time', receiveTime.toISOString() ?? '');
     formDataCreate.append('reason', reason ?? '');
     formDataCreate.append('content', content ?? '');
+    for (let i = 0; i < document_files.length; i++) {
+      let image = document_files[i];
+      formDataCreate.append('document_files', {
+        uri: image?.uri,
+        name: image?.name,
+        type: image?.type,
+      });
+    }
     formDataCreate.append('approve_user_id', approve_user_id ?? 0);
     formDataCreate.append('supplies', JSON.stringify(supplies) ?? '');
     axios
@@ -318,6 +327,7 @@ export const CreateAInventoryDeliveryVoucherAPI = (
   deliveryTime,
   reason,
   content,
+  document_files,
   approve_user_id,
   supplies,
 ) => {
@@ -327,6 +337,14 @@ export const CreateAInventoryDeliveryVoucherAPI = (
     formDataCreate.append('delivery_time', deliveryTime.toISOString() ?? '');
     formDataCreate.append('reason', reason ?? '');
     formDataCreate.append('content', content ?? '');
+    for (let i = 0; i < document_files.length; i++) {
+      let image = document_files[i];
+      formDataCreate.append('document_files', {
+        uri: image?.uri,
+        name: image?.name,
+        type: image?.type,
+      });
+    }
     formDataCreate.append('approve_user_id', approve_user_id ?? 0);
     formDataCreate.append('supplies', JSON.stringify(supplies) ?? '');
     axios
@@ -468,6 +486,7 @@ export const CreateAInventoryControlVoucherAPI = (
   forControlTime,
   reason,
   content,
+  document_files,
   approve_user_id,
   supplies,
 ) => {
@@ -480,6 +499,14 @@ export const CreateAInventoryControlVoucherAPI = (
     );
     formDataCreate.append('reason', reason ?? '');
     formDataCreate.append('content', content ?? '');
+    for (let i = 0; i < document_files.length; i++) {
+      let image = document_files[i];
+      formDataCreate.append('document_files', {
+        uri: image?.uri,
+        name: image?.name,
+        type: image?.type,
+      });
+    }
     formDataCreate.append('approve_user_id', approve_user_id ?? 0);
     formDataCreate.append('supplies', JSON.stringify(supplies) ?? '');
     axios

@@ -40,7 +40,9 @@ const ListInventoryReceivingVoucher = props => {
           setLoading(false);
         }
       })
-      .catch(error => console.log(error));
+      .catch(error => {
+        // console.log(error);
+      });
   };
   const filteredVoucher = () =>
     listVoucher.filter(eachVoucher =>
@@ -56,7 +58,7 @@ const ListInventoryReceivingVoucher = props => {
       getlistVoucherAPI();
       setRefreshing(false);
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }, []);
   const renderItem = (item, index) => {

@@ -110,7 +110,7 @@ const UpdateInventoryReceivingVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
     await GetStableWarehouseAPI(token)
       .then(res => {
@@ -119,7 +119,7 @@ const UpdateInventoryReceivingVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
     await UsersAPI.GetUsersAPI(token)
       .then(res => {
@@ -131,7 +131,7 @@ const UpdateInventoryReceivingVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
     await GetListSuppliesAPI(token)
       .then(res => {
@@ -140,7 +140,7 @@ const UpdateInventoryReceivingVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
   useEffect(() => {}, []);
@@ -168,7 +168,7 @@ const UpdateInventoryReceivingVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
         Alert.alert('Sửa phiếu nhập kho', 'Sửa phiếu nhập kho thất bại');
       });
   };

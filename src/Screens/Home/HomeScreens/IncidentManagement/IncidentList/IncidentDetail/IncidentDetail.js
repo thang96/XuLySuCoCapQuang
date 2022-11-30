@@ -349,7 +349,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   title: {fontSize: 18, fontWeight: 'bold', color: 'black'},
-  content: {fontSize: 16, fontWeight: 'bold'},
+  content: {fontSize: 16, fontWeight: 'bold', color: 'grey'},
   image: {width: '70%', height: 150},
   viewComponentTwoButton: {
     flexDirection: 'row',

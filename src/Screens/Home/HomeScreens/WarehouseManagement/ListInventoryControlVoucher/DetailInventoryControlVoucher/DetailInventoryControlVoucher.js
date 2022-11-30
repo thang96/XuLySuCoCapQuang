@@ -24,12 +24,11 @@ import {useSelector} from 'react-redux';
 import CustomConfirm from '../../../../../../Components/CustomConfirm';
 import {
   GetInventoryControlVoucherByIDAPI,
-  RejectInventoryDeliveryVoucher,
-  ApproveInventoryDeliveryVoucher,
   ApproveInventoryControlVoucher,
   RejectInventoryControlVoucher,
 } from '../../../../../../Api/Home/StableWarehouseAPI/StableWarehouseAPI';
-import UsersAPI from '../../../../../../Api/Home/UsersAPI/UsersAPI';
+import {uuid, isImage} from '../../../../../../utils/uuid';
+import {downloadFile} from '../../../../../../utils/DownloadFile';
 const DetailInventoryControlVoucher = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -52,7 +51,7 @@ const DetailInventoryControlVoucher = props => {
         }
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
 
@@ -69,7 +68,7 @@ const DetailInventoryControlVoucher = props => {
       })
       .catch(function (error) {
         Alert.alert('Lưu kho', 'Chấp thuận phiếu lưu kho thất bại');
-        console.log(error);
+        // console.log(error);
       });
   };
   const rejectReceiving = async () => {
@@ -85,8 +84,43 @@ const DetailInventoryControlVoucher = props => {
       })
       .catch(function (error) {
         Alert.alert('Lưu kho', 'Từ chối phiếu lưu kho thất bại');
-        console.log(error);
+        // console.log(error);
       });
+  };
+  const renderDocumentFiles = item => {
+    return (
+      <View>
+        {isImage(`${item?.path}`) == true ? (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ShowImageScreen', item)}
+            style={styles.renderDocumentFiles}>
+            <Image
+              source={{uri: item?.path}}
+              style={{width: 200, height: 200, marginRight: 5}}
+              resizeMode={'contain'}
+            />
+          </TouchableOpacity>
+        ) : (
+          <View
+            style={[
+              {width: 200, height: 200, marginRight: 5},
+              styles.renderDocumentFiles,
+            ]}>
+            <TouchableOpacity
+              onPress={() => downloadFile(item?.path)}
+              style={styles.styleCenter}>
+              <Text style={[styles.content, {color: colors.mainColor}]}>
+                Download file
+              </Text>
+              <Image
+                source={icons.ic_download}
+                style={{width: 50, height: 50, tintColor: colors.mainColor}}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+      </View>
+    );
   };
   return (
     <View style={styles.container}>
@@ -165,6 +199,16 @@ const DetailInventoryControlVoucher = props => {
                 </View>
               );
             })}
+            <View>
+              <Text style={styles.styleContent}>File đính kèm : </Text>
+              <FlatList
+                style={{height: 210}}
+                horizontal
+                data={result?.document_files}
+                keyExtractor={uuid}
+                renderItem={({item}) => renderDocumentFiles(item)}
+              />
+            </View>
           </View>
           <View style={[styles.viewRow, {marginTop: 10}]}>
             <Text style={styles.styleContent}>Người phê duyệt : </Text>
@@ -332,6 +376,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 10,
   },
+  styleCenter: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  renderDocumentFiles: {
+    borderWidth: 0.5,
+    borderColor: colors.mainColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  content: {fontSize: 16, fontWeight: 'bold', color: 'grey'},
 });
 const CustomViewRow = props => {
   const {title, content} = props;
