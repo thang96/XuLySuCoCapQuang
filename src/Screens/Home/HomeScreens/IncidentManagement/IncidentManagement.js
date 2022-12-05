@@ -84,18 +84,16 @@ const IncidentManagement = () => {
             <View style={styles.viewRow}>
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
                 icon={icons.ic_documentManagement}
                 title={'Tổng hợp\nbáo cáo\nsự cố'}
                 titleColor={colors.mainColor}
                 onPress={() => navigation.navigate('CableRouteReport')}
               />
-            </View>
-            <View style={styles.viewRow}>
               {userInfor?.role == 'EMPLOYEE' ? (
                 <CustomButtonFunction
                   styleView={styles.customButtonFunction}
-                  styleIcon={{tintColor: colors.mainColor}}
+                  styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
                   icon={icons.ic_receive_request}
                   title={'Tiếp nhận\nyêu cầu\nsự cố'}
                   titleColor={colors.mainColor}
@@ -104,7 +102,7 @@ const IncidentManagement = () => {
               ) : (
                 <CustomButtonFunction
                   styleView={styles.customButtonFunction}
-                  styleIcon={{tintColor: colors.mainColor}}
+                  styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
                   icon={icons.ic_edit}
                   title={'Tạo mới\nyêu cầu\nsự cố'}
                   titleColor={colors.mainColor}
@@ -113,7 +111,7 @@ const IncidentManagement = () => {
               )}
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
                 icon={icons.ic_checkList}
                 title={'Danh sách\nsự cố'}
                 titleColor={colors.mainColor}
@@ -159,17 +157,6 @@ const styles = StyleSheet.create({
   },
   imageUser: {width: 60, height: 60, borderRadius: 60, marginRight: 5},
   viewRowUser: {flexDirection: 'column', justifyContent: 'center'},
-  customViewRowFunction: {
-    width: '100%',
-    height: 100,
-    paddingHorizontal: 20,
-    position: 'absolute',
-    top: '100',
-    left: 0,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   viewBottom: {
     width: '100%',
     backgroundColor: 'white',
@@ -177,15 +164,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
     position: 'absolute',
     bottom: 0,
-  },
-  viewRowFunction: {
-    flexDirection: 'row',
-    marginTop: 70,
-    width: '100%',
-    height: 100,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
   },
   customInput: {
     width: '100%',
@@ -201,12 +179,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   viewRow: {
-    height: 120,
-    borderBottomWidth: 0.5,
-    borderBottomColor: colors.grey,
+    height: 150,
     marginTop: 30,
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  customButtonFunction: {height: 80, width: 80, marginRight: 5},
+  customButtonFunction: {
+    height: 150,
+    width: 100,
+    marginRight: 10,
+  },
+  styleIcon: {width: 60, height: 60},
 });
 export default IncidentManagement;

@@ -52,10 +52,10 @@ const WarehouseManagement = () => {
         </View>
         <View style={[styles.viewBottom, {height: viewBottomHeight}]}>
           <ScrollView style={{flex: 1}}>
-            <View style={styles.viewRow}>
+            <View style={[styles.viewRow, {marginTop: 30}]}>
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
                 icon={icons.ic_listWarehouse}
                 title={'Danh sách\ntổng kho'}
                 titleColor={colors.mainColor}
@@ -63,7 +63,7 @@ const WarehouseManagement = () => {
               />
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
                 icon={icons.ic_listSupplies}
                 title={'Danh sách\nvật tư'}
                 titleColor={colors.mainColor}
@@ -73,7 +73,7 @@ const WarehouseManagement = () => {
             <View style={styles.viewRow}>
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
                 icon={icons.ic_receivingVoucher}
                 title={'Phiếu\nnhập kho'}
                 titleColor={colors.mainColor}
@@ -83,7 +83,7 @@ const WarehouseManagement = () => {
               />
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
                 icon={icons.ic_deliveryVoucher}
                 title={'Phiếu\nxuất kho'}
                 titleColor={colors.mainColor}
@@ -93,7 +93,7 @@ const WarehouseManagement = () => {
               />
               <CustomButtonFunction
                 styleView={styles.customButtonFunction}
-                styleIcon={{tintColor: colors.mainColor}}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
                 icon={icons.ic_controlVoucher}
                 title={'Phiếu\ntồn kho'}
                 titleColor={colors.mainColor}
@@ -102,7 +102,6 @@ const WarehouseManagement = () => {
                 }
               />
             </View>
-            <View style={styles.viewRow}></View>
           </ScrollView>
         </View>
       </KeyboardAvoidingView>
@@ -161,39 +160,22 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
-  viewRowFunction: {
-    flexDirection: 'row',
-    marginTop: 70,
-    width: '100%',
-    height: 100,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  customInput: {
-    width: '100%',
-    height: 50,
-    paddingHorizontal: 10,
-    marginTop: 20,
-  },
-  textNews: {
-    color: 'black',
-    marginLeft: 15,
-    marginTop: 20,
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
   viewRow: {
-    height: 110,
-    borderBottomWidth: 0.5,
-    borderBottomColor: colors.grey,
-    marginTop: 30,
+    height: 150,
     flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   customButtonFunction: {
-    height: 80,
-    width: 80,
-    marginRight: 5,
+    height: 150,
+    width: 100,
+    marginRight: 10,
   },
+  customButtonFunction: {
+    height: 150,
+    width: 100,
+    marginRight: 10,
+  },
+  styleIcon: {width: 60, height: 60},
 });
 export default WarehouseManagement;

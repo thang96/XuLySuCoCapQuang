@@ -9,7 +9,7 @@ const CustomButtonFunction = props => {
         <View style={styles.view}>
           <Image
             source={icon}
-            style={[styles.image, styleIcon]}
+            style={styleIcon ? styleIcon : styles.image}
             resizeMode={'contain'}
           />
         </View>

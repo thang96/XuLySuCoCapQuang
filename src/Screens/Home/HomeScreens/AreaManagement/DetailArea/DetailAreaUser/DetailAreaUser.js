@@ -58,7 +58,13 @@ const DetailAreaUser = props => {
         <CustomViewRow
           title={'Chức vụ : '}
           content={
-            userInfo?.role == 'GENERAL_MANAGER' ? 'Quản lý' : 'Nhân viên'
+            userInfo?.role == 'EMPLOYEE'
+              ? 'Nhân viên'
+              : userInfo?.role == 'AREA_MANAGER'
+              ? 'Quản lý khu vực'
+              : userInfo?.role == 'GENERAL_MANAGER'
+              ? 'Quản lý chung'
+              : null
           }
         />
       </ScrollView>

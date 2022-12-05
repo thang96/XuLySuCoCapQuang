@@ -134,43 +134,34 @@ const HomeScreen = () => {
 
         <View style={[styles.viewBottom, {height: viewBottomHeight}]}>
           <ScrollView>
-            <View
-              style={{
-                height: 120,
-                marginTop: 30,
-                alignItems: 'center',
-                flexDirection: 'row',
-              }}>
-              <ScrollView horizontal>
-                <CustomButtonFunction
-                  styleView={styles.customButtonFunction}
-                  styleIcon={{tintColor: colors.mainColor}}
-                  icon={icons.ic_incidentManagement}
-                  titleColor={colors.mainColor}
-                  title={'Quản lý\nsự cố'}
-                  onPress={() => navigation.navigate('StackIncidentManagement')}
-                />
-                <CustomButtonFunction
-                  styleView={styles.customButtonFunction}
-                  styleIcon={{tintColor: colors.mainColor}}
-                  icon={icons.ic_maintenanceMaintenance}
-                  titleColor={colors.mainColor}
-                  title={'Bảo trì\nbảo dưỡng'}
-                  onPress={() =>
-                    navigation.navigate('StackMaintenanceManagement')
-                  }
-                />
-                <CustomButtonFunction
-                  styleView={styles.customButtonFunction}
-                  styleIcon={{tintColor: colors.mainColor}}
-                  icon={icons.ic_warehouseManagement}
-                  titleColor={colors.mainColor}
-                  title={'Quản lý kho'}
-                  onPress={() =>
-                    navigation.navigate('StackWarehouseManagement')
-                  }
-                />
-                {/* <CustomButtonFunction
+            <View style={[styles.viewRow, {marginTop: 30}]}>
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
+                icon={icons.ic_incidentManagement}
+                titleColor={colors.mainColor}
+                title={'Quản lý\nsự cố'}
+                onPress={() => navigation.navigate('StackIncidentManagement')}
+              />
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
+                icon={icons.ic_maintenanceMaintenance}
+                titleColor={colors.mainColor}
+                title={'Bảo trì\nbảo dưỡng'}
+                onPress={() =>
+                  navigation.navigate('StackMaintenanceManagement')
+                }
+              />
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
+                icon={icons.ic_warehouseManagement}
+                titleColor={colors.mainColor}
+                title={'Quản lý kho'}
+                onPress={() => navigation.navigate('StackWarehouseManagement')}
+              />
+              {/* <CustomButtonFunction
                   styleView={styles.customButtonFunction}
                   styleIcon={{tintColor: colors.mainColor}}
                   icon={icons.ic_documentManagement}
@@ -178,46 +169,38 @@ const HomeScreen = () => {
                   title={'Quản lý\nvăn bản'}
                   onPress={() => navigation.navigate('ContinueScreen')}
                 /> */}
-              </ScrollView>
             </View>
-            <View
-              style={{
-                height: 120,
-                alignItems: 'center',
-                flexDirection: 'row',
-              }}>
-              <ScrollView horizontal>
+            <View style={styles.viewRow}>
+              <CustomButtonFunction
+                styleView={styles.customButtonFunction}
+                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
+                icon={icons.ic_optical}
+                title={'Quản lý\nthông tin\ntuyến'}
+                titleColor={colors.mainColor}
+                onPress={() =>
+                  navigation.navigate('StackFiberOpticCableManagement')
+                }
+              />
+              {userInfor?.role != 'EMPLOYEE' && (
                 <CustomButtonFunction
                   styleView={styles.customButtonFunction}
-                  styleIcon={{tintColor: colors.mainColor}}
-                  icon={icons.ic_optical}
-                  title={'Quản lý\nthông tin\ntuyến'}
+                  styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
+                  icon={icons.ic_group}
                   titleColor={colors.mainColor}
-                  onPress={() =>
-                    navigation.navigate('StackFiberOpticCableManagement')
-                  }
+                  title={'Quản lý\nnhân viên'}
+                  onPress={() => navigation.navigate('StackEmployeeManager')}
                 />
-                {userInfor?.role != 'EMPLOYEE' && (
-                  <CustomButtonFunction
-                    styleView={styles.customButtonFunction}
-                    styleIcon={{tintColor: colors.mainColor}}
-                    icon={icons.ic_group}
-                    titleColor={colors.mainColor}
-                    title={'Quản lý\nnhân viên'}
-                    onPress={() => navigation.navigate('StackEmployeeManager')}
-                  />
-                )}
-                {userInfor?.role != 'EMPLOYEE' && (
-                  <CustomButtonFunction
-                    styleView={styles.customButtonFunction}
-                    styleIcon={{tintColor: colors.mainColor}}
-                    icon={icons.ic_area_manage}
-                    titleColor={colors.mainColor}
-                    title={'Quản lý\nkhu vực'}
-                    onPress={() => navigation.navigate('StackAreaNavigation')}
-                  />
-                )}
-              </ScrollView>
+              )}
+              {userInfor?.role != 'EMPLOYEE' && (
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
+                  icon={icons.ic_area_manage}
+                  titleColor={colors.mainColor}
+                  title={'Quản lý\nkhu vực'}
+                  onPress={() => navigation.navigate('StackAreaNavigation')}
+                />
+              )}
             </View>
           </ScrollView>
         </View>
@@ -278,20 +261,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
   },
-
-  buttonNews: {
-    height: 200,
-    backgroundColor: colors.background,
-    borderRadius: 15,
-    marginHorizontal: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
   customButtonFunction: {
-    height: 120,
-    width: 70,
+    height: 150,
+    width: 100,
     marginRight: 10,
+  },
+  styleIcon: {width: 60, height: 60},
+  viewRow: {
+    height: 150,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
 });
 export default HomeScreen;
