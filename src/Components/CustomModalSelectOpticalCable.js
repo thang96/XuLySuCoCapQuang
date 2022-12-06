@@ -10,9 +10,10 @@ import {
   RefreshControl,
 } from 'react-native';
 import {icons} from '../Constants';
+import CustomButtonIcon from './CustomButtonIcon';
 import CustomInput from './CustomInput';
 const CustomModalSelectOpticalCable = props => {
-  const {modalVisible, onRequestClose, data, onPress} = props;
+  const {modalVisible, onRequestClose, data, onPress, closeModal} = props;
   const [search, setSearch] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const renderItem = (item, index) => {
@@ -50,7 +51,12 @@ const CustomModalSelectOpticalCable = props => {
               value={search}
               onChangeText={test => setSearch(test)}
             />
-
+            <CustomButtonIcon
+              source={icons.ic_cancel}
+              styleButton={styles.buttonClose}
+              imageStyle={styles.imageButton}
+              onPress={closeModal}
+            />
             {filteredData().length > 0 ? (
               <FlatList
                 refreshControl={
@@ -106,5 +112,18 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(119,119,119,0.5)',
   },
   textWarning: {fontSize: 16, fontWeight: '500', color: 'grey'},
+  buttonClose: {
+    position: 'absolute',
+    top: -50,
+    right: 0,
+    left: 0,
+    alignSelf: 'center',
+    zIndex: 9999,
+  },
+  imageButton: {
+    tintColor: 'white',
+    width: 30,
+    height: 30,
+  },
 });
 export default CustomModalSelectOpticalCable;

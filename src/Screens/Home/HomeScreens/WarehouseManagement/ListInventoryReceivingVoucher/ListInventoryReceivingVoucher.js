@@ -98,7 +98,7 @@ const ListInventoryReceivingVoucher = props => {
   return (
     <View style={styles.container}>
       <CustomAppBar
-        title={'Danh sách phiếu nhập kho'}
+        title={'Danh sách nhập kho'}
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
@@ -108,7 +108,7 @@ const ListInventoryReceivingVoucher = props => {
             <View style={styles.eachContainer}>
               <CustomInput
                 styleInput={{height: 50, marginVertical: 10}}
-                placeholder={'Tìm kiếm phiếu theo lý do'}
+                placeholder={'Tìm kiếm theo lý do'}
                 source={icons.ic_seach}
                 value={search}
                 onChangeText={test => setSearch(test)}

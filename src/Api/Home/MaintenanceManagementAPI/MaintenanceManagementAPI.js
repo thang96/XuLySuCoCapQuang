@@ -236,6 +236,7 @@ const MaintenanceIssueReportAPI = (
   checkCableOdfAdapter,
   solutionProvide,
   documentFiles,
+  supplies,
 ) => {
   return new Promise((resolve, reject) => {
     const formDataReport = new FormData();
@@ -274,6 +275,7 @@ const MaintenanceIssueReportAPI = (
         type: imageDoc?.type,
       });
     }
+    formDataReport.append('supplies', JSON.stringify(supplies) ?? '');
     axios
       .post(
         `${BASEURL}/api/v1/maintenance_issue/${issueId}/maintenance-report`,

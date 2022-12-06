@@ -29,6 +29,8 @@ import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagem
 import {useSelector} from 'react-redux';
 import CustomButtonIcon from '../../../../../../../Components/CustomButtonIcon';
 import Geolocation from '@react-native-community/geolocation';
+import {GetListSuppliesAPI} from '../../../../../../../Api/Home/Master-Data/MasterData';
+import CustomModalStableWarehouse from '../../../../../../../Components/CustomModalStableWarehouse';
 const ReportIncident = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -40,11 +42,15 @@ const ReportIncident = props => {
   const [solution, setSolution] = useState('');
   const [reportDocument, setReportDocument] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [supplies, setSupplies] = useState([]);
+  const [suppliesName, setSuppliesName] = useState([]);
+
+  const [listSupplies, setListSupplies] = useState([]);
 
   useEffect(() => {
-    getRequest();
+    getResult();
   }, []);
-  const getRequest = async () => {
+  const getResult = async () => {
     let id = route.params;
     await IncidentManagementAPI.GetIncidentIssueByIdAPI(token, id)
       .then(res => {
@@ -56,6 +62,15 @@ const ReportIncident = props => {
       .catch(error => {
         console.log(error);
       });
+    await GetListSuppliesAPI(token)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          setListSupplies(res?.data?.data);
+        }
+      })
+      .catch(function (error) {
+        // console.log(error);
+      });
   };
 
   const isValueOK = () =>
@@ -63,9 +78,11 @@ const ReportIncident = props => {
     locationLatitude.length != '' &&
     reason.length != '' &&
     solution.length != '' &&
-    reportDocument.length > 0;
+    reportDocument.length > 0 &&
+    supplies.length > 0;
 
   const [modalCamera, setModalCamera] = useState(false);
+  const [modalSupplies, setModalSupplies] = useState(false);
 
   const getLocation = () => {
     Geolocation.getCurrentPosition(info => {
@@ -111,6 +128,7 @@ const ReportIncident = props => {
       reason,
       solution,
       reportDocument,
+      supplies,
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
@@ -149,8 +167,27 @@ const ReportIncident = props => {
     const newArray = reportDocument.filter(item => item != indexSelected);
     setReportDocument(newArray);
   };
+  const addSupplies = item => {
+    let idSupplies = item?.id;
+    let value = {id: idSupplies, quantity: ''};
+    let eachValue = {id: idSupplies, name: item?.name};
+    let newSupplies = [...supplies, value];
+    let eachNewSupplies = [...suppliesName, eachValue];
+    setSupplies(newSupplies);
+    setSuppliesName(eachNewSupplies);
+    setModalSupplies(false);
+  };
   return (
     <View style={styles.container}>
+      {modalSupplies && (
+        <View style={styles.styleModal}>
+          <CustomModalStableWarehouse
+            data={listSupplies}
+            closeModal={() => setModalSupplies(false)}
+            onPress={item => addSupplies(item)}
+          />
+        </View>
+      )}
       {modalCamera && (
         <View style={styles.styleModal}>
           <CustomModalCamera
@@ -264,6 +301,58 @@ const ReportIncident = props => {
                 Up ảnh
               </Text>
             </TouchableOpacity>
+            <Text style={styles.title}>Vật tư</Text>
+            <View
+              style={{
+                width: '100%',
+                backgroundColor: 'white',
+                borderRadius: 10,
+              }}>
+              {suppliesName.map((item, index) => {
+                return (
+                  <View
+                    key={`${index}`}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      paddingHorizontal: 5,
+                    }}>
+                    <Text
+                      style={[
+                        styles.textPicker,
+                        {width: '65%'},
+                      ]}>{`${item?.name} : `}</Text>
+                    <TextInput
+                      style={{fontSize: 16, width: '35%', height: 50}}
+                      placeholder={'Nhập số lượng'}
+                      defaultValue={''}
+                      onEndEditing={evt => {
+                        value = {
+                          id: item?.id,
+                          quantity: evt.nativeEvent.text,
+                        };
+                        let eachSupplies = [...supplies];
+                        eachSupplies[index] = value;
+                        setSupplies(eachSupplies);
+                      }}
+                    />
+                  </View>
+                );
+              })}
+            </View>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <CustomButtonIcon
+                styleButton={styles.styleCustomButtonIcon}
+                imageStyle={{
+                  width: 40,
+                  height: 40,
+                  tintColor: colors.mainColor,
+                }}
+                source={icons.ic_plusPurple}
+                onPress={() => setModalSupplies(true)}
+              />
+              <Text style={{color: colors.mainColor}}>Thêm vật tư</Text>
+            </View>
           </ScrollView>
           <TouchableOpacity
             disabled={isValueOK() ? false : true}
@@ -363,6 +452,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textSendReport: {fontSize: 18, color: 'white', fontWeight: 'bold'},
+  styleCustomButtonIcon: {
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default ReportIncident;

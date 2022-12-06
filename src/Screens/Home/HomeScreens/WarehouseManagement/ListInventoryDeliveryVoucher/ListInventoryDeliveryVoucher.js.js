@@ -87,10 +87,14 @@ const ListInventoryDeliveryVoucher = props => {
           ]}>
           {item?.status == 'NEW'
             ? 'Chưa phê duyệt'
+            : item?.status == 'RECEIVING_APPROVED'
+            ? 'Chờ chấp thuận'
+            : item?.status == 'RECEIVING_REJECTED'
+            ? 'Từ chối phê duyệt'
             : item?.status == 'APPROVED'
-            ? 'Đã phê duyệt'
+            ? 'Đã chấp thuận'
             : item?.status == 'REJECTED'
-            ? 'Đã từ chối'
+            ? 'Từ chối chấp thuận'
             : null}
         </Text>
       </TouchableOpacity>
@@ -99,7 +103,7 @@ const ListInventoryDeliveryVoucher = props => {
   return (
     <View style={styles.container}>
       <CustomAppBar
-        title={'Danh sách phiếu xuất kho'}
+        title={'Danh sách chuyển kho'}
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />

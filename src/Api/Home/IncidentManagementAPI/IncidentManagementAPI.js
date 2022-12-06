@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { BASEURL } from '../../BASEURL';
+import {BASEURL} from '../../BASEURL';
 
 const GetListIssuesAPI = token => {
   return new Promise((resolve, reject) => {
@@ -233,6 +233,7 @@ const IssueReportAPI = (
   reason,
   solution,
   reportDocument,
+  supplies,
 ) => {
   return new Promise((resolve, reject) => {
     let formData = new FormData();
@@ -248,6 +249,7 @@ const IssueReportAPI = (
         type: image?.type,
       });
     }
+    formData.append('supplies', JSON.stringify(supplies) ?? '');
     axios
       .post(`${BASEURL}/api/v1/issues/${issueId}/issue_report`, formData, {
         headers: {

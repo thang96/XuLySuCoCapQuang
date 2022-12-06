@@ -116,7 +116,7 @@ const DetailSupplies = props => {
         iconsLeft={icons.ic_back}
         onPressIconsLeft={() => navigation.goBack()}
       />
-      {loading == false && (
+      {loading == false && userInfor?.role != 'EMPLOYEE' && (
         <CustomButtonUpdate
           isUpdate={editable}
           firtPress={() => setEditable(true)}

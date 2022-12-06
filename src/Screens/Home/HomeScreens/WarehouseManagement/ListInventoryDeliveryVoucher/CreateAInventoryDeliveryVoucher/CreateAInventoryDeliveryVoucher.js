@@ -38,13 +38,16 @@ const CreateAInventoryDeliveryVoucher = props => {
   const [modalCamera, setModalCamera] = useState(false);
   const [modalStableWarehouse, setModalStableWarehouse] = useState(false);
   const [modalDate, setModalDate] = useState(false);
-  const [modalTime, setModalTime] = useState(false);
+  const [modalStableWarehouseDelivery, setModalStableWarehouseDelivery] =
+    useState(false);
   const [modalApproveUser, setModalApproveUser] = useState(false);
   const [modalSupplies, setModalSupplies] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const token = useSelector(state => state?.token?.token);
   const [stableWarehouseId, setStableWarehouseId] = useState('');
+  const [destinationStableWarehouseId, setDestinationStableWarehouseId] =
+    useState('');
   const [deliveryTime, setDeliveryTime] = useState('');
   const [reason, setReason] = useState('');
   const [content, setContent] = useState('');
@@ -55,6 +58,7 @@ const CreateAInventoryDeliveryVoucher = props => {
 
   const isReady = () =>
     stableWarehouseId !== '' &&
+    destinationStableWarehouseId !== '' &&
     deliveryTime !== '' &&
     reason !== '' &&
     content !== '' &&
@@ -129,11 +133,15 @@ const CreateAInventoryDeliveryVoucher = props => {
 
   const createVoucher = async () => {
     let stable_warehouse_id = parseFloat(stableWarehouseId?.id);
+    let destination_stable_warehouse_id = parseFloat(
+      destinationStableWarehouseId?.id,
+    );
     let approve_user_id = parseFloat(approveUserId?.id);
     let document_files = albumImage;
     await CreateAInventoryDeliveryVoucherAPI(
       token,
       stable_warehouse_id,
+      destination_stable_warehouse_id,
       deliveryTime,
       reason,
       content,
@@ -208,7 +216,6 @@ const CreateAInventoryDeliveryVoucher = props => {
 
     setAlbumImage(newResult);
   };
-
   return (
     <View style={styles.container}>
       {modalCamera && (
@@ -226,6 +233,7 @@ const CreateAInventoryDeliveryVoucher = props => {
         <View style={styles.styleModal}>
           <CustomModalStableWarehouse
             data={listSupplies}
+            closeModal={() => setModalSupplies(false)}
             onPress={item => addSupplies(item)}
           />
         </View>
@@ -234,9 +242,22 @@ const CreateAInventoryDeliveryVoucher = props => {
         <View style={styles.styleModal}>
           <CustomModalStableWarehouse
             data={listStableWarehouse}
+            closeModal={() => setModalStableWarehouse(false)}
             onPress={item => {
               setStableWarehouseId(item);
               setModalStableWarehouse(false);
+            }}
+          />
+        </View>
+      )}
+      {modalStableWarehouseDelivery && (
+        <View style={styles.styleModal}>
+          <CustomModalStableWarehouse
+            data={listStableWarehouse}
+            closeModal={() => setModalStableWarehouseDelivery(false)}
+            onPress={item => {
+              setDestinationStableWarehouseId(item);
+              setModalStableWarehouseDelivery(false);
             }}
           />
         </View>
@@ -253,12 +274,12 @@ const CreateAInventoryDeliveryVoucher = props => {
           />
         </View>
       )}
-
       {modalApproveUser && (
         <View style={styles.styleModal}>
           <CustomModalSelectUserAssigned
             modalVisible={modalApproveUser}
             data={listManage}
+            closeModal={() => setModalApproveUser(false)}
             onPress={item => {
               setApproveUserId(item);
               setModalApproveUser(false);
@@ -277,12 +298,23 @@ const CreateAInventoryDeliveryVoucher = props => {
           />
 
           <ScrollView style={styles.scrollView}>
-            <Text style={styles.title}>Kho</Text>
+            <Text style={styles.title}>Kho chuyển</Text>
             <TouchableOpacity
               onPress={() => setModalStableWarehouse(true)}
               style={styles.buttonPicker}>
               <Text style={styles.textPicker}>
-                {stableWarehouseId ? stableWarehouseId?.name : 'Chọn kho'}
+                {stableWarehouseId ? stableWarehouseId?.name : 'Chọn kho chyển'}
+              </Text>
+              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Kho nhận</Text>
+            <TouchableOpacity
+              onPress={() => setModalStableWarehouseDelivery(true)}
+              style={styles.buttonPicker}>
+              <Text style={styles.textPicker}>
+                {destinationStableWarehouseId
+                  ? destinationStableWarehouseId?.name
+                  : 'Chọn kho nhận'}
               </Text>
               <Image source={icons.ic_downArrow} style={styles.imagePicker} />
             </TouchableOpacity>

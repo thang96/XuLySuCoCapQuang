@@ -10,10 +10,11 @@ import {
   Image,
   RefreshControl,
 } from 'react-native';
-import {icons} from '../Constants';
+import {colors, icons} from '../Constants';
+import CustomButtonIcon from './CustomButtonIcon';
 import CustomInput from './CustomInput';
 const CustomModalSelectUserAssigned = props => {
-  const {modalVisible, onRequestClose, data, onPress} = props;
+  const {modalVisible, onRequestClose, data, onPress, closeModal} = props;
   const [search, setSearch] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const renderItem = (item, index) => {
@@ -65,7 +66,12 @@ const CustomModalSelectUserAssigned = props => {
               value={search}
               onChangeText={test => setSearch(test)}
             />
-
+            <CustomButtonIcon
+              source={icons.ic_cancel}
+              styleButton={styles.buttonClose}
+              imageStyle={styles.imageButton}
+              onPress={closeModal}
+            />
             {filteredData().length > 0 ? (
               <FlatList
                 refreshControl={
@@ -103,6 +109,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
   },
   title: {
     color: 'black',
@@ -122,5 +129,18 @@ const styles = StyleSheet.create({
   },
   image: {width: 50, height: 50, borderRadius: 50, marginRight: 5},
   textWarning: {fontSize: 16, fontWeight: '500', color: 'grey'},
+  buttonClose: {
+    position: 'absolute',
+    top: -50,
+    right: 0,
+    left: 0,
+    alignSelf: 'center',
+    zIndex: 9999,
+  },
+  imageButton: {
+    tintColor: 'white',
+    width: 30,
+    height: 30,
+  },
 });
 export default CustomModalSelectUserAssigned;

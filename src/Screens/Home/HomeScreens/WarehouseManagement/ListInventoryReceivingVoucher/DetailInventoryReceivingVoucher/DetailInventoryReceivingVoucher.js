@@ -141,9 +141,9 @@ const DetailInventoryReceivingVoucher = props => {
         </View>
       )}
       <CustomAppBar
-        title={'Chi tiết phiếu'}
+        title={'Chi tiết nhập kho'}
         iconsLeft={icons.ic_back}
-        iconFirtRight={icons.ic_edit}
+        iconFirtRight={userInfor?.role != 'EMPLOYEE' ? icons.ic_edit : null}
         onPressIconsLeft={() => navigation.goBack()}
         onPressFirtIconsRight={() => setEdit(true)}
       />
@@ -153,7 +153,7 @@ const DetailInventoryReceivingVoucher = props => {
       ) : (
         <ScrollView style={styles.eachContainer}>
           <View style={styles.viewRow}>
-            <Text style={styles.styleContent}>Chi tiết phiếu nhập kho :</Text>
+            <Text style={styles.styleContent}>Chi tiết nhập kho :</Text>
             <CustomViewRow
               title={'Thời gian tạo : '}
               content={result?.created_time}
@@ -267,7 +267,7 @@ const DetailInventoryReceivingVoucher = props => {
               content={result?.stable_warehouse?.description}
             />
           </View>
-          {userInfor?.role != 'EMPLOYEE' && result?.status == 'NEW' && (
+          {userInfor?.role == 'GENERAL_MANAGER' && result?.status == 'NEW' && (
             <View style={[styles.viewRowButton, {marginTop: 20}]}>
               <CustomTextButton
                 styleButton={styles.viewCustomTextButton}

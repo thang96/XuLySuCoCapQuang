@@ -27,21 +27,32 @@ import common from '../../../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useSelector} from 'react-redux';
 import MaintenanceManagementAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
+import {GetListSuppliesAPI} from '../../../../../../../Api/Home/Master-Data/MasterData';
+import CustomModalStableWarehouse from '../../../../../../../Components/CustomModalStableWarehouse';
 const ReportMaintenance = props => {
   const navigation = useNavigation();
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const [request, setRequest] = useState(null);
   useEffect(() => {
-    getRequest();
+    getResult();
   }, []);
-  const getRequest = async () => {
+  const getResult = async () => {
     let id = route.params;
     await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(token, id)
       .then(res => {
         setRequest(res?.data?.data);
       })
       .catch(error => {
+        // console.log(error);
+      });
+    await GetListSuppliesAPI(token)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          setListSupplies(res?.data?.data);
+        }
+      })
+      .catch(function (error) {
         // console.log(error);
       });
   };
@@ -59,6 +70,10 @@ const ReportMaintenance = props => {
   const [checkCableOdfAdapter, setCheckCableOdfAdapter] = useState(null);
   const [solutionProvide, setSolutionProvide] = useState('');
   const [documentFiles, setDocumentFiles] = useState([]);
+  const [supplies, setSupplies] = useState([]);
+  const [suppliesName, setSuppliesName] = useState([]);
+
+  const [listSupplies, setListSupplies] = useState([]);
 
   const isValueOK = () =>
     measureCableResult != null &&
@@ -75,6 +90,7 @@ const ReportMaintenance = props => {
 
   const [modalResultCamera, setModalResultCamera] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
+  const [modalSupplies, setModalSupplies] = useState(false);
   const openResultCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
       .then(async image => {
@@ -173,6 +189,7 @@ const ReportMaintenance = props => {
       checkCableOdfAdapter,
       solutionProvide,
       documentFiles,
+      supplies,
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
@@ -208,9 +225,28 @@ const ReportMaintenance = props => {
     const newArray = documentFiles.filter(item => item != indexSelected);
     setDocumentFiles(newArray);
   };
+  const addSupplies = item => {
+    let idSupplies = item?.id;
+    let value = {id: idSupplies, quantity: ''};
+    let eachValue = {id: idSupplies, name: item?.name};
+    let newSupplies = [...supplies, value];
+    let eachNewSupplies = [...suppliesName, eachValue];
+    setSupplies(newSupplies);
+    setSuppliesName(eachNewSupplies);
+    setModalSupplies(false);
+  };
   return (
     <View style={styles.container}>
       <KeyboardAvoidingView style={styles.container}>
+        {modalSupplies && (
+          <View style={styles.styleModal}>
+            <CustomModalStableWarehouse
+              data={listSupplies}
+              closeModal={() => setModalSupplies(false)}
+              onPress={item => addSupplies(item)}
+            />
+          </View>
+        )}
         {modalResultCamera && (
           <View style={styles.styleModal}>
             <CustomModalCamera
@@ -407,6 +443,58 @@ const ReportMaintenance = props => {
               Chụp báo cáo
             </Text>
           </TouchableOpacity>
+          <Text style={styles.title}>Vật tư</Text>
+          <View
+            style={{
+              width: '100%',
+              backgroundColor: 'white',
+              borderRadius: 10,
+            }}>
+            {suppliesName.map((item, index) => {
+              return (
+                <View
+                  key={`${index}`}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    paddingHorizontal: 5,
+                  }}>
+                  <Text
+                    style={[
+                      styles.textPicker,
+                      {width: '65%'},
+                    ]}>{`${item?.name} : `}</Text>
+                  <TextInput
+                    style={{fontSize: 16, width: '35%', height: 50}}
+                    placeholder={'Nhập số lượng'}
+                    defaultValue={''}
+                    onEndEditing={evt => {
+                      value = {
+                        id: item?.id,
+                        quantity: evt.nativeEvent.text,
+                      };
+                      let eachSupplies = [...supplies];
+                      eachSupplies[index] = value;
+                      setSupplies(eachSupplies);
+                    }}
+                  />
+                </View>
+              );
+            })}
+          </View>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <CustomButtonIcon
+              styleButton={styles.styleCustomButtonIcon}
+              imageStyle={{
+                width: 40,
+                height: 40,
+                tintColor: colors.mainColor,
+              }}
+              source={icons.ic_plusPurple}
+              onPress={() => setModalSupplies(true)}
+            />
+            <Text style={{color: colors.mainColor}}>Thêm vật tư</Text>
+          </View>
         </ScrollView>
 
         <TouchableOpacity
@@ -511,6 +599,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   textSendReport: {fontSize: 18, color: 'white', fontWeight: 'bold'},
+  styleCustomButtonIcon: {
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 const CustomComponentViewCheck = props => {
   const {title, result, onPressOk, onPressNotOk} = props;

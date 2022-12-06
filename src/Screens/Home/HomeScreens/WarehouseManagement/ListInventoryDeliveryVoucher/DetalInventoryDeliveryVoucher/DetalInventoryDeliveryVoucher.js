@@ -26,6 +26,9 @@ import {
   GetInventoryDeliveryVoucherByIDAPI,
   RejectInventoryDeliveryVoucher,
   ApproveInventoryDeliveryVoucher,
+  GetStableWarehouseByIdAPI,
+  ReceivingApproveInventoryDeliveryVoucher,
+  ReceivingRejectInventoryDeliveryVoucher,
 } from '../../../../../../Api/Home/StableWarehouseAPI/StableWarehouseAPI';
 import {uuid, isImage} from '../../../../../../utils/uuid';
 import {downloadFile} from '../../../../../../utils/DownloadFile';
@@ -36,8 +39,10 @@ const DetalInventoryDeliveryVoucher = props => {
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState(true);
+  const [destinationStableWarehouse, setDestinationStableWarehouse] =
+    useState(true);
   const [edit, setEdit] = useState(false);
-
+  //"destination_stable_warehouse_id": 4,
   useEffect(() => {
     getResult();
   }, []);
@@ -47,6 +52,18 @@ const DetalInventoryDeliveryVoucher = props => {
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
           setResult(res?.data?.data);
+          getDestination(res?.data?.data?.destination_stable_warehouse_id);
+        }
+      })
+      .catch(function (error) {
+        // console.log(error);
+      });
+  };
+  const getDestination = async id => {
+    await GetStableWarehouseByIdAPI(token, id)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          setDestinationStableWarehouse(res?.data?.data);
           setLoading(false);
         }
       })
@@ -54,8 +71,39 @@ const DetalInventoryDeliveryVoucher = props => {
         // console.log(error);
       });
   };
-
-  const approveReceiving = async () => {
+  const receivingApprove = async () => {
+    let id = result?.id;
+    await ReceivingApproveInventoryDeliveryVoucher(token, id)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Chuyển kho', 'Duyệt phiếu chuyển kho thành công');
+          navigation.navigate('ListInventoryDeliveryVoucher');
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Chuyển kho', 'Không thể duyệt phiếu chuyển kho');
+        }
+      })
+      .catch(function (error) {
+        Alert.alert('Chuyển kho', 'Duyệt phiếu chuyển kho thất bại');
+        // console.log(error);
+      });
+  };
+  const receivingReject = async () => {
+    let id = result?.id;
+    await ReceivingRejectInventoryDeliveryVoucher(token, id)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          Alert.alert('Chuyển kho', 'Từ chối phiếu xuất kho thành công');
+          navigation.navigate('ListInventoryDeliveryVoucher');
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          Alert.alert('Chuyển kho', 'Không thể từ chối phiếu xuất kho');
+        }
+      })
+      .catch(function (error) {
+        Alert.alert('Xuất kho', 'Từ chối phiếu xuất kho thất bại');
+        // console.log(error);
+      });
+  };
+  const approve = async () => {
     let id = result?.id;
     await ApproveInventoryDeliveryVoucher(token, id)
       .then(res => {
@@ -71,19 +119,20 @@ const DetalInventoryDeliveryVoucher = props => {
         // console.log(error);
       });
   };
-  const rejectReceiving = async () => {
+
+  const reject = async () => {
     let id = result?.id;
     await RejectInventoryDeliveryVoucher(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          Alert.alert('Xuất kho', 'Từ chối phiếu xuất kho thành công');
+          Alert.alert('Nhập kho', 'Từ chối phiếu nhập kho thành công');
           navigation.navigate('ListInventoryDeliveryVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
-          Alert.alert('Xuất kho', 'Không thể từ chối phiếu xuất kho');
+          Alert.alert('Nhập kho', 'Không thể từ chối phiếu nhập kho');
         }
       })
       .catch(function (error) {
-        Alert.alert('Xuất kho', 'Từ chối phiếu xuất kho thất bại');
+        Alert.alert('Nhập kho', 'Từ chối phiếu nhập kho thất bại');
         // console.log(error);
       });
   };
@@ -141,7 +190,7 @@ const DetalInventoryDeliveryVoucher = props => {
         </View>
       )}
       <CustomAppBar
-        title={'Chi tiết phiếu'}
+        title={'Chi tiết chuyển kho'}
         iconsLeft={icons.ic_back}
         iconFirtRight={icons.ic_edit}
         onPressIconsLeft={() => navigation.goBack()}
@@ -153,7 +202,8 @@ const DetalInventoryDeliveryVoucher = props => {
       ) : (
         <ScrollView style={styles.eachContainer}>
           <View style={styles.viewRow}>
-            <Text style={styles.styleContent}>Chi tiết phiếu xuất kho :</Text>
+            <Text style={styles.styleContent}>Chi tiết chuyển kho :</Text>
+            <CustomViewRow title={'ID : '} content={result?.id} />
             <CustomViewRow
               title={'Thời gian tạo : '}
               content={result?.created_time}
@@ -169,10 +219,14 @@ const DetalInventoryDeliveryVoucher = props => {
               content={
                 result?.status == 'NEW'
                   ? 'Chưa phê duyệt'
-                  : result?.status == 'APPROVED'
-                  ? 'Đã phê duyệt'
-                  : result?.status == 'REJECTED'
-                  ? 'Đã từ chối'
+                  : item?.status == 'RECEIVING_APPROVED'
+                  ? 'Chờ chấp thuận'
+                  : item?.status == 'RECEIVING_REJECTED'
+                  ? 'Từ chối phê duyệt'
+                  : item?.status == 'APPROVED'
+                  ? 'Đã chấp thuận'
+                  : item?.status == 'REJECTED'
+                  ? 'Từ chối chấp thuận'
                   : null
               }
             />
@@ -209,6 +263,45 @@ const DetalInventoryDeliveryVoucher = props => {
                 renderItem={({item}) => renderDocumentFiles(item)}
               />
             </View>
+          </View>
+
+          <View style={[styles.viewRow, {marginTop: 10}]}>
+            <Text style={styles.styleContent}>Chi tiết kho chuyển : </Text>
+            <CustomViewRow
+              title={'Tên kho : '}
+              content={result?.stable_warehouse?.name}
+            />
+            <CustomViewRow
+              title={'Mã kho : '}
+              content={result?.stable_warehouse?.code}
+            />
+            <CustomViewRow
+              title={'Thời gian tạo : '}
+              content={result?.stable_warehouse?.created_time}
+            />
+            <CustomViewRow
+              title={'Mô tả : '}
+              content={result?.stable_warehouse?.description}
+            />
+          </View>
+          <View style={[styles.viewRow, {marginTop: 10}]}>
+            <Text style={styles.styleContent}>Chi tiết kho nhận : </Text>
+            <CustomViewRow
+              title={'Tên kho : '}
+              content={destinationStableWarehouse.name}
+            />
+            <CustomViewRow
+              title={'Mã kho : '}
+              content={destinationStableWarehouse.code}
+            />
+            <CustomViewRow
+              title={'Thời gian tạo : '}
+              content={destinationStableWarehouse.created_time}
+            />
+            <CustomViewRow
+              title={'Mô tả : '}
+              content={destinationStableWarehouse.description}
+            />
           </View>
           <View style={[styles.viewRow, {marginTop: 10}]}>
             <Text style={styles.styleContent}>Người phê duyệt : </Text>
@@ -248,38 +341,36 @@ const DetalInventoryDeliveryVoucher = props => {
               }
             />
           </View>
-          <View style={[styles.viewRow, {marginTop: 10}]}>
-            <Text style={styles.styleContent}>Chi tiết kho : </Text>
-            <CustomViewRow
-              title={'Tên kho : '}
-              content={result?.stable_warehouse?.name}
-            />
-            <CustomViewRow
-              title={'Mã kho : '}
-              content={result?.stable_warehouse?.code}
-            />
-            <CustomViewRow
-              title={'Thời gian tạo : '}
-              content={result?.stable_warehouse?.created_time}
-            />
-            <CustomViewRow
-              title={'Mô tả : '}
-              content={result?.stable_warehouse?.description}
-            />
-          </View>
+          {userInfor?.role != 'EMPLOYEE' &&
+            result?.status == 'RECEIVING_APPROVED' && (
+              <View style={[styles.viewRowButton, {marginTop: 20}]}>
+                <CustomTextButton
+                  styleButton={styles.viewCustomTextButton}
+                  label={'Từ chối'}
+                  textStyle={styles.textCustomTextButton}
+                  onPress={() => receivingReject()}
+                />
+                <CustomTextButton
+                  styleButton={styles.viewCustomTextButton}
+                  label={'Duyệt nhập kho'}
+                  textStyle={styles.textCustomTextButton}
+                  onPress={() => receivingApprove()}
+                />
+              </View>
+            )}
           {userInfor?.role != 'EMPLOYEE' && result?.status == 'NEW' && (
             <View style={[styles.viewRowButton, {marginTop: 20}]}>
               <CustomTextButton
                 styleButton={styles.viewCustomTextButton}
                 label={'Từ chối'}
                 textStyle={styles.textCustomTextButton}
-                onPress={() => rejectReceiving()}
+                onPress={() => reject()}
               />
               <CustomTextButton
                 styleButton={styles.viewCustomTextButton}
-                label={'Chấp thuận'}
+                label={'Duyệt xuất kho'}
                 textStyle={styles.textCustomTextButton}
-                onPress={() => approveReceiving()}
+                onPress={() => approve()}
               />
             </View>
           )}

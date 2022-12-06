@@ -214,9 +214,8 @@ const CreateAMaintenanceRequest = props => {
           <CustomModalSelectOpticalCable
             data={listOpticalCables}
             modalVisible={modalOpticalCable}
-            onRequestClose={() => {
-              setModalOpticalCable(false);
-            }}
+            onRequestClose={() => setModalOpticalCable(false)}
+            closeModal={() => setModalOpticalCable(false)}
             onPress={item => chooseOpticalCable(item)}
           />
         </View>
@@ -226,9 +225,8 @@ const CreateAMaintenanceRequest = props => {
           <CustomModalSelectUserAssigned
             data={listOfEmployee}
             modalVisible={modaUserAssigned}
-            onRequestClose={() => {
-              setModalUserAssigned(false);
-            }}
+            onRequestClose={() => setModalUserAssigned(false)}
+            closeModal={() => setModalUserAssigned(false)}
             onPress={item => chooseEmployee(item)}
           />
         </View>

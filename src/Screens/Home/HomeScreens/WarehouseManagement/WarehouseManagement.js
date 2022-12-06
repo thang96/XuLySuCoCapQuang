@@ -71,36 +71,42 @@ const WarehouseManagement = () => {
               />
             </View>
             <View style={styles.viewRow}>
-              <CustomButtonFunction
-                styleView={styles.customButtonFunction}
-                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
-                icon={icons.ic_receivingVoucher}
-                title={'Phiếu\nnhập kho'}
-                titleColor={colors.mainColor}
-                onPress={() =>
-                  navigation.navigate('ListInventoryReceivingVoucher')
-                }
-              />
-              <CustomButtonFunction
-                styleView={styles.customButtonFunction}
-                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
-                icon={icons.ic_deliveryVoucher}
-                title={'Phiếu\nxuất kho'}
-                titleColor={colors.mainColor}
-                onPress={() =>
-                  navigation.navigate('ListInventoryDeliveryVoucher')
-                }
-              />
-              <CustomButtonFunction
-                styleView={styles.customButtonFunction}
-                styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
-                icon={icons.ic_controlVoucher}
-                title={'Phiếu\ntồn kho'}
-                titleColor={colors.mainColor}
-                onPress={() =>
-                  navigation.navigate('ListInventoryControlVoucher')
-                }
-              />
+              {userInfor?.role != 'EMPLOYEE' && (
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
+                  icon={icons.ic_receivingVoucher}
+                  title={'Nhập kho'}
+                  titleColor={colors.mainColor}
+                  onPress={() =>
+                    navigation.navigate('ListInventoryReceivingVoucher')
+                  }
+                />
+              )}
+              {userInfor?.role != 'EMPLOYEE' && (
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
+                  icon={icons.ic_deliveryVoucher}
+                  title={'Chuyển kho'}
+                  titleColor={colors.mainColor}
+                  onPress={() =>
+                    navigation.navigate('ListInventoryDeliveryVoucher')
+                  }
+                />
+              )}
+              {userInfor?.role != 'EMPLOYEE' && (
+                <CustomButtonFunction
+                  styleView={styles.customButtonFunction}
+                  styleIcon={[{tintColor: colors.mainColor}, styles.styleIcon]}
+                  icon={icons.ic_controlVoucher}
+                  title={'Đối soát'}
+                  titleColor={colors.mainColor}
+                  onPress={() =>
+                    navigation.navigate('ListInventoryControlVoucher')
+                  }
+                />
+              )}
             </View>
           </ScrollView>
         </View>

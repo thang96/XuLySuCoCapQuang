@@ -275,7 +275,7 @@ const CreateAInventoryReceivingVoucher = props => {
           />
 
           <ScrollView style={styles.scrollView}>
-            <Text style={styles.title}>Kho</Text>
+            <Text style={styles.title}>Kho nhập</Text>
             <TouchableOpacity
               onPress={() => setModalStableWarehouse(true)}
               style={styles.buttonPicker}>

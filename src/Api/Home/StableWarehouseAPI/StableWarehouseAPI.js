@@ -324,6 +324,7 @@ export const GetInventoryDeliveryVoucherAPI = token => {
 export const CreateAInventoryDeliveryVoucherAPI = (
   token,
   stable_warehouse_id,
+  destination_stable_warehouse_id,
   deliveryTime,
   reason,
   content,
@@ -334,6 +335,10 @@ export const CreateAInventoryDeliveryVoucherAPI = (
   return new Promise((resolve, reject) => {
     let formDataCreate = new FormData();
     formDataCreate.append('stable_warehouse_id', stable_warehouse_id ?? 0);
+    formDataCreate.append(
+      'destination_stable_warehouse_id',
+      destination_stable_warehouse_id ?? 0,
+    );
     formDataCreate.append('delivery_time', deliveryTime.toISOString() ?? '');
     formDataCreate.append('reason', reason ?? '');
     formDataCreate.append('content', content ?? '');
@@ -419,6 +424,50 @@ export const UpdateAInventoryDeliveryVoucherAPI = (
       .catch(function (error) {
         console.log(error, error?.response?.data);
         reject(error);
+      });
+  });
+};
+export const ReceivingApproveInventoryDeliveryVoucher = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(
+        `${BASEURL}/api/v1/inventory-delivery-voucher/${id}/receiving-approve`,
+        id,
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
+      });
+  });
+};
+export const ReceivingRejectInventoryDeliveryVoucher = (token, id) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(
+        `${BASEURL}/api/v1/inventory-delivery-voucher/${id}/receiving-reject`,
+        id,
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      .then(res => {
+        resolve(res);
+      })
+      .catch(errors => {
+        reject(errors);
       });
   });
 };
