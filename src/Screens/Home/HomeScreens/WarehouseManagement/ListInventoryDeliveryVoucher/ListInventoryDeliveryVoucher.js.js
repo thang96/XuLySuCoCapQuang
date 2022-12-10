@@ -79,16 +79,18 @@ const ListInventoryDeliveryVoucher = props => {
                 item?.status == 'NEW'
                   ? 'blue'
                   : item?.status == 'APPROVED'
-                  ? 'green'
-                  : item?.status == 'REJECTED'
                   ? 'red'
+                  : item?.status == 'REJECTED'
+                  ? 'grey'
+                  : item?.status == 'RECEIVING_APPROVED'
+                  ? 'green'
                   : null,
             },
           ]}>
           {item?.status == 'NEW'
             ? 'Chưa phê duyệt'
             : item?.status == 'RECEIVING_APPROVED'
-            ? 'Chờ chấp thuận'
+            ? 'Đã phê duyệt'
             : item?.status == 'RECEIVING_REJECTED'
             ? 'Từ chối phê duyệt'
             : item?.status == 'APPROVED'

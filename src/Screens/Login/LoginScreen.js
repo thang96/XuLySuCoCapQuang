@@ -1,20 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  ImageBackground,
-  Image,
-  TouchableOpacity,
-  View,
-  Alert,
-} from 'react-native';
+import {StyleSheet, Image, View, Alert} from 'react-native';
 import {icons, images, colors} from '../../Constants';
 import CustomInput from '../../Components/CustomInput';
 import {useNavigation} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useDispatch} from 'react-redux';
 import {updateToken} from '../../Store/slices/tokenSlice';
-import {updateUser} from '../../Store/slices/userSlice';
 import {LoginAccessToken} from '../../Api/Login/LoginAPI';
 import CustomLoading from '../../Components/CustomLoading';
 import CustomTextButton from '../../Components/CustomTextButton';
@@ -28,7 +19,6 @@ const LoginScreen = () => {
   const dispatch = useDispatch();
 
   const login = async () => {
-    let user = {username: userName, password: password};
     setIsLoading(true);
     await LoginAccessToken(userName, password)
       .then(res => {
@@ -46,11 +36,17 @@ const LoginScreen = () => {
         console.log(error);
       });
   };
-  if (isLoading) {
-    return <CustomLoading />;
-  }
+
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.viewModal}>
+          <CustomLoading
+            modalVisible={isLoading}
+            onRequestClose={() => setIsLoading(false)}
+          />
+        </View>
+      )}
       <Image resizeMode="contain" source={icons.ic_logo} style={styles.image} />
       <CustomInput
         onChangeText={text => setUserName(text)}
@@ -67,15 +63,6 @@ const LoginScreen = () => {
         placeholder={'Mật khẩu'}
         styleInput={[styles.styleInput, {marginTop: 20}]}
       />
-      {/* <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('ForgotPassword');
-        }}
-        style={styles.fogetPassButton}>
-        <Text style={[styles.fogetPassText, {color: colors.mainColor}]}>
-          Quên mật khẩu ?
-        </Text>
-      </TouchableOpacity> */}
       <CustomTextButton
         textStyle={styles.textStyle}
         onPress={() => login()}
@@ -113,6 +100,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
+  },
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 9999,
+    position: 'absolute',
   },
 });
 export default LoginScreen;

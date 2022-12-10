@@ -29,9 +29,8 @@ import ImagePicker from 'react-native-image-crop-picker';
 import MaintenanceManagementAPI from '../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import {uuid} from '../../../../../utils/uuid';
 import CustomModalPicker from '../../../../../Components/CustomModalPicker';
+import CustomLoading from '../../../../../Components/CustomLoading';
 import {
-  ReadUsersAPI,
-  ReadOpticalCablesAPI,
   ReadUserByOpticalCablesIdAPI,
   ReadOpticalCablesByUserIdAPI,
 } from '../../../../../Api/Home/Master-Data/MasterData';
@@ -59,6 +58,7 @@ const CreateAMaintenanceRequest = props => {
   const [listOfEmployee, setListOfEmployee] = useState([]);
   const [isChoose, setIsChoose] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const isReady = () =>
     opticalCableId != null &&
     userAssignedId != null &&
@@ -116,9 +116,9 @@ const CreateAMaintenanceRequest = props => {
   };
   const openCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
-      .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
+      .then(image => {
+        let eachImg = {...image, uri: image?.path};
+        addResult(eachImg);
         setModalCamera(false);
       })
       .catch(e => {
@@ -127,16 +127,26 @@ const CreateAMaintenanceRequest = props => {
       });
   };
   const openGallery = () => {
-    ImagePicker.openPicker({})
-      .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
+    ImagePicker.openPicker({multiple: true})
+      .then(image => {
+        let albumImg = [];
+        for (let index = 0; index < image.length; index++) {
+          let element = image[index];
+          let eachElement = {...element, uri: element?.path};
+          albumImg.push(eachElement);
+        }
+        addResultGallery(albumImg);
         setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
         setModalCamera(false);
       });
+  };
+  const addResultGallery = album => {
+    const eachResult = [...albumImage];
+    const newResult = eachResult.concat(album);
+    setAlbumImage(newResult);
   };
   const addResult = image => {
     const eachResult = [...albumImage, image];
@@ -153,7 +163,7 @@ const CreateAMaintenanceRequest = props => {
             source={icons.ic_cancel}
           />
           <Image
-            source={{uri: item?.uri}}
+            source={{uri: item?.path}}
             style={{width: 200, height: 200}}
             resizeMode={'contain'}
           />
@@ -168,6 +178,7 @@ const CreateAMaintenanceRequest = props => {
     setAlbumImage(newResult);
   };
   const createRequest = async () => {
+    setIsLoading(true);
     const repeat_by = repeatBy?.value;
     const optical_cable_id = parseInt(opticalCableId?.id);
     const user_assigned_id = parseInt(userAssignedId?.id);
@@ -182,18 +193,32 @@ const CreateAMaintenanceRequest = props => {
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Tạo yêu cầu bảo trì', 'Tạo yêu cầu thành công');
+          navigation.goBack();
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
+          Alert.alert('Tạo yêu cầu bảo trì', 'Không thể tạo yêu cầu bảo trì');
           navigation.goBack();
         }
       })
       .catch(function (error) {
-        console.log(error);
+        setIsLoading(false);
+        // console.log(error);
         Alert.alert('Tạo yêu cầu bảo trì', 'Tạo yêu cầu thất bại');
       });
   };
 
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.viewModal}>
+          <CustomLoading
+            modalVisible={isLoading}
+            onRequestClose={() => setIsLoading(false)}
+          />
+        </View>
+      )}
       {modalCamera && (
         <View style={styles.styleModal}>
           <CustomModalCamera
@@ -417,6 +442,13 @@ const styles = StyleSheet.create({
   },
   customButtonIcon: {position: 'absolute', right: 3, top: 3, zIndex: 1},
   imageStyle: {width: 20, height: 20, tintColor: 'red'},
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 9999,
+    position: 'absolute',
+  },
 });
 const ButtonPicker = props => {
   const {repeatBy, onPressPicker} = props;

@@ -107,7 +107,7 @@ const ReportIncidentDetail = props => {
           />
           <CustomViewRow title={'Lý do  : '} content={result?.reason} />
           <CustomViewRow title={'Giải pháp  : '} content={result?.solution} />
-          <View>
+          <View style={styles.customView}>
             <Text style={styles.title}>File báo cáo </Text>
             <FlatList
               style={{height: 210, backgroundColor: 'white'}}
@@ -116,6 +116,64 @@ const ReportIncidentDetail = props => {
               keyExtractor={uuid}
               renderItem={({item, index}) => renderDocumentFiles(item, index)}
             />
+          </View>
+          <View style={[styles.viewRowShowInfo, {marginTop: 10}]}>
+            <Text style={styles.styleContent}>Kho vật tư </Text>
+            <CustomViewRow
+              title={'Kho vật tư  : '}
+              content={
+                result?.inventory_issue_delivery_voucher?.stable_warehouse?.name
+              }
+            />
+            <CustomViewRow
+              title={'Mã kho  : '}
+              content={
+                result?.inventory_issue_delivery_voucher?.stable_warehouse?.code
+              }
+            />
+            <CustomViewRow
+              title={'Thời gian tạo  : '}
+              content={
+                result?.inventory_issue_delivery_voucher?.stable_warehouse
+                  ?.created_time
+              }
+            />
+            <CustomViewRow
+              title={'Mô tả  : '}
+              content={
+                result?.inventory_issue_delivery_voucher?.stable_warehouse
+                  ?.description
+              }
+            />
+          </View>
+          <View style={[styles.viewRowShowInfo, {marginTop: 10}]}>
+            <Text style={styles.styleContent}>
+              {result?.inventory_issue_delivery_voucher?.content}
+            </Text>
+            {result?.inventory_issue_delivery_voucher?.supplies?.map(
+              (item, index) => {
+                return (
+                  <View key={item?.id} style={styles.viewVoucher}>
+                    <CustomViewRow
+                      title={'Mã : '}
+                      content={item?.supplies?.code}
+                    />
+                    <CustomViewRow
+                      title={'Tên vật tư : '}
+                      content={item?.supplies?.name}
+                    />
+                    <CustomViewRow
+                      title={'Đơn vị : '}
+                      content={item?.supplies?.unit}
+                    />
+                    <CustomViewRow
+                      title={'Số lượng : '}
+                      content={item?.quantity}
+                    />
+                  </View>
+                );
+              },
+            )}
           </View>
         </ScrollView>
       )}
@@ -132,6 +190,9 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     paddingHorizontal: 5,
     justifyContent: 'space-between',
+    width: '95%',
+    alignSelf: 'center',
+    borderRadius: 5,
   },
   renderDocumentFiles: {
     borderWidth: 0.5,
@@ -144,6 +205,26 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  viewRowShowInfo: {
+    width: '95%',
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 10,
+    alignSelf: 'center',
+  },
+  styleContent: {
+    color: 'black',
+    fontSize: 18,
+    fontWeight: 'bold',
+    maxWidth: '65%',
+  },
+  viewVoucher: {
+    borderWidth: 0.5,
+    padding: 5,
+    borderRadius: 10,
+    marginBottom: 5,
+    borderColor: colors.mainColor,
   },
 });
 const CustomViewRow = props => {

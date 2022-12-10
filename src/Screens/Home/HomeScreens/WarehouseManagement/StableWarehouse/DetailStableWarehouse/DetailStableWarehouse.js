@@ -38,7 +38,6 @@ const DetailStableWarehouse = props => {
   useEffect(() => {
     getResult();
   }, []);
-
   const getResult = async () => {
     let id = route.params;
     await GetStableWarehouseByIdAPI(token, id)
@@ -47,14 +46,14 @@ const DetailStableWarehouse = props => {
         setLoading(false);
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
     await GetStableWarehouseSuppliesByIdAPI(token, id)
       .then(res => {
-        setStableWarehouseSuppliesResult(res?.data?.data);
+        setStableWarehouseSuppliesResult(res?.data?.data?.data);
       })
       .catch(function (error) {
-        console.log(error);
+        // console.log(error);
       });
   };
   return (
@@ -69,7 +68,7 @@ const DetailStableWarehouse = props => {
         <ActivityIndicator size="large" color={colors.mainColor} />
       ) : (
         <ScrollView style={styles.eachContainer}>
-          <View style={styles.viewRow}>
+          <View style={styles.viewShow}>
             <Text style={styles.styleContent}>Chi tiết kho : </Text>
             <CustomViewRow
               title={'Tên : '}
@@ -88,8 +87,24 @@ const DetailStableWarehouse = props => {
               content={stableWarehouseResult?.description}
             />
           </View>
-          <View style={[styles.viewRow, {marginTop: 30}]}>
+          <View style={[styles.viewShow, {marginTop: 30}]}>
             <Text style={styles.styleContent}>Chi tiết vật tư trong kho :</Text>
+            <View style={[styles.viewRow, {marginBottom: 10}]}>
+              <Text style={styles.styleContent}>Tên vật tư</Text>
+              <Text style={styles.styleContent}>Số lượng</Text>
+            </View>
+            {stableWarehouseSuppliesResult.map(item => {
+              return (
+                <View
+                  key={`${item?.id}`}
+                  style={[styles.viewRow, {marginVertical: 5}]}>
+                  <Text style={styles.styleContent}>
+                    {item?.supplies?.name}
+                  </Text>
+                  <Text style={styles.styleContent}>{item?.quantity}</Text>
+                </View>
+              );
+            })}
           </View>
         </ScrollView>
       )}
@@ -106,7 +121,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingTop: 10,
   },
-  viewRow: {
+  viewShow: {
     width: '100%',
     backgroundColor: 'white',
     borderRadius: 5,
@@ -118,6 +133,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     maxWidth: '65%',
+  },
+  viewRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
 });
 const CustomViewRow = props => {

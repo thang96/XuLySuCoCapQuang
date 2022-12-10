@@ -23,6 +23,7 @@ import IncidentManagementAPI from '../../../../../../Api/Home/IncidentManagement
 import {uuid, isImage} from '../../../../../../utils/uuid';
 import {downloadFile} from '../../../../../../utils/DownloadFile';
 import CustomConfirm from '../../../../../../Components/CustomConfirm';
+import CustomLoading from '../../../../../../Components/CustomLoading';
 const IncidentDetail = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
@@ -30,6 +31,7 @@ const IncidentDetail = props => {
   const route = useRoute();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     getResult();
   }, [route, token]);
@@ -43,31 +45,39 @@ const IncidentDetail = props => {
       .catch(function (error) {});
   };
   const rejectIssue = async () => {
+    setIsLoading(true);
     await IncidentManagementAPI.RejectIssueAPI(token, result?.id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Sự cố', 'Từ chối thành công');
-          navigation.navigate('IncidentManagement');
+          navigation.navigate('IncidentList');
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Sự cố', 'Không thể từ chôi');
         }
       })
       .catch(error => {
+        setIsLoading(false);
         Alert.alert('Sự cố', 'Từ chối thất bại');
       });
   };
   const receiveIssue = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await IncidentManagementAPI.ReceiveIssueAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Sự cố', 'Tiếp nhận sự cố thành công');
           navigation.navigate('IncidentList');
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Sự cố', 'Không thể tiếp nhận sự cố');
         }
       })
       .catch(error => {
+        setIsLoading(false);
         Alert.alert('Sự cố', 'Tiếp nhận sự cố thất bại');
       });
   };
@@ -76,10 +86,12 @@ const IncidentDetail = props => {
     navigation.navigate('ReportIncident', id);
   };
   const acceptance = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await IncidentManagementAPI.AcceptIssueRequestAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Nghiệm thu', 'Nghiệm thu thành công');
           navigation.navigate('IncidentManagement');
         } else if (res?.status == 200 && res?.data?.success == false) {
@@ -87,6 +99,7 @@ const IncidentDetail = props => {
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
         Alert.alert('Nghiệm thu', 'Nghiệm thu thất bại');
       });
   };
@@ -127,19 +140,23 @@ const IncidentDetail = props => {
   };
   const [confirm, setConfirm] = useState(false);
   const deleteIncident = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await IncidentManagementAPI.DeleteIncidentIssueByIdAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Sự cố', 'Xóa yêu cầu xử lý sự cố thành công');
           navigation.goBack();
           setConfirm(false);
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Sự cố', 'Không thể xóa yêu cầu xử lý sự cố');
           setConfirm(false);
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
         Alert.alert('Sự cố', 'Xóa yêu cầu xử lý sự cố thất bại');
         setConfirm(false);
       });
@@ -148,6 +165,14 @@ const IncidentDetail = props => {
 
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.viewModal}>
+          <CustomLoading
+            modalVisible={isLoading}
+            onRequestClose={() => setIsLoading(false)}
+          />
+        </View>
+      )}
       <CustomAppBar
         title={'Chi tiết công việc'}
         iconsLeft={icons.ic_back}
@@ -401,6 +426,13 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 9999,
+    position: 'absolute',
   },
 });
 

@@ -19,7 +19,7 @@ import CustomAppBar from '../../../../../../Components/CustomAppBar';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
 import CustomTextInputChangeValue from '../../../../../../Components/CustomTextInputChangeValue';
-import CusttomTwoButtonBottom from '../../../../../../Components/CusttomTwoButtonBottom';
+import CustomLoading from '../../../../../../Components/CustomLoading';
 import {useSelector} from 'react-redux';
 import CustomConfirm from '../../../../../../Components/CustomConfirm';
 import {
@@ -38,6 +38,7 @@ const DetalInventoryDeliveryVoucher = props => {
   const token = useSelector(state => state?.token?.token);
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState(true);
   const [destinationStableWarehouse, setDestinationStableWarehouse] =
     useState(true);
@@ -72,66 +73,82 @@ const DetalInventoryDeliveryVoucher = props => {
       });
   };
   const receivingApprove = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await ReceivingApproveInventoryDeliveryVoucher(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Chuyển kho', 'Duyệt phiếu chuyển kho thành công');
           navigation.navigate('ListInventoryDeliveryVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Chuyển kho', 'Không thể duyệt phiếu chuyển kho');
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
         Alert.alert('Chuyển kho', 'Duyệt phiếu chuyển kho thất bại');
         // console.log(error);
       });
   };
   const receivingReject = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await ReceivingRejectInventoryDeliveryVoucher(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Chuyển kho', 'Từ chối phiếu xuất kho thành công');
           navigation.navigate('ListInventoryDeliveryVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Chuyển kho', 'Không thể từ chối phiếu xuất kho');
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
         Alert.alert('Xuất kho', 'Từ chối phiếu xuất kho thất bại');
         // console.log(error);
       });
   };
   const approve = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await ApproveInventoryDeliveryVoucher(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Xuất kho', 'Chấp thuận phiếu xuất kho thành công');
           navigation.navigate('ListInventoryDeliveryVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Xuất kho', 'Không thể chấp thuận phiếu xuất kho');
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
         Alert.alert('Xuất kho', 'Chấp thuận phiếu xuất kho thất bại');
         // console.log(error);
       });
   };
 
   const reject = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await RejectInventoryDeliveryVoucher(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Nhập kho', 'Từ chối phiếu nhập kho thành công');
           navigation.navigate('ListInventoryDeliveryVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Nhập kho', 'Không thể từ chối phiếu nhập kho');
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
         Alert.alert('Nhập kho', 'Từ chối phiếu nhập kho thất bại');
         // console.log(error);
       });
@@ -173,6 +190,14 @@ const DetalInventoryDeliveryVoucher = props => {
   };
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.viewModal}>
+          <CustomLoading
+            modalVisible={isLoading}
+            onRequestClose={() => setIsLoading(false)}
+          />
+        </View>
+      )}
       {edit && (
         <View style={styles.viewModal}>
           <CustomConfirm
@@ -219,13 +244,13 @@ const DetalInventoryDeliveryVoucher = props => {
               content={
                 result?.status == 'NEW'
                   ? 'Chưa phê duyệt'
-                  : item?.status == 'RECEIVING_APPROVED'
-                  ? 'Chờ chấp thuận'
-                  : item?.status == 'RECEIVING_REJECTED'
+                  : result?.status == 'RECEIVING_APPROVED'
+                  ? 'Đã phê duyệt'
+                  : result?.status == 'RECEIVING_REJECTED'
                   ? 'Từ chối phê duyệt'
-                  : item?.status == 'APPROVED'
+                  : result?.status == 'APPROVED'
                   ? 'Đã chấp thuận'
-                  : item?.status == 'REJECTED'
+                  : result?.status == 'REJECTED'
                   ? 'Từ chối chấp thuận'
                   : null
               }
@@ -247,8 +272,8 @@ const DetalInventoryDeliveryVoucher = props => {
                     content={item?.supplies?.unit}
                   />
                   <CustomViewRow
-                    title={'Số lượng tối thiểu : '}
-                    content={item?.supplies?.minimum_quantity}
+                    title={'Số lượng : '}
+                    content={item?.quantity}
                   />
                 </View>
               );
@@ -341,23 +366,22 @@ const DetalInventoryDeliveryVoucher = props => {
               }
             />
           </View>
-          {userInfor?.role != 'EMPLOYEE' &&
-            result?.status == 'RECEIVING_APPROVED' && (
-              <View style={[styles.viewRowButton, {marginTop: 20}]}>
-                <CustomTextButton
-                  styleButton={styles.viewCustomTextButton}
-                  label={'Từ chối'}
-                  textStyle={styles.textCustomTextButton}
-                  onPress={() => receivingReject()}
-                />
-                <CustomTextButton
-                  styleButton={styles.viewCustomTextButton}
-                  label={'Duyệt nhập kho'}
-                  textStyle={styles.textCustomTextButton}
-                  onPress={() => receivingApprove()}
-                />
-              </View>
-            )}
+          {userInfor?.role != 'EMPLOYEE' && result?.status == 'APPROVED' && (
+            <View style={[styles.viewRowButton, {marginTop: 20}]}>
+              <CustomTextButton
+                styleButton={styles.viewCustomTextButton}
+                label={'Từ chối'}
+                textStyle={styles.textCustomTextButton}
+                onPress={() => receivingReject()}
+              />
+              <CustomTextButton
+                styleButton={styles.viewCustomTextButton}
+                label={'Duyệt nhập kho'}
+                textStyle={styles.textCustomTextButton}
+                onPress={() => receivingApprove()}
+              />
+            </View>
+          )}
           {userInfor?.role != 'EMPLOYEE' && result?.status == 'NEW' && (
             <View style={[styles.viewRowButton, {marginTop: 20}]}>
               <CustomTextButton
@@ -480,6 +504,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   content: {fontSize: 16, fontWeight: 'bold', color: 'grey'},
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 9999,
+    position: 'absolute',
+  },
 });
 const CustomViewRow = props => {
   const {title, content} = props;

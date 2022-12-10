@@ -15,25 +15,31 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
 import {uuid} from '../../../../../../../utils/uuid';
 import CustomButtonIcon from '../../../../../../../Components/CustomButtonIcon';
 import CustomTextInputChangeValue from '../../../../../../../Components/CustomTextInputChangeValue';
-import CustomTextButton from '../../../../../../../Components/CustomTextButton';
+import CustomLoading from '../../../../../../../Components/CustomLoading';
 import {colors, icons} from '../../../../../../../Constants';
 import common from '../../../../../../../utils/common';
 import ImagePicker from 'react-native-image-crop-picker';
 import {useSelector} from 'react-redux';
 import MaintenanceManagementAPI from '../../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
-import {GetListSuppliesAPI} from '../../../../../../../Api/Home/Master-Data/MasterData';
 import CustomModalStableWarehouse from '../../../../../../../Components/CustomModalStableWarehouse';
+import {
+  GetStableWarehouseAPI,
+  GetStableWarehouseSuppliesByIdAPI,
+} from '../../../../../../../Api/Home/StableWarehouseAPI/StableWarehouseAPI';
 const ReportMaintenance = props => {
   const navigation = useNavigation();
   const route = useRoute();
   const token = useSelector(state => state?.token?.token);
   const [request, setRequest] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     getResult();
   }, []);
@@ -42,14 +48,16 @@ const ReportMaintenance = props => {
     await MaintenanceManagementAPI.GetMaintenanceIssueByIdAPI(token, id)
       .then(res => {
         setRequest(res?.data?.data);
+        setLoading(false);
       })
       .catch(error => {
         // console.log(error);
       });
-    await GetListSuppliesAPI(token)
+    await GetStableWarehouseAPI(token)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          setListSupplies(res?.data?.data);
+          setlistwarehouse(res?.data?.data);
+          // setListSupplies(res?.data?.data);
         }
       })
       .catch(function (error) {
@@ -74,6 +82,9 @@ const ReportMaintenance = props => {
   const [suppliesName, setSuppliesName] = useState([]);
 
   const [listSupplies, setListSupplies] = useState([]);
+  const [listwarehouse, setlistwarehouse] = useState([]);
+  const [warehouse, setwarehouse] = useState('');
+  const [modalStableWarehouse, setModalStableWarehouse] = useState(false);
 
   const isValueOK = () =>
     measureCableResult != null &&
@@ -86,16 +97,17 @@ const ReportMaintenance = props => {
     checkCableSocket != null &&
     checkCableOdfAdapter != null &&
     solutionProvide.length > 0 &&
-    documentFiles.length > 0;
+    documentFiles.length > 0 &&
+    supplies.length > 0;
 
   const [modalResultCamera, setModalResultCamera] = useState(false);
   const [modalCamera, setModalCamera] = useState(false);
   const [modalSupplies, setModalSupplies] = useState(false);
   const openResultCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
-      .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        addMeasureCableResultDocument(imageConverted1);
+      .then(image => {
+        let eachImg = {...image, uri: image?.path};
+        addMeasureCableResultDocument(eachImg);
         setModalResultCamera(false);
       })
       .catch(e => {
@@ -104,10 +116,15 @@ const ReportMaintenance = props => {
       });
   };
   const openResultGallery = () => {
-    ImagePicker.openPicker({})
-      .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        addMeasureCableResultDocument(imageConverted1);
+    ImagePicker.openPicker({multiple: true})
+      .then(image => {
+        let albumImg = [];
+        for (let index = 0; index < image.length; index++) {
+          let element = image[index];
+          let eachElement = {...element, uri: element?.path};
+          albumImg.push(eachElement);
+        }
+        addMeasureCableResultDocumentGallery(albumImg);
         setModalResultCamera(false);
       })
       .catch(e => {
@@ -115,15 +132,21 @@ const ReportMaintenance = props => {
         setModalResultCamera(false);
       });
   };
+  const addMeasureCableResultDocumentGallery = album => {
+    const eachResult = [...measureCableResultDocument];
+    const newResult = eachResult.concat(album);
+    setMeasureCableResultDocument(newResult);
+  };
   const addMeasureCableResultDocument = image => {
     const eachResult = [...measureCableResultDocument, image];
     setMeasureCableResultDocument(eachResult);
   };
+
   const openCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
-      .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        addDocumentFiles(imageConverted1);
+      .then(image => {
+        let eachImg = {...image, uri: image?.path};
+        addDocumentFiles(eachImg);
         setModalCamera(false);
       })
       .catch(e => {
@@ -133,16 +156,26 @@ const ReportMaintenance = props => {
   };
 
   const openGallery = () => {
-    ImagePicker.openPicker({})
-      .then(async image => {
-        const imageConverted1 = await common.resizeImageNotVideo(image);
-        addDocumentFiles(imageConverted1);
+    ImagePicker.openPicker({multiple: true})
+      .then(image => {
+        let albumImg = [];
+        for (let index = 0; index < image.length; index++) {
+          let element = image[index];
+          let eachElement = {...element, uri: element?.path};
+          albumImg.push(eachElement);
+        }
+        addDocumentFilesGallery(albumImg);
         setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
         setModalCamera(false);
       });
+  };
+  const addDocumentFilesGallery = album => {
+    const eachResult = [...documentFiles];
+    const newResult = eachResult.concat(album);
+    setDocumentFiles(newResult);
   };
   const addDocumentFiles = image => {
     const eachResult = [...documentFiles, image];
@@ -174,6 +207,7 @@ const ReportMaintenance = props => {
     setMeasureCableResultDocument(newArray);
   };
   const sendReport = async () => {
+    setIsLoading(true);
     let issueId = request?.id;
     await MaintenanceManagementAPI.MaintenanceIssueReportAPI(
       token,
@@ -193,12 +227,18 @@ const ReportMaintenance = props => {
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Báo cáo', 'Gửi báo cáo thành công');
+          navigation.navigate('MaintenanceManagement');
+        } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
+          Alert.alert('Báo cáo', 'Không thể gửi báo cáo');
           navigation.navigate('MaintenanceManagement');
         }
       })
       .catch(function (error) {
-        console.log(JSON.stringify(error));
+        setIsLoading(false);
+        // console.log(error);
         Alert.alert('Báo cáo', 'Gửi báo cáo thất bại');
       });
   };
@@ -235,9 +275,50 @@ const ReportMaintenance = props => {
     setSuppliesName(eachNewSupplies);
     setModalSupplies(false);
   };
+  const getListSuppliesInfor = async id => {
+    await GetStableWarehouseSuppliesByIdAPI(token, id)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          let eachSupplies = [];
+          for (let index = 0; index < res?.data?.data?.data.length; index++) {
+            let element = res?.data?.data?.data[index];
+            let value = {
+              name: element?.supplies?.name,
+              id: element?.supplies_id,
+            };
+            eachSupplies.push(value);
+          }
+          setListSupplies(eachSupplies);
+        }
+      })
+      .catch(function (error) {
+        // console.log(error);
+      });
+  };
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.viewModal}>
+          <CustomLoading
+            modalVisible={isLoading}
+            onRequestClose={() => setIsLoading(false)}
+          />
+        </View>
+      )}
       <KeyboardAvoidingView style={styles.container}>
+        {modalStableWarehouse && (
+          <View style={styles.styleModal}>
+            <CustomModalStableWarehouse
+              data={listwarehouse}
+              closeModal={() => setModalStableWarehouse(false)}
+              onPress={item => {
+                setwarehouse(item);
+                getListSuppliesInfor(item?.id);
+                setModalStableWarehouse(false);
+              }}
+            />
+          </View>
+        )}
         {modalSupplies && (
           <View style={styles.styleModal}>
             <CustomModalStableWarehouse
@@ -288,224 +369,217 @@ const ReportMaintenance = props => {
         <CustomAppBar
           title={'Báo cáo kết quả'}
           iconsLeft={icons.ic_back}
-          onPressIconsLeft={() => navigation.navigate('FiberOpticCableDetail')}
+          onPressIconsLeft={() => navigation.goBack()}
         />
-
-        <ScrollView style={styles.eachContainer}>
-          <Text style={styles.title}>Thông tin yêu cầu xử lý</Text>
-          <Text style={styles.content}>{`Mã CV : ${request?.code}`}</Text>
-          <Text
-            style={
-              styles.content
-            }>{`Nhân sự kỹ thuật : ${request?.user_assigned}`}</Text>
-          <View style={[styles.line, {marginVertical: 10}]} />
-
-          <View style={styles.viewItem}>
-            <CustomComponentViewCheck
-              title={'Kết quả đo tuyến cáp'}
-              result={measureCableResult}
-              onPressOk={() => setMeasureCableResult(true)}
-              onPressNotOk={() => setMeasureCableResult(false)}
-            />
-            <FlatList
-              horizontal
-              data={measureCableResultDocument}
-              keyExtractor={uuid}
-              renderItem={({item, index}) =>
-                renderMeasureCableResultDocument(item, index)
-              }
-            />
-            <TouchableOpacity
-              disabled={measureCableResultDocument.length < 5 ? false : true}
-              onPress={() => setModalResultCamera(true)}
-              style={[styles.buttonUpload, {marginTop: 10}]}>
-              <Image
-                source={icons.ic_report}
-                style={[
-                  styles.iconButtonUpload,
-                  {
-                    tintColor:
-                      measureCableResultDocument.length < 5
-                        ? colors.mainColor
-                        : 'grey',
-                  },
-                ]}
-              />
+        {loading ? (
+          <ActivityIndicator size={'large'} color={colors.mainColor} />
+        ) : (
+          <View style={styles.container}>
+            <ScrollView style={styles.eachContainer}>
+              <Text style={styles.title}>Thông tin yêu cầu xử lý</Text>
+              <Text style={styles.content}>{`Mã CV : ${request?.code}`}</Text>
               <Text
-                style={[
-                  styles.textButtonUpload,
-                  {
-                    color:
-                      measureCableResultDocument.length < 5
-                        ? colors.mainColor
-                        : 'grey',
-                  },
-                ]}>
-                Chụp kết quả đo
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.viewItem}>
-            <CustomComponentViewCheck
-              title={'Phát quang\ndọc tuyến cáp'}
-              result={cleanCableResult}
-              onPressOk={() => setCleanCableResult(true)}
-              onPressNotOk={() => setCleanCableResult(false)}
-            />
-          </View>
-          <View style={styles.viewItem}>
-            <CustomComponentViewCheck
-              title={'Căn chỉnh các tuyến\ncáp quang treo'}
-              result={adjustTensionCable}
-              onPressOk={() => setAdjustTensionCable(true)}
-              onPressNotOk={() => setAdjustTensionCable(false)}
-            />
-          </View>
-          <View style={styles.viewItem}>
-            <CustomComponentViewCheck
-              title={'Kiểm tra chỉnh lại vật tư\nphụ kiện treo cáp'}
-              result={checkSupplies}
-              onPressOk={() => setCheckSupplies(true)}
-              onPressNotOk={() => setCheckSupplies(false)}
-            />
-          </View>
-          <View style={styles.viewItem}>
-            <CustomComponentViewCheck
-              title={'Vệ sinh công bể\ncáp ngầm'}
-              result={cleanUndergroundCable}
-              onPressOk={() => setCleanUndergroundCable(true)}
-              onPressNotOk={() => setCleanUndergroundCable(false)}
-            />
-          </View>
-          <View style={styles.viewItem}>
-            <CustomComponentViewCheck
-              title={'Kiểm tra làm gọn cáp\ndự phòng'}
-              result={checkPreventiveCable}
-              onPressOk={() => setCheckPreventiveCable(true)}
-              onPressNotOk={() => setCheckPreventiveCable(false)}
-            />
-          </View>
-          <View style={styles.viewItem}>
-            <CustomComponentViewCheck
-              title={'Kiểm tra, vệ sinh\nmăng xông nối cáp'}
-              result={checkCableSocket}
-              onPressOk={() => setCheckCableSocket(true)}
-              onPressNotOk={() => setCheckCableSocket(false)}
-            />
-          </View>
-          <View style={styles.viewItem}>
-            <CustomComponentViewCheck
-              title={'Kiểm tra, vệ sinh ODF và\ncác đầu Adapter quang'}
-              result={checkCableOdfAdapter}
-              onPressOk={() => setCheckCableOdfAdapter(true)}
-              onPressNotOk={() => setCheckCableOdfAdapter(false)}
-            />
-          </View>
-          <Text style={styles.title}>Phương án đề xuất tối ưu</Text>
-          <CustomTextInputChangeValue
-            styleViewInput={{
-              height: 50,
-              width: '100%',
-              backgroundColor: 'white',
-            }}
-            placeholder={'Nhập phương án'}
-            value={solutionProvide}
-            onChangeText={text => setSolutionProvide(text)}
-          />
-          <Text style={styles.title}>Hình ảnh báo cáo</Text>
-          <FlatList
-            horizontal
-            data={documentFiles}
-            keyExtractor={uuid}
-            renderItem={({item, index}) => renderDocumentFiles(item, index)}
-          />
-          <TouchableOpacity
-            disabled={documentFiles.length < 5 ? false : true}
-            style={styles.button}
-            onPress={() => setModalCamera(true)}>
-            <Image
-              style={[
-                styles.imageUpload,
-                {
-                  tintColor:
-                    documentFiles.length < 5 ? colors.mainColor : 'grey',
-                },
-              ]}
-              source={icons.ic_upload}
-            />
-            <Text
-              style={[
-                styles.textUpload,
-                {
-                  color: documentFiles.length < 5 ? colors.mainColor : 'grey',
-                },
-              ]}>
-              Chụp báo cáo
-            </Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>Vật tư</Text>
-          <View
-            style={{
-              width: '100%',
-              backgroundColor: 'white',
-              borderRadius: 10,
-            }}>
-            {suppliesName.map((item, index) => {
-              return (
-                <View
-                  key={`${index}`}
-                  style={{
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    paddingHorizontal: 5,
-                  }}>
+                style={
+                  styles.content
+                }>{`Nhân sự kỹ thuật : ${request?.user_assigned}`}</Text>
+              <View style={[styles.line, {marginVertical: 10}]} />
+
+              <View style={styles.viewItem}>
+                <CustomComponentViewCheck
+                  title={'Kết quả đo tuyến cáp'}
+                  result={measureCableResult}
+                  onPressOk={() => setMeasureCableResult(true)}
+                  onPressNotOk={() => setMeasureCableResult(false)}
+                />
+                <FlatList
+                  horizontal
+                  data={measureCableResultDocument}
+                  keyExtractor={uuid}
+                  renderItem={({item, index}) =>
+                    renderMeasureCableResultDocument(item, index)
+                  }
+                />
+                <TouchableOpacity
+                  onPress={() => setModalResultCamera(true)}
+                  style={[styles.buttonUpload, {marginTop: 10}]}>
+                  <Image
+                    source={icons.ic_report}
+                    style={[
+                      styles.iconButtonUpload,
+                      {tintColor: colors.mainColor},
+                    ]}
+                  />
                   <Text
                     style={[
-                      styles.textPicker,
-                      {width: '65%'},
-                    ]}>{`${item?.name} : `}</Text>
-                  <TextInput
-                    style={{fontSize: 16, width: '35%', height: 50}}
-                    placeholder={'Nhập số lượng'}
-                    defaultValue={''}
-                    onEndEditing={evt => {
-                      value = {
-                        id: item?.id,
-                        quantity: evt.nativeEvent.text,
-                      };
-                      let eachSupplies = [...supplies];
-                      eachSupplies[index] = value;
-                      setSupplies(eachSupplies);
-                    }}
-                  />
+                      styles.textButtonUpload,
+                      {color: colors.mainColor},
+                    ]}>
+                    Chụp kết quả đo
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.viewItem}>
+                <CustomComponentViewCheck
+                  title={'Phát quang\ndọc tuyến cáp'}
+                  result={cleanCableResult}
+                  onPressOk={() => setCleanCableResult(true)}
+                  onPressNotOk={() => setCleanCableResult(false)}
+                />
+              </View>
+              <View style={styles.viewItem}>
+                <CustomComponentViewCheck
+                  title={'Căn chỉnh các tuyến\ncáp quang treo'}
+                  result={adjustTensionCable}
+                  onPressOk={() => setAdjustTensionCable(true)}
+                  onPressNotOk={() => setAdjustTensionCable(false)}
+                />
+              </View>
+              <View style={styles.viewItem}>
+                <CustomComponentViewCheck
+                  title={'Kiểm tra chỉnh lại vật tư\nphụ kiện treo cáp'}
+                  result={checkSupplies}
+                  onPressOk={() => setCheckSupplies(true)}
+                  onPressNotOk={() => setCheckSupplies(false)}
+                />
+              </View>
+              <View style={styles.viewItem}>
+                <CustomComponentViewCheck
+                  title={'Vệ sinh công bể\ncáp ngầm'}
+                  result={cleanUndergroundCable}
+                  onPressOk={() => setCleanUndergroundCable(true)}
+                  onPressNotOk={() => setCleanUndergroundCable(false)}
+                />
+              </View>
+              <View style={styles.viewItem}>
+                <CustomComponentViewCheck
+                  title={'Kiểm tra làm gọn cáp\ndự phòng'}
+                  result={checkPreventiveCable}
+                  onPressOk={() => setCheckPreventiveCable(true)}
+                  onPressNotOk={() => setCheckPreventiveCable(false)}
+                />
+              </View>
+              <View style={styles.viewItem}>
+                <CustomComponentViewCheck
+                  title={'Kiểm tra, vệ sinh\nmăng xông nối cáp'}
+                  result={checkCableSocket}
+                  onPressOk={() => setCheckCableSocket(true)}
+                  onPressNotOk={() => setCheckCableSocket(false)}
+                />
+              </View>
+              <View style={styles.viewItem}>
+                <CustomComponentViewCheck
+                  title={'Kiểm tra, vệ sinh ODF và\ncác đầu Adapter quang'}
+                  result={checkCableOdfAdapter}
+                  onPressOk={() => setCheckCableOdfAdapter(true)}
+                  onPressNotOk={() => setCheckCableOdfAdapter(false)}
+                />
+              </View>
+              <Text style={styles.title}>Phương án đề xuất tối ưu</Text>
+              <CustomTextInputChangeValue
+                styleViewInput={{
+                  height: 50,
+                  width: '100%',
+                  backgroundColor: 'white',
+                }}
+                placeholder={'Nhập phương án'}
+                value={solutionProvide}
+                onChangeText={text => setSolutionProvide(text)}
+              />
+              <Text style={styles.title}>Hình ảnh báo cáo</Text>
+              <FlatList
+                horizontal
+                data={documentFiles}
+                keyExtractor={uuid}
+                renderItem={({item, index}) => renderDocumentFiles(item, index)}
+              />
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => setModalCamera(true)}>
+                <Image
+                  style={[styles.imageUpload, {tintColor: colors.mainColor}]}
+                  source={icons.ic_upload}
+                />
+                <Text style={[styles.textUpload, {color: colors.mainColor}]}>
+                  Chụp báo cáo
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.title}>Kho vật tư</Text>
+              <TouchableOpacity
+                onPress={() => setModalStableWarehouse(true)}
+                style={styles.buttonPicker}>
+                <Text style={styles.textPicker}>
+                  {warehouse ? warehouse?.name : 'Chọn kho vật tư'}
+                </Text>
+                <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+              </TouchableOpacity>
+              {warehouse && (
+                <View>
+                  <Text style={styles.title}>Vật tư</Text>
+                  <View
+                    style={{
+                      width: '100%',
+                      backgroundColor: 'white',
+                      borderRadius: 10,
+                    }}>
+                    {suppliesName.map((item, index) => {
+                      return (
+                        <View
+                          key={`${index}`}
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                            paddingHorizontal: 5,
+                          }}>
+                          <Text
+                            style={[
+                              styles.textPicker,
+                              {width: '65%'},
+                            ]}>{`${item?.name} : `}</Text>
+                          <TextInput
+                            style={{fontSize: 16, width: '35%', height: 50}}
+                            placeholder={'Nhập số lượng'}
+                            defaultValue={''}
+                            onEndEditing={evt => {
+                              value = {
+                                id: item?.id,
+                                quantity: evt.nativeEvent.text,
+                              };
+                              let eachSupplies = [...supplies];
+                              eachSupplies[index] = value;
+                              setSupplies(eachSupplies);
+                            }}
+                          />
+                        </View>
+                      );
+                    })}
+                  </View>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <CustomButtonIcon
+                      styleButton={styles.styleCustomButtonIcon}
+                      imageStyle={{
+                        width: 40,
+                        height: 40,
+                        tintColor: colors.mainColor,
+                      }}
+                      source={icons.ic_plusPurple}
+                      onPress={() => setModalSupplies(true)}
+                    />
+                    <Text style={{color: colors.mainColor}}>Thêm vật tư</Text>
+                  </View>
                 </View>
-              );
-            })}
+              )}
+            </ScrollView>
+            <TouchableOpacity
+              disabled={isValueOK() ? false : true}
+              onPress={sendReport}
+              style={[
+                styles.styleButton,
+                {backgroundColor: isValueOK() ? colors.mainColor : 'grey'},
+              ]}>
+              <Text style={styles.textSendReport}>Gửi báo cáo</Text>
+            </TouchableOpacity>
           </View>
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            <CustomButtonIcon
-              styleButton={styles.styleCustomButtonIcon}
-              imageStyle={{
-                width: 40,
-                height: 40,
-                tintColor: colors.mainColor,
-              }}
-              source={icons.ic_plusPurple}
-              onPress={() => setModalSupplies(true)}
-            />
-            <Text style={{color: colors.mainColor}}>Thêm vật tư</Text>
-          </View>
-        </ScrollView>
-
-        <TouchableOpacity
-          disabled={isValueOK() ? false : true}
-          onPress={sendReport}
-          style={[
-            styles.styleButton,
-            {backgroundColor: isValueOK() ? colors.mainColor : 'grey'},
-          ]}>
-          <Text style={styles.textSendReport}>Gửi báo cáo</Text>
-        </TouchableOpacity>
+        )}
       </KeyboardAvoidingView>
     </View>
   );
@@ -604,6 +678,28 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  buttonPicker: {
+    width: '100%',
+    height: 50,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    elevation: 2,
+    zIndex: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  textPicker: {fontSize: 18, color: 'black'},
+  imagePicker: {width: 25, height: 25},
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 9999,
+    position: 'absolute',
   },
 });
 const CustomComponentViewCheck = props => {

@@ -23,6 +23,7 @@ import {useSelector} from 'react-redux';
 import CustomModalSelectUserAssigned from '../../../../../Components/CustomModalSelectUserAssigned';
 import UsersAPI from '../../../../../Api/Home/UsersAPI/UsersAPI';
 import CustomModalCamera from '../../../../../Components/CustomModalCamera';
+import CustomLoading from '../../../../../Components/CustomLoading';
 import common from '../../../../../utils/common';
 import {uuid} from '../../../../../utils/uuid';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -47,6 +48,7 @@ const CreateNewRequest = props => {
   const [listOpticalCables, setListOpticalCables] = useState([]);
   const [listOfEmployee, setListOfEmployee] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const isReady = () =>
     opticalCableId != null &&
     userAssignedId != null &&
@@ -68,7 +70,7 @@ const CreateNewRequest = props => {
       .catch(function (error) {
         // console.log(error)
       });
-    await ReadUsersAPI(token)
+    await UsersAPI.GetUsersAPI(token)
       .then(res => {
         if (res?.status == 200) {
           setListOfEmployee(res?.data?.data);
@@ -108,21 +110,9 @@ const CreateNewRequest = props => {
   };
   const openCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
-      .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
-        setModalCamera(false);
-      })
-      .catch(e => {
-        ImagePicker.clean();
-        setModalCamera(false);
-      });
-  };
-  const openGallery = () => {
-    ImagePicker.openPicker({})
-      .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
+      .then(image => {
+        let eachImg = {...image, uri: image?.path};
+        addResult(eachImg);
         setModalCamera(false);
       })
       .catch(e => {
@@ -134,7 +124,28 @@ const CreateNewRequest = props => {
     const eachResult = [...albumImage, image];
     setAlbumImage(eachResult);
   };
-
+  const openGallery = () => {
+    ImagePicker.openPicker({multiple: true})
+      .then(image => {
+        let albumImg = [];
+        for (let index = 0; index < image.length; index++) {
+          let element = image[index];
+          let eachElement = {...element, uri: element?.path};
+          albumImg.push(eachElement);
+        }
+        addResultGallery(albumImg);
+        setModalCamera(false);
+      })
+      .catch(e => {
+        ImagePicker.clean();
+        setModalCamera(false);
+      });
+  };
+  const addResultGallery = album => {
+    const eachResult = [...albumImage];
+    const newResult = eachResult.concat(album);
+    setAlbumImage(newResult);
+  };
   const renderImage = (item, index) => {
     return (
       <View>
@@ -146,7 +157,7 @@ const CreateNewRequest = props => {
             source={icons.ic_cancel}
           />
           <Image
-            source={{uri: item?.uri}}
+            source={{uri: item?.path}}
             style={{width: 200, height: 200, marginHorizontal: 5}}
             resizeMode={'contain'}
           />
@@ -161,6 +172,7 @@ const CreateNewRequest = props => {
     setAlbumImage(newResult);
   };
   const createRequest = async () => {
+    setIsLoading(true);
     let descriptionS = description;
     let optical_cable_id = parseInt(opticalCableId?.id);
     let user_assigned_id = parseInt(userAssignedId?.id);
@@ -174,17 +186,32 @@ const CreateNewRequest = props => {
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Xử lý sự cố', 'Yêu cầu xử lý sự cố thành công');
+          navigation.navigate('IncidentManagement');
+        }
+        if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
+          Alert.alert('Xử lý sự cố', 'Không thể yêu cầu xử lý sự cố');
           navigation.navigate('IncidentManagement');
         }
       })
       .catch(error => {
-        console.log(error.response);
+        // console.log(error);
+        setIsLoading(false);
         Alert.alert('Xử lý sự cố', 'Yêu cầu xử lý sự cố thất bại');
       });
   };
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.viewModal}>
+          <CustomLoading
+            modalVisible={isLoading}
+            onRequestClose={() => setIsLoading(false)}
+          />
+        </View>
+      )}
       {modalCamera && (
         <View style={styles.styleModal}>
           <CustomModalCamera
@@ -268,24 +295,13 @@ const CreateNewRequest = props => {
               renderItem={({item}) => renderImage(item)}
             />
             <TouchableOpacity
-              disabled={albumImage.length < 5 ? false : true}
               style={[styles.button, {marginTop: 10}]}
               onPress={() => setModalCamera(true)}>
               <Image
-                style={[
-                  styles.imageUpload,
-                  {
-                    tintColor:
-                      albumImage.length < 5 ? colors.mainColor : 'grey',
-                  },
-                ]}
+                style={[styles.imageUpload, {tintColor: colors.mainColor}]}
                 source={icons.ic_upload}
               />
-              <Text
-                style={[
-                  styles.textUpload,
-                  {color: albumImage.length < 5 ? colors.mainColor : 'grey'},
-                ]}>
+              <Text style={[styles.textUpload, {color: colors.mainColor}]}>
                 Up ảnh
               </Text>
             </TouchableOpacity>
@@ -402,5 +418,12 @@ const styles = StyleSheet.create({
   },
   customButtonIcon: {position: 'absolute', right: 3, top: 3, zIndex: 1},
   imageStyle: {width: 20, height: 20, tintColor: 'red'},
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 9999,
+    position: 'absolute',
+  },
 });
 export default CreateNewRequest;

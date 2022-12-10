@@ -19,7 +19,7 @@ import {
 import CustomAppBar from '../../../../../../../Components/CustomAppBar';
 import CustomModalCamera from '../../../../../../../Components/CustomModalCamera';
 import CustomTextButton from '../../../../../../../Components/CustomTextButton';
-import CustomInput from '../../../../../../../Components/CustomInput';
+import CustomLoading from '../../../../../../../Components/CustomLoading';
 import CustomTextInputChangeValue from '../../../../../../../Components/CustomTextInputChangeValue';
 import {colors, icons} from '../../../../../../../Constants';
 import common from '../../../../../../../utils/common';
@@ -29,8 +29,11 @@ import IncidentManagementAPI from '../../../../../../../Api/Home/IncidentManagem
 import {useSelector} from 'react-redux';
 import CustomButtonIcon from '../../../../../../../Components/CustomButtonIcon';
 import Geolocation from '@react-native-community/geolocation';
-import {GetListSuppliesAPI} from '../../../../../../../Api/Home/Master-Data/MasterData';
 import CustomModalStableWarehouse from '../../../../../../../Components/CustomModalStableWarehouse';
+import {
+  GetStableWarehouseSuppliesByIdAPI,
+  GetStableWarehouseAPI,
+} from '../../../../../../../Api/Home/StableWarehouseAPI/StableWarehouseAPI';
 const ReportIncident = props => {
   const navigation = useNavigation();
   const route = useRoute();
@@ -44,9 +47,10 @@ const ReportIncident = props => {
   const [loading, setLoading] = useState(true);
   const [supplies, setSupplies] = useState([]);
   const [suppliesName, setSuppliesName] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [listSupplies, setListSupplies] = useState([]);
-
+  const [listwarehouse, setlistwarehouse] = useState([]);
+  const [warehouse, setwarehouse] = useState('');
   useEffect(() => {
     getResult();
   }, []);
@@ -62,10 +66,11 @@ const ReportIncident = props => {
       .catch(error => {
         console.log(error);
       });
-    await GetListSuppliesAPI(token)
+    await GetStableWarehouseAPI(token)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
-          setListSupplies(res?.data?.data);
+          setlistwarehouse(res?.data?.data);
+          // setListSupplies(res?.data?.data);
         }
       })
       .catch(function (error) {
@@ -83,6 +88,7 @@ const ReportIncident = props => {
 
   const [modalCamera, setModalCamera] = useState(false);
   const [modalSupplies, setModalSupplies] = useState(false);
+  const [modalStableWarehouse, setModalStableWarehouse] = useState(false);
 
   const getLocation = () => {
     Geolocation.getCurrentPosition(info => {
@@ -93,9 +99,9 @@ const ReportIncident = props => {
   const openCamera = () => {
     setModalCamera(true);
     ImagePicker.openCamera({width: 300, height: 400})
-      .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
+      .then(image => {
+        let eachImg = {...image, uri: image?.path};
+        addResult(eachImg);
         setModalCamera(false);
       })
       .catch(e => {
@@ -106,10 +112,15 @@ const ReportIncident = props => {
 
   const openGallery = () => {
     setModalCamera(true);
-    ImagePicker.openPicker({})
-      .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
+    ImagePicker.openPicker({multiple: true})
+      .then(image => {
+        let albumImg = [];
+        for (let index = 0; index < image.length; index++) {
+          let element = image[index];
+          let eachElement = {...element, uri: element?.path};
+          albumImg.push(eachElement);
+        }
+        addResultGallery(albumImg);
         setModalCamera(false);
       })
       .catch(e => {
@@ -117,8 +128,13 @@ const ReportIncident = props => {
         setModalCamera(false);
       });
   };
-
+  const addResultGallery = album => {
+    const eachResult = [...reportDocument];
+    const newResult = eachResult.concat(album);
+    setReportDocument(newResult);
+  };
   const sendReport = async () => {
+    setIsLoading(true);
     let issueId = request?.id;
     await IncidentManagementAPI.IssueReportAPI(
       token,
@@ -132,12 +148,13 @@ const ReportIncident = props => {
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Báo cáo', 'Gửi báo cáo thành công');
           navigation.navigate('IncidentList');
         }
       })
       .catch(function (error) {
-        console.log(JSON.stringify(error?.status));
+        setIsLoading(false);
         Alert.alert('Báo cáo', 'Gửi báo cáo thất bại');
       });
   };
@@ -155,7 +172,7 @@ const ReportIncident = props => {
           onPress={() => removeImage(index)}
         />
         <Image
-          source={{uri: image?.uri}}
+          source={{uri: image?.path}}
           style={{width: '100%', height: '100%', marginHorizontal: 5}}
           resizeMode={'contain'}
         />
@@ -177,8 +194,49 @@ const ReportIncident = props => {
     setSuppliesName(eachNewSupplies);
     setModalSupplies(false);
   };
+  const getListSuppliesInfor = async id => {
+    await GetStableWarehouseSuppliesByIdAPI(token, id)
+      .then(res => {
+        if (res?.status == 200 && res?.data?.success == true) {
+          let eachSupplies = [];
+          for (let index = 0; index < res?.data?.data?.data.length; index++) {
+            let element = res?.data?.data?.data[index];
+            let value = {
+              name: element?.supplies?.name,
+              id: element?.supplies_id,
+            };
+            eachSupplies.push(value);
+          }
+          setListSupplies(eachSupplies);
+        }
+      })
+      .catch(function (error) {
+        // console.log(error);
+      });
+  };
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.viewModal}>
+          <CustomLoading
+            modalVisible={isLoading}
+            onRequestClose={() => setIsLoading(false)}
+          />
+        </View>
+      )}
+      {modalStableWarehouse && (
+        <View style={styles.styleModal}>
+          <CustomModalStableWarehouse
+            data={listwarehouse}
+            closeModal={() => setModalStableWarehouse(false)}
+            onPress={item => {
+              setwarehouse(item);
+              getListSuppliesInfor(item?.id);
+              setModalStableWarehouse(false);
+            }}
+          />
+        </View>
+      )}
       {modalSupplies && (
         <View style={styles.styleModal}>
           <CustomModalStableWarehouse
@@ -277,82 +335,81 @@ const ReportIncident = props => {
               renderItem={({item, index}) => renderImage(item, index)}
             />
             <TouchableOpacity
-              disabled={reportDocument.length < 5 ? false : true}
               style={[styles.button, {marginTop: 10}]}
               onPress={() => setModalCamera(true)}>
               <Image
-                style={[
-                  styles.imageUpload,
-                  {
-                    tintColor:
-                      reportDocument.length < 5 ? colors.mainColor : 'grey',
-                  },
-                ]}
+                style={[styles.imageUpload, {tintColor: colors.mainColor}]}
                 source={icons.ic_upload}
               />
-              <Text
-                style={[
-                  styles.textUpload,
-                  {
-                    color:
-                      reportDocument.length < 5 ? colors.mainColor : 'grey',
-                  },
-                ]}>
+              <Text style={[styles.textUpload, {color: colors.mainColor}]}>
                 Up ảnh
               </Text>
             </TouchableOpacity>
-            <Text style={styles.title}>Vật tư</Text>
-            <View
-              style={{
-                width: '100%',
-                backgroundColor: 'white',
-                borderRadius: 10,
-              }}>
-              {suppliesName.map((item, index) => {
-                return (
-                  <View
-                    key={`${index}`}
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      paddingHorizontal: 5,
-                    }}>
-                    <Text
-                      style={[
-                        styles.textPicker,
-                        {width: '65%'},
-                      ]}>{`${item?.name} : `}</Text>
-                    <TextInput
-                      style={{fontSize: 16, width: '35%', height: 50}}
-                      placeholder={'Nhập số lượng'}
-                      defaultValue={''}
-                      onEndEditing={evt => {
-                        value = {
-                          id: item?.id,
-                          quantity: evt.nativeEvent.text,
-                        };
-                        let eachSupplies = [...supplies];
-                        eachSupplies[index] = value;
-                        setSupplies(eachSupplies);
-                      }}
-                    />
-                  </View>
-                );
-              })}
-            </View>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <CustomButtonIcon
-                styleButton={styles.styleCustomButtonIcon}
-                imageStyle={{
-                  width: 40,
-                  height: 40,
-                  tintColor: colors.mainColor,
-                }}
-                source={icons.ic_plusPurple}
-                onPress={() => setModalSupplies(true)}
-              />
-              <Text style={{color: colors.mainColor}}>Thêm vật tư</Text>
-            </View>
+            <Text style={styles.title}>Kho vật tư</Text>
+            <TouchableOpacity
+              onPress={() => setModalStableWarehouse(true)}
+              style={styles.buttonPicker}>
+              <Text style={styles.textPicker}>
+                {warehouse ? warehouse?.name : 'Chọn kho vật tư'}
+              </Text>
+              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+            </TouchableOpacity>
+            {warehouse && (
+              <View>
+                <Text style={styles.title}>Vật tư</Text>
+                <View
+                  style={{
+                    width: '100%',
+                    backgroundColor: 'white',
+                    borderRadius: 10,
+                  }}>
+                  {suppliesName.map((item, index) => {
+                    return (
+                      <View
+                        key={`${index}`}
+                        style={{
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          paddingHorizontal: 5,
+                        }}>
+                        <Text
+                          style={[
+                            styles.textPicker,
+                            {width: '65%'},
+                          ]}>{`${item?.name} : `}</Text>
+                        <TextInput
+                          style={{fontSize: 16, width: '35%', height: 50}}
+                          placeholder={'Nhập số lượng'}
+                          defaultValue={''}
+                          onEndEditing={evt => {
+                            value = {
+                              id: item?.id,
+                              quantity: evt.nativeEvent.text,
+                            };
+                            let eachSupplies = [...supplies];
+                            eachSupplies[index] = value;
+                            setSupplies(eachSupplies);
+                          }}
+                        />
+                      </View>
+                    );
+                  })}
+                </View>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <CustomButtonIcon
+                    styleButton={styles.styleCustomButtonIcon}
+                    imageStyle={{
+                      width: 40,
+                      height: 40,
+                      tintColor: colors.mainColor,
+                    }}
+                    source={icons.ic_plusPurple}
+                    onPress={() => setModalSupplies(true)}
+                  />
+                  <Text style={{color: colors.mainColor}}>Thêm vật tư</Text>
+                </View>
+              </View>
+            )}
           </ScrollView>
           <TouchableOpacity
             disabled={isValueOK() ? false : true}
@@ -457,6 +514,28 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  buttonPicker: {
+    width: '100%',
+    height: 50,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    elevation: 2,
+    zIndex: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    justifyContent: 'space-between',
+    marginBottom: 20,
+  },
+  textPicker: {fontSize: 18, color: 'black'},
+  imagePicker: {width: 25, height: 25},
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 9999,
+    position: 'absolute',
   },
 });
 

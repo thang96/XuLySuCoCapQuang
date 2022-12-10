@@ -59,8 +59,8 @@ const CreateIssuesRequestAPI = (
       let image = document_files[i];
       formDataCreate.append('document_files', {
         uri: image?.uri,
-        name: image?.name,
-        type: image?.type,
+        name: getFileName(image),
+        type: 'image/jpeg',
       });
     }
     axios
@@ -245,8 +245,8 @@ const IssueReportAPI = (
       let image = reportDocument[i];
       formData.append('document_files', {
         uri: image?.uri,
-        name: image?.name,
-        type: image?.type,
+        name: getFileName(image),
+        type: 'image/jpeg',
       });
     }
     formData.append('supplies', JSON.stringify(supplies) ?? '');
@@ -299,3 +299,17 @@ const IncidentManagementAPI = {
   ExportIssueAPI,
 };
 export default IncidentManagementAPI;
+const getFileName = file => {
+  if (file.name !== undefined) {
+    return file.name;
+  } else if (file.filename !== undefined && file.filename !== null) {
+    return file.filename;
+  } else {
+    const type = file?.mime || file?.type;
+    return (
+      Math.floor(Math.random() * Math.floor(999999999)) +
+      '.' +
+      type.split('/')[1]
+    );
+  }
+};

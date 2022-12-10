@@ -52,17 +52,17 @@ const CreateMaintenanceIssueAPI = (
   albumImage,
 ) => {
   return new Promise((resolve, reject) => {
-    const formData = new FormData();
+    let formData = new FormData();
     formData.append('repeat_by', repeat_by ?? 'MONTHLY');
     formData.append('description', descrip ?? '');
     formData.append('optical_cable_id', optical_cable_id ?? 0);
     formData.append('user_assigned_id', user_assigned_id ?? 0);
     for (let i = 0; i < albumImage.length; i++) {
-      const element = albumImage[i];
+      let element = albumImage[i];
       formData.append('document_files', {
         uri: element?.uri,
-        name: element?.name,
-        type: element?.type,
+        name: getFileName(element),
+        type: 'image/jpeg',
       });
     }
     axios
@@ -239,14 +239,14 @@ const MaintenanceIssueReportAPI = (
   supplies,
 ) => {
   return new Promise((resolve, reject) => {
-    const formDataReport = new FormData();
+    let formDataReport = new FormData();
     formDataReport.append('measure_cable_result', measureCableResult ?? false);
     for (let i = 0; i < measureCableResultDocument.length; i++) {
       let image = measureCableResultDocument[i];
       formDataReport.append('measure_cable_result_document_files', {
         uri: image?.uri,
-        name: image?.name,
-        type: image?.type,
+        name: getFileName(image),
+        type: 'image/jpeg',
       });
     }
     formDataReport.append('clean_cable_result', cleanCableResult ?? false);
@@ -271,8 +271,8 @@ const MaintenanceIssueReportAPI = (
       let imageDoc = documentFiles[i];
       formDataReport.append('document_files', {
         uri: imageDoc?.uri,
-        name: imageDoc?.name,
-        type: imageDoc?.type,
+        name: getFileName(imageDoc),
+        type: 'image/jpeg',
       });
     }
     formDataReport.append('supplies', JSON.stringify(supplies) ?? '');
@@ -311,3 +311,17 @@ const MaintenanceManagementAPI = {
   MaintenanceIssueReportAPI,
 };
 export default MaintenanceManagementAPI;
+const getFileName = file => {
+  if (file.name !== undefined) {
+    return file.name;
+  } else if (file.filename !== undefined && file.filename !== null) {
+    return file.filename;
+  } else {
+    const type = file?.mime || file?.type;
+    return (
+      Math.floor(Math.random() * Math.floor(999999999)) +
+      '.' +
+      type.split('/')[1]
+    );
+  }
+};

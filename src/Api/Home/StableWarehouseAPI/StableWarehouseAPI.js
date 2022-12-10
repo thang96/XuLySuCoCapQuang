@@ -179,8 +179,8 @@ export const CreateAInventoryReceivingVoucherAPI = (
       let image = document_files[i];
       formDataCreate.append('document_files', {
         uri: image?.uri,
-        name: image?.name,
-        type: image?.type,
+        name: getFileName(image),
+        type: 'image/jpeg',
       });
     }
     formDataCreate.append('approve_user_id', approve_user_id ?? 0);
@@ -346,8 +346,8 @@ export const CreateAInventoryDeliveryVoucherAPI = (
       let image = document_files[i];
       formDataCreate.append('document_files', {
         uri: image?.uri,
-        name: image?.name,
-        type: image?.type,
+        name: getFileName(image),
+        type: 'image/jpeg',
       });
     }
     formDataCreate.append('approve_user_id', approve_user_id ?? 0);
@@ -552,8 +552,8 @@ export const CreateAInventoryControlVoucherAPI = (
       let image = document_files[i];
       formDataCreate.append('document_files', {
         uri: image?.uri,
-        name: image?.name,
-        type: image?.type,
+        name: getFileName(image),
+        type: 'image/jpeg',
       });
     }
     formDataCreate.append('approve_user_id', approve_user_id ?? 0);
@@ -667,4 +667,18 @@ export const RejectInventoryControlVoucher = (token, id) => {
         reject(errors);
       });
   });
+};
+const getFileName = file => {
+  if (file.name !== undefined) {
+    return file.name;
+  } else if (file.filename !== undefined && file.filename !== null) {
+    return file.filename;
+  } else {
+    const type = file?.mime || file?.type;
+    return (
+      Math.floor(Math.random() * Math.floor(999999999)) +
+      '.' +
+      type.split('/')[1]
+    );
+  }
 };

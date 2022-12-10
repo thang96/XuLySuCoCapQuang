@@ -23,6 +23,7 @@ import {useSelector} from 'react-redux';
 import MaintenanceManagementAPI from '../../../../../../Api/Home/MaintenanceManagementAPI/MaintenanceManagementAPI';
 import CustomTextButton from '../../../../../../Components/CustomTextButton';
 import CustomConfirm from '../../../../../../Components/CustomConfirm';
+import CustomLoading from '../../../../../../Components/CustomLoading';
 const FiberOpticCableDetail = props => {
   const navigation = useNavigation();
   const userInfor = useSelector(state => state?.userInfor?.userInfor);
@@ -30,6 +31,7 @@ const FiberOpticCableDetail = props => {
   const route = useRoute();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     getDetail();
   }, [route, token]);
@@ -45,32 +47,40 @@ const FiberOpticCableDetail = props => {
       });
   };
   const rejectMaintenanceIssue = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await MaintenanceManagementAPI.RejectMaintenanceIssueAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Bảo trì', 'Từ chối thành công');
           navigation.goBack();
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Bảo trì', 'Không thể từ chôi');
         }
       })
       .catch(error => {
+        setIsLoading(false);
         Alert.alert('Bảo trì', 'Từ chối thất bại');
       });
   };
   const receiveMaintenanceIssue = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await MaintenanceManagementAPI.ReceiveMaintenanceIssueAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Bảo trì', 'Tiếp nhận thành công');
           navigation.navigate('MaintenanceList');
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Bảo trì', 'Không thể tiếp nhận');
         }
       })
       .catch(error => {
+        setIsLoading(false);
         Alert.alert('Bảo trì', 'Tiếp nhận thất bại');
       });
   };
@@ -79,18 +89,23 @@ const FiberOpticCableDetail = props => {
     navigation.navigate('ReportMaintenance', id);
   };
   const acceptance = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await MaintenanceManagementAPI.AcceptanceMaintenanceRequestAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Bảo trì', 'Nghiệm thu thành công');
           navigation.navigate('MaintenanceManagement');
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Bảo trì', 'Không thể nghiệm thu');
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
         Alert.alert('Bảo trì', 'Nghiệm thu thất bại');
+        console.log(error);
       });
   };
   const renderDocumentFiles = item => {
@@ -130,10 +145,12 @@ const FiberOpticCableDetail = props => {
   };
   const [confirm, setConfirm] = useState(false);
   const deleteMaintenance = async () => {
+    setIsLoading(true);
     let id = result?.id;
     await MaintenanceManagementAPI.DeleteMaintenanceIssueByIdAPI(token, id)
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert(
             'Yêu cầu bảo trì',
             'Xóa yêu cầu xử lý bảo trì thành công',
@@ -141,16 +158,26 @@ const FiberOpticCableDetail = props => {
           navigation.goBack();
           setConfirm(false);
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Yêu cầu bảo trì', 'Không thể xóa yêu cầu xử lý bảo trì');
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
         Alert.alert('Yêu cầu bảo trì', 'Xóa yêu cầu xử lý bảo trì thất bại');
       });
   };
   const [edit, setEdit] = useState(false);
   return (
     <View style={styles.container}>
+      {isLoading && (
+        <View style={styles.viewModal}>
+          <CustomLoading
+            modalVisible={isLoading}
+            onRequestClose={() => setIsLoading(false)}
+          />
+        </View>
+      )}
       <CustomAppBar
         title={'Chi tiết bảo trì'}
         iconsLeft={icons.ic_back}
@@ -338,7 +365,7 @@ const FiberOpticCableDetail = props => {
                   styleButton={styles.viewCustomTextButton}
                   label={'Từ chối'}
                   textStyle={styles.textCustomTextButton}
-                  onPress={() => rejectIssue()}
+                  onPress={() => rejectMaintenanceIssue()}
                 />
                 <CustomTextButton
                   styleButton={styles.viewCustomTextButton}
@@ -416,6 +443,13 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 9999,
+    position: 'absolute',
   },
 });
 

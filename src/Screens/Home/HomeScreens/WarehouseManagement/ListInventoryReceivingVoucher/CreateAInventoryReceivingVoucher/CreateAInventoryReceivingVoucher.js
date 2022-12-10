@@ -31,6 +31,7 @@ import CustomButtonIcon from '../../../../../../Components/CustomButtonIcon';
 import CustomModalDateTimePicker from '../../../../../../Components/CustomModalDateTimePicker';
 import CustomModalStableWarehouse from '../../../../../../Components/CustomModalStableWarehouse';
 import CustomModalSelectUserAssigned from '../../../../../../Components/CustomModalSelectUserAssigned';
+import CustomLoading from '../../../../../../Components/CustomLoading';
 import {GetListSuppliesAPI} from '../../../../../../Api/Home/Master-Data/MasterData';
 const CreateAInventoryReceivingVoucher = props => {
   const navigation = useNavigation();
@@ -38,11 +39,10 @@ const CreateAInventoryReceivingVoucher = props => {
   const [modalCamera, setModalCamera] = useState(false);
   const [modalStableWarehouse, setModalStableWarehouse] = useState(false);
   const [modalDate, setModalDate] = useState(false);
-  const [modalTime, setModalTime] = useState(false);
   const [modalApproveUser, setModalApproveUser] = useState(false);
   const [modalSupplies, setModalSupplies] = useState(false);
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const token = useSelector(state => state?.token?.token);
   const [stableWarehouseId, setStableWarehouseId] = useState('');
   const [receiveTime, setReceiveTime] = useState('');
@@ -81,6 +81,9 @@ const CreateAInventoryReceivingVoucher = props => {
   };
 
   useEffect(() => {
+    let newDate = dateToYMD(date);
+    setFormatsDate(newDate);
+    setReceiveTime(date);
     getResult();
   }, []);
   const getResult = async () => {
@@ -118,6 +121,7 @@ const CreateAInventoryReceivingVoucher = props => {
   };
 
   const createVoucher = async () => {
+    setIsLoading(true);
     let stable_warehouse_id = parseFloat(stableWarehouseId?.id);
     let approve_user_id = parseFloat(approveUserId?.id);
     let document_files = albumImage;
@@ -133,13 +137,16 @@ const CreateAInventoryReceivingVoucher = props => {
     )
       .then(res => {
         if (res?.status == 200 && res?.data?.success == true) {
+          setIsLoading(false);
           Alert.alert('Tạo phiếu nhập kho', 'Tạo phiếu nhập kho thành công');
           navigation.navigate('ListInventoryReceivingVoucher');
         } else if (res?.status == 200 && res?.data?.success == false) {
+          setIsLoading(false);
           Alert.alert('Tạo phiếu nhập kho', 'Không thể tạo phiếu nhập kho');
         }
       })
       .catch(function (error) {
+        setIsLoading(false);
         // console.log(error);
         Alert.alert('Tạo phiếu nhập kho', 'Tạo phiếu nhập kho thất bại');
       });
@@ -156,9 +163,9 @@ const CreateAInventoryReceivingVoucher = props => {
   };
   const openCamera = () => {
     ImagePicker.openCamera({width: 300, height: 400})
-      .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
+      .then(image => {
+        let eachImg = {...image, uri: image?.path};
+        addResult(eachImg);
         setModalCamera(false);
       })
       .catch(e => {
@@ -167,16 +174,26 @@ const CreateAInventoryReceivingVoucher = props => {
       });
   };
   const openGallery = () => {
-    ImagePicker.openPicker({})
+    ImagePicker.openPicker({multiple: true})
       .then(async image => {
-        const imageConverted = await common.resizeImageNotVideo(image);
-        addResult(imageConverted);
+        let albumImg = [];
+        for (let index = 0; index < image.length; index++) {
+          let element = image[index];
+          let eachElement = {...element, uri: element?.path};
+          albumImg.push(eachElement);
+        }
+        addResultGallery(albumImg);
         setModalCamera(false);
       })
       .catch(e => {
         ImagePicker.clean();
         setModalCamera(false);
       });
+  };
+  const addResultGallery = album => {
+    const eachResult = [...albumImage];
+    const newResult = eachResult.concat(album);
+    setAlbumImage(newResult);
   };
   const addResult = image => {
     const eachResult = [...albumImage, image];
@@ -209,6 +226,19 @@ const CreateAInventoryReceivingVoucher = props => {
   };
   return (
     <View style={styles.container}>
+      <CustomAppBar
+        title={'Tạo phiếu nhập kho'}
+        iconsLeft={icons.ic_back}
+        onPressIconsLeft={() => navigation.goBack()}
+      />
+      {isLoading && (
+        <View style={styles.viewModal}>
+          <CustomLoading
+            modalVisible={isLoading}
+            onRequestClose={() => setIsLoading(false)}
+          />
+        </View>
+      )}
       {modalCamera && (
         <View style={styles.styleModal}>
           <CustomModalCamera
@@ -223,6 +253,7 @@ const CreateAInventoryReceivingVoucher = props => {
       {modalSupplies && (
         <View style={styles.styleModal}>
           <CustomModalStableWarehouse
+            closeModal={() => setModalSupplies(false)}
             data={listSupplies}
             onPress={item => addSupplies(item)}
           />
@@ -231,8 +262,11 @@ const CreateAInventoryReceivingVoucher = props => {
       {modalStableWarehouse && (
         <View style={styles.styleModal}>
           <CustomModalStableWarehouse
+            closeModal={() => setModalStableWarehouse(false)}
             data={listStableWarehouse}
             onPress={item => {
+              setSupplies([]);
+              setSuppliesName([]);
               setStableWarehouseId(item);
               setModalStableWarehouse(false);
             }}
@@ -268,22 +302,7 @@ const CreateAInventoryReceivingVoucher = props => {
         <ActivityIndicator size={'large'} color={colors.mainColor} />
       ) : (
         <KeyboardAvoidingView style={styles.container}>
-          <CustomAppBar
-            title={'Tạo phiếu nhập kho'}
-            iconsLeft={icons.ic_back}
-            onPressIconsLeft={() => navigation.goBack()}
-          />
-
           <ScrollView style={styles.scrollView}>
-            <Text style={styles.title}>Kho nhập</Text>
-            <TouchableOpacity
-              onPress={() => setModalStableWarehouse(true)}
-              style={styles.buttonPicker}>
-              <Text style={styles.textPicker}>
-                {stableWarehouseId ? stableWarehouseId?.name : 'Chọn kho'}
-              </Text>
-              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
-            </TouchableOpacity>
             <Text style={styles.title}>Thời gian</Text>
             <View style={styles.viewDateTime}>
               <TouchableOpacity
@@ -332,27 +351,26 @@ const CreateAInventoryReceivingVoucher = props => {
               renderItem={({item}) => renderImage(item)}
             />
             <TouchableOpacity
-              disabled={albumImage.length < 5 ? false : true}
               style={[styles.button, {marginTop: 10}]}
               onPress={() => setModalCamera(true)}>
               <Image
-                style={[
-                  styles.imageUpload,
-                  {
-                    tintColor:
-                      albumImage.length < 5 ? colors.mainColor : 'grey',
-                  },
-                ]}
+                style={[styles.imageUpload, {tintColor: colors.mainColor}]}
                 source={icons.ic_upload}
               />
-              <Text
-                style={[
-                  styles.textUpload,
-                  {color: albumImage.length < 5 ? colors.mainColor : 'grey'},
-                ]}>
+              <Text style={[styles.textUpload, {color: colors.mainColor}]}>
                 Up ảnh
               </Text>
             </TouchableOpacity>
+            <Text style={styles.title}>Kho nhập vật tư</Text>
+            <TouchableOpacity
+              onPress={() => setModalStableWarehouse(true)}
+              style={styles.buttonPicker}>
+              <Text style={styles.textPicker}>
+                {stableWarehouseId ? stableWarehouseId?.name : 'Chọn kho'}
+              </Text>
+              <Image source={icons.ic_downArrow} style={styles.imagePicker} />
+            </TouchableOpacity>
+
             <Text style={styles.title}>Vật tư</Text>
             <View
               style={{
@@ -375,6 +393,7 @@ const CreateAInventoryReceivingVoucher = props => {
                         {width: '65%'},
                       ]}>{`${item?.name} : `}</Text>
                     <TextInput
+                      keyboardType={'numeric'}
                       style={{fontSize: 16, width: '35%', height: 50}}
                       placeholder={'Nhập số lượng'}
                       defaultValue={''}
@@ -524,6 +543,13 @@ const styles = StyleSheet.create({
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  viewModal: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    zIndex: 9999,
+    position: 'absolute',
   },
 });
 export default CreateAInventoryReceivingVoucher;
