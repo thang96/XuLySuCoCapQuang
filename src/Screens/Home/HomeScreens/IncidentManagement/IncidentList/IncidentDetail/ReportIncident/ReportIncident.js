@@ -378,6 +378,7 @@ const ReportIncident = props => {
                             {width: '65%'},
                           ]}>{`${item?.name} : `}</Text>
                         <TextInput
+                          keyboardType="numeric"
                           style={{fontSize: 16, width: '35%', height: 50}}
                           placeholder={'Nhập số lượng'}
                           defaultValue={''}
