@@ -94,19 +94,25 @@ const ReportIncidentDetail = props => {
         <ActivityIndicator size={'large'} color={colors.mainColor} />
       ) : (
         <ScrollView style={styles.container}>
-          <CustomViewRow title={'Mã sự cố : '} content={result?.issue_code} />
-          <CustomViewRow title={'ID sự cố : '} content={result?.id} />
+          <CustomViewRow
+            title={'Mã sự cố : '}
+            content={`${result?.issue_code}`}
+          />
+          <CustomViewRow title={'ID sự cố : '} content={`${result?.id}`} />
 
           <CustomViewRow
             title={'Tọa độ longitude : '}
-            content={result?.location_longitude}
+            content={`${result?.location_longitude}`}
           />
           <CustomViewRow
             title={'Tọa độ latitude  : '}
-            content={result?.location_latitude}
+            content={`${result?.location_latitude}`}
           />
-          <CustomViewRow title={'Lý do  : '} content={result?.reason} />
-          <CustomViewRow title={'Giải pháp  : '} content={result?.solution} />
+          <CustomViewRow title={'Lý do  : '} content={`${result?.reason}`} />
+          <CustomViewRow
+            title={'Giải pháp  : '}
+            content={`${result?.solution}`}
+          />
           <View style={styles.customView}>
             <Text style={styles.title}>File báo cáo </Text>
             <FlatList
@@ -121,29 +127,19 @@ const ReportIncidentDetail = props => {
             <Text style={styles.styleContent}>Kho vật tư </Text>
             <CustomViewRow
               title={'Kho vật tư  : '}
-              content={
-                result?.inventory_issue_delivery_voucher?.stable_warehouse?.name
-              }
+              content={`${result?.inventory_issue_delivery_voucher?.stable_warehouse?.name}`}
             />
             <CustomViewRow
               title={'Mã kho  : '}
-              content={
-                result?.inventory_issue_delivery_voucher?.stable_warehouse?.code
-              }
+              content={`${result?.inventory_issue_delivery_voucher?.stable_warehouse?.code}`}
             />
             <CustomViewRow
               title={'Thời gian tạo  : '}
-              content={
-                result?.inventory_issue_delivery_voucher?.stable_warehouse
-                  ?.created_time
-              }
+              content={`${result?.inventory_issue_delivery_voucher?.stable_warehouse?.created_time}`}
             />
             <CustomViewRow
               title={'Mô tả  : '}
-              content={
-                result?.inventory_issue_delivery_voucher?.stable_warehouse
-                  ?.description
-              }
+              content={`${result?.inventory_issue_delivery_voucher?.stable_warehouse?.description}`}
             />
           </View>
           <View style={[styles.viewRowShowInfo, {marginTop: 10}]}>
@@ -156,19 +152,19 @@ const ReportIncidentDetail = props => {
                   <View key={item?.id} style={styles.viewVoucher}>
                     <CustomViewRow
                       title={'Mã : '}
-                      content={item?.supplies?.code}
+                      content={`${item?.supplies?.code}`}
                     />
                     <CustomViewRow
                       title={'Tên vật tư : '}
-                      content={item?.supplies?.name}
+                      content={`${item?.supplies?.name}`}
                     />
                     <CustomViewRow
                       title={'Đơn vị : '}
-                      content={item?.supplies?.unit}
+                      content={`${item?.supplies?.unit}`}
                     />
                     <CustomViewRow
                       title={'Số lượng : '}
-                      content={item?.quantity}
+                      content={`${item?.quantity}`}
                     />
                   </View>
                 );

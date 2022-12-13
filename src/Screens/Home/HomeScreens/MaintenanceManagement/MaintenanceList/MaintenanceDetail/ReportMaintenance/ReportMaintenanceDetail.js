@@ -130,9 +130,9 @@ const ReportMaintenanceDetail = props => {
         <ScrollView style={styles.container}>
           <CustomViewRow
             title={'Mã bảo trì : '}
-            content={result?.maintenance_issue_code}
+            content={`${result?.maintenance_issue_code}`}
           />
-          <CustomViewRow title={'ID bảo trì : '} content={result?.id} />
+          <CustomViewRow title={'ID bảo trì : '} content={`${result?.id}`} />
 
           <CustomViewRow
             title={'Kết quả đo tuyến cáp  : '}
@@ -186,7 +186,7 @@ const ReportMaintenanceDetail = props => {
           />
           <CustomViewRow
             title={'Phương án đề xuất tối ưu : '}
-            content={result?.solution_provide}
+            content={`${result?.solution_provide}`}
           />
           <View style={styles.customView}>
             <Text style={styles.title}>Hình ảnh báo cáo</Text>
@@ -201,54 +201,44 @@ const ReportMaintenanceDetail = props => {
             <Text style={styles.styleContent}>Kho vật tư </Text>
             <CustomViewRow
               title={'Kho vật tư  : '}
-              content={
-                result?.inventory_issue_delivery_voucher?.stable_warehouse?.name
-              }
+              content={`${result?.inventory_issue_delivery_voucher?.stable_warehouse?.name}`}
             />
             <CustomViewRow
               title={'Mã kho  : '}
-              content={
-                result?.inventory_issue_delivery_voucher?.stable_warehouse?.code
-              }
+              content={`${result?.inventory_issue_delivery_voucher?.stable_warehouse?.code}`}
             />
             <CustomViewRow
               title={'Thời gian tạo  : '}
-              content={
-                result?.inventory_issue_delivery_voucher?.stable_warehouse
-                  ?.created_time
-              }
+              content={`${result?.inventory_issue_delivery_voucher?.stable_warehouse?.created_time}`}
             />
             <CustomViewRow
               title={'Mô tả  : '}
-              content={
-                result?.inventory_issue_delivery_voucher?.stable_warehouse
-                  ?.description
-              }
+              content={`${result?.inventory_issue_delivery_voucher?.stable_warehouse?.description}`}
             />
           </View>
           <View style={[styles.viewRowShowInfo, {marginTop: 10}]}>
             <Text style={styles.styleContent}>
-              {result?.inventory_issue_delivery_voucher?.content}
+              {`${result?.inventory_issue_delivery_voucher?.content}`}
             </Text>
             {result?.inventory_issue_delivery_voucher?.supplies?.map(
               (item, index) => {
                 return (
-                  <View key={item?.id} style={styles.viewVoucher}>
+                  <View key={`${item?.id}`} style={styles.viewVoucher}>
                     <CustomViewRow
                       title={'Mã : '}
-                      content={item?.supplies?.code}
+                      content={`${item?.supplies?.code}`}
                     />
                     <CustomViewRow
                       title={'Tên vật tư : '}
-                      content={item?.supplies?.name}
+                      content={`${item?.supplies?.name}`}
                     />
                     <CustomViewRow
                       title={'Đơn vị : '}
-                      content={item?.supplies?.unit}
+                      content={`${item?.supplies?.unit}`}
                     />
                     <CustomViewRow
                       title={'Số lượng : '}
-                      content={item?.quantity}
+                      content={`${item?.quantity}`}
                     />
                   </View>
                 );

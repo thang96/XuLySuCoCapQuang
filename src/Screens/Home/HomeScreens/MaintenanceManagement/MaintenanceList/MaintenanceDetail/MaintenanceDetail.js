@@ -155,6 +155,7 @@ const FiberOpticCableDetail = props => {
             'Yêu cầu bảo trì',
             'Xóa yêu cầu xử lý bảo trì thành công',
           );
+
           navigation.goBack();
           setConfirm(false);
         } else if (res?.status == 200 && res?.data?.success == false) {
